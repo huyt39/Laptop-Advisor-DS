@@ -5,7 +5,7 @@ import os
 import re
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import requests
 from bs4 import BeautifulSoup
@@ -102,19 +102,7 @@ def parse_product_page(html: str, url: str) -> Dict:
             name = h1.get_text(strip=True)
 
     # price
-    price_raw = None
-    meta_price = soup.select_one("meta[itemprop='price'], meta[property='product:price:amount'], meta[name='price']")
-    if meta_price and meta_price.get('content'):
-        price_raw = meta_price['content'].strip()
-    else:
-        el = soup.select_one("[itemprop='price'], .price, .product-price, .gia-ban, .price-new")
-        if el:
-            price_raw = el.get_text(strip=True)
-    price = None
-    if price_raw:
-        m = re.findall(r"[0-9]+", price_raw.replace('.', '').replace(',', ''))
-        if m:
-            price = int(''.join(m))
+    price_raw, price = extract_price(soup)
 
     # image
     image = None
@@ -160,6 +148,82 @@ def parse_product_page(html: str, url: str) -> Dict:
         'specs': specs,
         'features': features,
     }
+
+
+def extract_price(soup: BeautifulSoup) -> Tuple[Optional[str], Optional[int]]:
+    # 1) structured/meta price if available
+    meta_price = soup.select_one("meta[itemprop='price'], meta[property='product:price:amount'], meta[name='price']")
+    if meta_price and meta_price.get('content'):
+        raw = meta_price['content'].strip()
+        n = to_int_price(raw)
+        if n is not None:
+            return raw, n
+
+    # 2) common product-price containers on Vietnamese ecommerce pages
+    # Order matters: try specific selectors first.
+    selectors = [
+        ".product-price .price",
+        ".product-price",
+        ".product-detail-price",
+        ".price-box .special-price",
+        ".special-price .price",
+        ".price-current",
+        ".price-sale",
+        ".gia-ban",
+        ".price",
+        "[class*='price']",
+    ]
+    candidates: List[tuple[str, int]] = []
+    for sel in selectors:
+        for el in soup.select(sel):
+            txt = el.get_text(' ', strip=True)
+            if not txt:
+                continue
+            # Reduce false positives like installments/accessories.
+            lowered = txt.lower()
+            if any(x in lowered for x in ('trả góp', 'tháng', 'phụ kiện', 'voucher')):
+                continue
+            value = to_int_price(txt)
+            # Skip tiny values that are often accessory prices.
+            if value is not None and value >= 1_000_000:
+                candidates.append((txt, value))
+        if candidates:
+            break
+
+    # 3) fallback from full page text
+    if not candidates:
+        text = soup.get_text(' ', strip=True)
+        for m in re.finditer(r"(\d[\d\.,]{5,})\s*(đ|vnđ|vnd)", text, re.I):
+            raw = m.group(0)
+            value = to_int_price(raw)
+            if value is not None and value >= 1_000_000:
+                candidates.append((raw, value))
+
+    if not candidates:
+        return None, None
+
+    # Choose the highest value within the selected block to reduce accessory-price noise.
+    best = max(candidates, key=lambda x: x[1])
+    return best[0], best[1]
+
+
+def to_int_price(text: Optional[str]) -> Optional[int]:
+    if not text:
+        return None
+    # Extract each monetary token independently (avoid joining multiple prices).
+    for token in re.finditer(r"\d[\d\.,]{2,}", text):
+        raw = token.group(0)
+        digits = re.sub(r"[^0-9]", "", raw)
+        if not digits:
+            continue
+        try:
+            value = int(digits)
+        except ValueError:
+            continue
+        # Keep practical laptop range to avoid accessory/noise values.
+        if 1_000_000 <= value <= 200_000_000:
+            return value
+    return None
 
 
 def extract_features(title: str, specs: Dict[str, str], price_value: Optional[int]) -> Dict[str, Optional[str]]:

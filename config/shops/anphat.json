@@ -1,0 +1,12 @@
+{
+  "shop": "anphat",
+  "product_link_selector": ".p-item a, .product-item a, .box-product a",
+  "load_more_selectors": [
+    ".js-viewmore",
+    ".btn-show-more",
+    ".show-more"
+  ],
+  "brands": {
+    "all": "https://www.anphatpc.com.vn/may-tinh-xach-tay-laptop.html"
+  }
+}

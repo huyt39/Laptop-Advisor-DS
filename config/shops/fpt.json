@@ -1,0 +1,13 @@
+{
+  "shop": "fpt",
+  "product_link_selector": "a[href*='/may-tinh-xach-tay/']",
+  "load_more_selectors": [
+    ".st-pd-btnShowmore",
+    ".btn-show-more",
+    ".show-more",
+    ".view-more"
+  ],
+  "brands": {
+    "all": "https://fptshop.com.vn/may-tinh-xach-tay"
+  }
+}
