@@ -1,0 +1,13 @@
+{
+  "shop": "phongvu",
+  "product_link_selector": "a[href*='/laptop-']",
+  "load_more_selectors": [
+    ".css-1s7f8ma",
+    ".btn-show-more",
+    ".show-more",
+    ".view-more"
+  ],
+  "brands": {
+    "all": "https://phongvu.vn/c/laptop"
+  }
+}
