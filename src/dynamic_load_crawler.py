@@ -29,6 +29,22 @@ from shop_configs import (
 from az_no_db import extract_features
 
 
+def _collect_links_from_html(html: str, category_url: str, product_link_selector: str, shop: Optional[str]) -> List[str]:
+    soup = BeautifulSoup(html, "html.parser")
+    out: Dict[str, bool] = {}
+    for a in soup.select(product_link_selector):
+        href = a.get("href")
+        normalized = _normalize_url(href, category_url) if href else None
+        if not normalized:
+            continue
+        if urlparse(normalized).netloc != urlparse(category_url).netloc:
+            continue
+        if not _is_likely_product_url(normalized, shop):
+            continue
+        out[normalized] = True
+    return list(out.keys())
+
+
 def create_driver(headless: bool = True) -> webdriver.Chrome:
     options = Options()
     if headless:
@@ -63,13 +79,37 @@ def _is_likely_product_url(url: str, shop: Optional[str]) -> bool:
     p = urlparse(url)
     path = p.path.lower()
     if shop == "anphat":
-        return path.endswith(".html") and "_id" not in path and "/tim" not in path and "/collection/" not in path
+        if not path.endswith(".html"):
+            return False
+        if any(x in path for x in ("/tim", "/collection/", "_id", "_dm", "he-thong-showroom", "tin-khuyen-mai")):
+            return False
+        # Keep broad candidate set, final validation happens after parsing.
+        return "/laptop-" in path or "/notebook-" in path
     if shop == "fpt":
         if not path.startswith("/may-tinh-xach-tay/"):
             return False
         slug = path.rsplit("/", 1)[-1]
-        # Product slug on FPT usually contains model digits.
-        if not any(ch.isdigit() for ch in slug):
+        # Exclude obvious category/filter slugs; keep the rest as potential product pages.
+        category_like = {
+            "gaming-do-hoa",
+            "asus",
+            "lenovo",
+            "hp",
+            "acer",
+            "msi",
+            "gigabyte",
+            "apple-macbook",
+            "lg",
+            "dell",
+            "samsung",
+            "colorful",
+            "masstel",
+            "sinh-vien-van-phong",
+            "mong-nhe",
+            "doanh-nhan",
+            "ai",
+        }
+        if slug in category_like:
             return False
         return True
     return True
@@ -93,6 +133,22 @@ def _click_first_available_load_more(
             continue
         except Exception:
             continue
+    # Fallback by visible text, useful when class names are dynamic.
+    xpath_candidates = [
+        "//button[contains(translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'xem thêm')]",
+        "//a[contains(translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'xem thêm')]",
+        "//button[contains(translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'xem them')]",
+        "//a[contains(translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'xem them')]",
+    ]
+    for xp in xpath_candidates:
+        try:
+            btn = WebDriverWait(driver, timeout_sec).until(EC.element_to_be_clickable((By.XPATH, xp)))
+            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", btn)
+            time.sleep(0.5)
+            btn.click()
+            return True
+        except Exception:
+            continue
     return False
 
 
@@ -102,40 +158,98 @@ def crawl_dynamic_links(
     shop: Optional[str] = None,
     load_more_selectors: Optional[List[str]] = None,
     max_clicks: int = 30,
+    max_idle_rounds: int = 4,
     wait_after_scroll: float = 1.5,
     wait_after_click: float = 2.0,
     headless: bool = True,
 ) -> List[str]:
     selectors = load_more_selectors or DEFAULT_LOAD_MORE_SELECTORS
+
+    # An Phat is often better captured through classic pagination than load-more UI.
+    if shop == "anphat":
+        return crawl_anphat_paginated_links(
+            category_url=category_url,
+            product_link_selector=product_link_selector,
+            max_pages=max(3, max_clicks),
+        )
+
     driver = create_driver(headless=headless)
     try:
         driver.get(category_url)
         time.sleep(2.5)
+        collected: Dict[str, bool] = {}
+        idle_rounds = 0
 
         for _ in range(max_clicks):
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             time.sleep(wait_after_scroll)
 
-            clicked = _click_first_available_load_more(driver, selectors, timeout_sec=4)
-            if not clicked:
-                break
-            time.sleep(wait_after_click)
+            # Collect links progressively, not only from final DOM snapshot.
+            soup = BeautifulSoup(driver.page_source, "html.parser")
+            before_count = len(collected)
+            for link in _collect_links_from_html(str(soup), category_url, product_link_selector, shop):
+                collected[link] = True
 
-        soup = BeautifulSoup(driver.page_source, "html.parser")
-        links: List[str] = []
-        for a in soup.select(product_link_selector):
-            href = a.get("href")
-            normalized = _normalize_url(href, category_url) if href else None
-            if not normalized:
-                continue
-            if urlparse(normalized).netloc != urlparse(category_url).netloc:
-                continue
-            if not _is_likely_product_url(normalized, shop):
-                continue
-            links.append(normalized)
-        return list(dict.fromkeys(links))
+            clicked = _click_first_available_load_more(driver, selectors, timeout_sec=4)
+            if clicked:
+                time.sleep(wait_after_click)
+            after_count = len(collected)
+            if after_count == before_count and not clicked:
+                idle_rounds += 1
+            else:
+                idle_rounds = 0
+            if idle_rounds >= max_idle_rounds:
+                break
+        return list(collected.keys())
     finally:
         driver.quit()
+
+
+def crawl_anphat_paginated_links(
+    category_url: str,
+    product_link_selector: str,
+    max_pages: int = 50,
+    delay_sec: float = 0.2,
+) -> List[str]:
+    session = requests.Session()
+    session.headers.update(
+        {
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            )
+        }
+    )
+    collected: Dict[str, bool] = {}
+    idle_pages = 0
+    for page in range(1, max_pages + 1):
+        urls = [f"{category_url}?page={page}"]
+        if page > 1:
+            # Some category pages use /trang-{n}.html format.
+            base_no_html = category_url[:-5] if category_url.endswith(".html") else category_url
+            urls.append(f"{base_no_html}/trang-{page}.html")
+        page_links_before = len(collected)
+        got_page = False
+        for u in urls:
+            try:
+                r = session.get(u, timeout=20)
+                if r.status_code != 200:
+                    continue
+                got_page = True
+                for link in _collect_links_from_html(r.text, category_url, product_link_selector, "anphat"):
+                    collected[link] = True
+                break
+            except Exception:
+                continue
+        page_links_after = len(collected)
+        if (not got_page) or (page_links_after == page_links_before):
+            idle_pages += 1
+        else:
+            idle_pages = 0
+        if idle_pages >= 3:
+            break
+        time.sleep(delay_sec)
+    return list(collected.keys())
 
 
 def _to_int_price(text: Optional[str]) -> Optional[int]:
@@ -332,6 +446,14 @@ def crawl_and_parse_products(urls: List[str], shop: Optional[str], request_delay
             item = parse_product_page(r.text, u, shop=shop)
             if not item.get("name"):
                 continue
+            # Final product-page guardrails to reduce category/landing false positives.
+            specs_len = len(item.get("specs", {}) or {})
+            if shop == "anphat":
+                if item.get("price") is None and specs_len < 3:
+                    continue
+            if shop == "fpt":
+                if item.get("price") is None and specs_len < 2:
+                    continue
             items.append(item)
             time.sleep(request_delay)
         except Exception:

@@ -1,6 +1,6 @@
 {
   "shop": "anphat",
-  "product_link_selector": ".p-item a, .product-item a, .box-product a",
+  "product_link_selector": "a[href$='.html']",
   "load_more_selectors": [
     ".js-viewmore",
     ".btn-show-more",

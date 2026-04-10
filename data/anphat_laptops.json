@@ -1,196 +1,10 @@
 [
   {
-    "url": "https://www.anphatpc.com.vn/laptop-asus-vivobook-s14-s3407va-ly146w.html",
-    "name": "Laptop ASUS Vivobook S14 S3407VA-LY146W (Intel Core 5 210H)",
-    "price": 20290000,
-    "price_raw": "20290000",
-    "image": "https://anphat.com.vn/media/product/53516_laptop_asus_vivobook_s14_s3407va_ly146w__1_.jpg",
-    "specs": {
-      "Tên đầy đủ": "",
-      "Email": "",
-      "Điện thoại": "",
-      "Thông tin liên hệ": ""
-    },
-    "features": {
-      "Manufacturer": "Laptop",
-      "CPU manufacturer": "Intel",
-      "CPU brand modifier": null,
-      "CPU generation": null,
-      "CPU Speed (GHz)": null,
-      "RAM (GB)": null,
-      "RAM Type": null,
-      "Bus (MHz)": null,
-      "Storage (GB)": null,
-      "Screen Size (inch)": null,
-      "Screen Resolution": null,
-      "Refresh Rate (Hz)": null,
-      "GPU manufacturer": null,
-      "Weight (kg)": null,
-      "Battery": null,
-      "Price (VND)": "20290000"
-    }
-  },
-  {
-    "url": "https://www.anphatpc.com.vn/laptop-acer-aspire-lite-14-al14-71p-55p9-nx.d7usv.001.html",
-    "name": "Laptop Acer Aspire Lite 14 AL14-71P-55P9 NX.D7USV.001",
-    "price": 18690000,
-    "price_raw": "18690000",
-    "image": "https://anphat.com.vn/media/product/53361_nx_d7usv_001.jpg",
-    "specs": {
-      "Tên đầy đủ": "",
-      "Email": "",
-      "Điện thoại": "",
-      "Thông tin liên hệ": ""
-    },
-    "features": {
-      "Manufacturer": "Laptop",
-      "CPU manufacturer": null,
-      "CPU brand modifier": null,
-      "CPU generation": null,
-      "CPU Speed (GHz)": null,
-      "RAM (GB)": null,
-      "RAM Type": null,
-      "Bus (MHz)": null,
-      "Storage (GB)": null,
-      "Screen Size (inch)": null,
-      "Screen Resolution": null,
-      "Refresh Rate (Hz)": null,
-      "GPU manufacturer": null,
-      "Weight (kg)": null,
-      "Battery": null,
-      "Price (VND)": "18690000"
-    }
-  },
-  {
-    "url": "https://www.anphatpc.com.vn/laptop-acer-aspire-go-15-ag15-72p-54gy-nx.jrrsv.002.html",
-    "name": "Laptop Acer Aspire Go 15 AG15-72P-54GY NX.JRRSV.002",
-    "price": 17990000,
-    "price_raw": "17990000",
-    "image": "https://anphat.com.vn/media/product/54231_laptop_acer_aspire_go_15_ag15_72p_54gy_nx_jrrsv_002__3_.jpg",
-    "specs": {
-      "Tên đầy đủ": "",
-      "Email": "",
-      "Điện thoại": "",
-      "Thông tin liên hệ": ""
-    },
-    "features": {
-      "Manufacturer": "Laptop",
-      "CPU manufacturer": null,
-      "CPU brand modifier": null,
-      "CPU generation": null,
-      "CPU Speed (GHz)": null,
-      "RAM (GB)": null,
-      "RAM Type": null,
-      "Bus (MHz)": null,
-      "Storage (GB)": null,
-      "Screen Size (inch)": null,
-      "Screen Resolution": null,
-      "Refresh Rate (Hz)": null,
-      "GPU manufacturer": null,
-      "Weight (kg)": null,
-      "Battery": null,
-      "Price (VND)": "17990000"
-    }
-  },
-  {
-    "url": "https://www.anphatpc.com.vn/tui-chong-soc-cao-cap-hp-carry-sleeve-15.6-quot-black-3xd36aa.html",
-    "name": "Túi chống sốc HP Cary Sleeve cao cấp cho Laptop 14-15,6 inch (Có quai - 2 ngăn) 3XD36AA",
-    "price": 1590000,
-    "price_raw": "1.590.000 đ",
-    "image": "https://anphat.com.vn/media/product/41630_hp_carry_sleeve_15_6_black_3xd36aa_upweb_1a.jpg",
-    "specs": {
-      "Tên đầy đủ": "",
-      "Email": "",
-      "Điện thoại": "",
-      "Thông tin liên hệ": ""
-    },
-    "features": {
-      "Manufacturer": null,
-      "CPU manufacturer": null,
-      "CPU brand modifier": null,
-      "CPU generation": null,
-      "CPU Speed (GHz)": null,
-      "RAM (GB)": null,
-      "RAM Type": null,
-      "Bus (MHz)": null,
-      "Storage (GB)": null,
-      "Screen Size (inch)": "6",
-      "Screen Resolution": null,
-      "Refresh Rate (Hz)": null,
-      "GPU manufacturer": null,
-      "Weight (kg)": null,
-      "Battery": null,
-      "Price (VND)": "1590000"
-    }
-  },
-  {
-    "url": "https://www.anphatpc.com.vn/laptop-hp-hp-15-fd0306tu-a2nl7pa.html",
-    "name": "Laptop HP 15-fd0306TU A2NL7PA (Intel Core i3-1315U)",
-    "price": 13890000,
-    "price_raw": "13890000",
-    "image": "https://anphat.com.vn/media/product/51030_laptop_hp_hp_15_fd0306tu_a2nl7pa__2_.jpg",
-    "specs": {
-      "Tên đầy đủ": "",
-      "Email": "",
-      "Điện thoại": "",
-      "Thông tin liên hệ": ""
-    },
-    "features": {
-      "Manufacturer": "Laptop",
-      "CPU manufacturer": "Intel",
-      "CPU brand modifier": "core i3",
-      "CPU generation": null,
-      "CPU Speed (GHz)": null,
-      "RAM (GB)": null,
-      "RAM Type": null,
-      "Bus (MHz)": null,
-      "Storage (GB)": null,
-      "Screen Size (inch)": null,
-      "Screen Resolution": null,
-      "Refresh Rate (Hz)": null,
-      "GPU manufacturer": null,
-      "Weight (kg)": null,
-      "Battery": null,
-      "Price (VND)": "13890000"
-    }
-  },
-  {
-    "url": "https://www.anphatpc.com.vn/laptop-dell-15-dc15250-i5u165w11slu-5.html",
-    "name": "Laptop Dell 15 DC15250-i5U165W11SLU-5",
-    "price": 19890000,
-    "price_raw": "19890000",
-    "image": "https://anphat.com.vn/media/product/54767_laptop_dell_15_dc15250_i5u165w11slu_5___2_.jpg",
-    "specs": {
-      "Tên đầy đủ": "",
-      "Email": "",
-      "Điện thoại": "",
-      "Thông tin liên hệ": ""
-    },
-    "features": {
-      "Manufacturer": "Laptop",
-      "CPU manufacturer": null,
-      "CPU brand modifier": null,
-      "CPU generation": null,
-      "CPU Speed (GHz)": null,
-      "RAM (GB)": null,
-      "RAM Type": null,
-      "Bus (MHz)": null,
-      "Storage (GB)": null,
-      "Screen Size (inch)": null,
-      "Screen Resolution": null,
-      "Refresh Rate (Hz)": null,
-      "GPU manufacturer": null,
-      "Weight (kg)": null,
-      "Battery": null,
-      "Price (VND)": "19890000"
-    }
-  },
-  {
-    "url": "https://www.anphatpc.com.vn/gaming-gear.html",
-    "name": "Gaming Gear - Bàn phím + chuột 💥 Giá Sốc - Giảm 40%",
+    "url": "https://www.anphatpc.com.vn/laptop-gaming-do-hoa.html",
+    "name": "Laptop Gaming - Đồ Họa",
     "price": null,
     "price_raw": null,
-    "image": "https://www.anphatpc.com.vn/media/category/cb_8a7100a2bf10de1685a042557ef4ee77.png",
+    "image": "https://www.anphatpc.com.vn/media/category/0",
     "specs": {
       "Tên đầy đủ": "",
       "Email": "",
@@ -198,7 +12,7 @@
       "Thông tin liên hệ": ""
     },
     "features": {
-      "Manufacturer": "Gaming",
+      "Manufacturer": "Laptop",
       "CPU manufacturer": null,
       "CPU brand modifier": null,
       "CPU generation": null,
@@ -217,73 +31,11 @@
     }
   },
   {
-    "url": "https://www.anphatpc.com.vn/laptop-dell-15-dc15250-cph99.html",
-    "name": "Laptop Dell 15 DC15250 CPH99 (Intel Core i5-1334U)",
-    "price": 19890000,
-    "price_raw": "19890000",
-    "image": "https://anphat.com.vn/media/product/53825_laptop_dell_15_dc15250_cph99__1_.jpg",
-    "specs": {
-      "Tên đầy đủ": "",
-      "Email": "",
-      "Điện thoại": "",
-      "Thông tin liên hệ": ""
-    },
-    "features": {
-      "Manufacturer": "Laptop",
-      "CPU manufacturer": "Intel",
-      "CPU brand modifier": "core i5",
-      "CPU generation": null,
-      "CPU Speed (GHz)": null,
-      "RAM (GB)": null,
-      "RAM Type": null,
-      "Bus (MHz)": null,
-      "Storage (GB)": null,
-      "Screen Size (inch)": null,
-      "Screen Resolution": null,
-      "Refresh Rate (Hz)": null,
-      "GPU manufacturer": null,
-      "Weight (kg)": null,
-      "Battery": null,
-      "Price (VND)": "19890000"
-    }
-  },
-  {
-    "url": "https://www.anphatpc.com.vn/laptop-hp-250r-g9-b93h2at.html",
-    "name": "Laptop HP 250R G9 B93H2AT (Intel Core i5-1334U)",
-    "price": 16690000,
-    "price_raw": "16690000",
-    "image": "https://anphat.com.vn/media/product/53464_b890.jpg",
-    "specs": {
-      "Tên đầy đủ": "",
-      "Email": "",
-      "Điện thoại": "",
-      "Thông tin liên hệ": ""
-    },
-    "features": {
-      "Manufacturer": "Laptop",
-      "CPU manufacturer": "Intel",
-      "CPU brand modifier": "core i5",
-      "CPU generation": null,
-      "CPU Speed (GHz)": null,
-      "RAM (GB)": null,
-      "RAM Type": null,
-      "Bus (MHz)": null,
-      "Storage (GB)": null,
-      "Screen Size (inch)": null,
-      "Screen Resolution": null,
-      "Refresh Rate (Hz)": null,
-      "GPU manufacturer": null,
-      "Weight (kg)": null,
-      "Battery": null,
-      "Price (VND)": "16690000"
-    }
-  },
-  {
-    "url": "https://www.anphatpc.com.vn/laptop-acer-aspire-5-a514-56p-55k5-nx.khrsv.003.html",
-    "name": "Laptop Acer Aspire 5 A514-56P-55K5 NX.KHRSV.003 | An Phát Computer",
-    "price": 18299000,
-    "price_raw": "18299000",
-    "image": "https://anphat.com.vn/media/product/46548_laptop_acer_aspire_5_a514_56p_55k5_nx_khrsv_003.jpg",
+    "url": "https://www.anphatpc.com.vn/laptop-gaming-nitro.html",
+    "name": "Laptop Gaming Nitro Chính Hãng, Mới Nhất 2026",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
     "specs": {
       "Tên đầy đủ": "",
       "Email": "",
@@ -306,77 +58,15 @@
       "GPU manufacturer": null,
       "Weight (kg)": null,
       "Battery": null,
-      "Price (VND)": "18299000"
+      "Price (VND)": null
     }
   },
   {
-    "url": "https://www.anphatpc.com.vn/laptop-asus-rog-strix-g615j-g615jmr-s5155w.html",
-    "name": "Laptop ASUS ROG Strix G615J G615JMR-S5155W (Intel Core i7-14650HX)",
-    "price": 44999000,
-    "price_raw": "44999000",
-    "image": "https://anphat.com.vn/media/product/52962_laptop_asus_rog_strix_g615j_g615jmr_s5155w__5_.jpg",
-    "specs": {
-      "Tên đầy đủ": "",
-      "Email": "",
-      "Điện thoại": "",
-      "Thông tin liên hệ": ""
-    },
-    "features": {
-      "Manufacturer": "Laptop",
-      "CPU manufacturer": "Intel",
-      "CPU brand modifier": "core i7",
-      "CPU generation": null,
-      "CPU Speed (GHz)": null,
-      "RAM (GB)": null,
-      "RAM Type": null,
-      "Bus (MHz)": null,
-      "Storage (GB)": null,
-      "Screen Size (inch)": null,
-      "Screen Resolution": null,
-      "Refresh Rate (Hz)": null,
-      "GPU manufacturer": null,
-      "Weight (kg)": null,
-      "Battery": null,
-      "Price (VND)": "44999000"
-    }
-  },
-  {
-    "url": "https://www.anphatpc.com.vn/laptop-asus-tuf-gaming-f16-fx607vu-rl045w.html",
-    "name": "Laptop ASUS TUF Gaming F16 FX607VU-RL045W (Intel Core 5)",
-    "price": 26990000,
-    "price_raw": "26990000",
-    "image": "https://anphat.com.vn/media/product/52190_90nr0n06_m00210.jpg",
-    "specs": {
-      "Tên đầy đủ": "",
-      "Email": "",
-      "Điện thoại": "",
-      "Thông tin liên hệ": ""
-    },
-    "features": {
-      "Manufacturer": "Laptop",
-      "CPU manufacturer": "Intel",
-      "CPU brand modifier": null,
-      "CPU generation": null,
-      "CPU Speed (GHz)": null,
-      "RAM (GB)": null,
-      "RAM Type": null,
-      "Bus (MHz)": null,
-      "Storage (GB)": null,
-      "Screen Size (inch)": null,
-      "Screen Resolution": null,
-      "Refresh Rate (Hz)": null,
-      "GPU manufacturer": null,
-      "Weight (kg)": null,
-      "Battery": null,
-      "Price (VND)": "26990000"
-    }
-  },
-  {
-    "url": "https://www.anphatpc.com.vn/laptop-acer-gaming-nitro-v-15-propanel-anv15-52-59aa-nh.qz9sv.002.html",
-    "name": "Laptop Acer Gaming Nitro ProPanel ANV15-52-59AA (RTX5050)",
-    "price": 33999000,
-    "price_raw": "33999000",
-    "image": "https://anphat.com.vn/media/product/53252_laptop_acer_gaming_nitro_v_15_propanel_anv15_52_59aa_nh_qz9sv_002___1_.jpg",
+    "url": "https://www.anphatpc.com.vn/laptop-acer-predator-helios-neo.html",
+    "name": "Laptop Gaming Predator",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
     "specs": {
       "Tên đầy đủ": "",
       "Email": "",
@@ -399,15 +89,15 @@
       "GPU manufacturer": null,
       "Weight (kg)": null,
       "Battery": null,
-      "Price (VND)": "33999000"
+      "Price (VND)": null
     }
   },
   {
-    "url": "https://www.anphatpc.com.vn/laptop-msi-katana-15-b13udxk-2412vn.html",
-    "name": "Laptop MSI Katana 15 B13UDXK - 2412VN",
-    "price": 19690000,
-    "price_raw": "19690000",
-    "image": "https://anphat.com.vn/media/product/53387_laptop_msi_katana_15_b13udxk___2412vn__1_.jpg",
+    "url": "https://www.anphatpc.com.vn/laptop-gaming-nitro-propanel.html",
+    "name": "Laptop Gaming Acer Nitro Propanel Giá Tốt | An Phát Computer",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
     "specs": {
       "Tên đầy đủ": "",
       "Email": "",
@@ -430,15 +120,46 @@
       "GPU manufacturer": null,
       "Weight (kg)": null,
       "Battery": null,
-      "Price (VND)": "19690000"
+      "Price (VND)": null
     }
   },
   {
-    "url": "https://www.anphatpc.com.vn/laptop-lenovo-loq-15arp10e-83s0004fvn.html",
-    "name": "Laptop LENOVO LOQ 15ARP10E 83S0004FVN",
-    "price": 27990000,
-    "price_raw": "27990000",
-    "image": "https://anphat.com.vn/media/product/54598_laptop_lenovo_loq_15arp10e_83s0004fvn__3_.jpg",
+    "url": "https://www.anphatpc.com.vn/laptop-acer-helios-neo-16.html",
+    "name": "Acer Predator Helios Neo 16 Giá Tốt Nhất 2026",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Acer",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-gaming-gigabyte.html",
+    "name": "Laptop Gaming Gigabyte 2026 Giá Tốt, Bảo Hành Chính Hãng",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
     "specs": {
       "Tên đầy đủ": "",
       "Email": "",
@@ -461,15 +182,232 @@
       "GPU manufacturer": null,
       "Weight (kg)": null,
       "Battery": null,
-      "Price (VND)": "27990000"
+      "Price (VND)": null
     }
   },
   {
-    "url": "https://www.anphatpc.com.vn/laptop-asus-vivobook-x1404va-eb509w.html",
-    "name": "Laptop ASUS Vivobook X1404VA-EB509W (Core i3, 14 inch)",
-    "price": 13890000,
-    "price_raw": "13890000",
-    "image": "https://anphat.com.vn/media/product/53268_laptop_asus_vivobook_x1404va_eb509w_anphatpc.png",
+    "url": "https://www.anphatpc.com.vn/laptop-msi-katana.html",
+    "name": "MSI Katana - Laptop Gaming Chính Hãng Giá Rẻ Nhất",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "MSI",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-msi-thin.html",
+    "name": "MSI Thin - Laptop Gaming Mỏng Nhẹ Chính Hãng Giá Cực Tốt",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "MSI",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-msi-crosshair.html",
+    "name": "MSI Crosshair - Laptop Gaming Cấu Hình Mạnh Giá Rẻ",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "MSI",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-msi-raider.html",
+    "name": "MSI Raider - Laptop Gaming Cấu Hình Khỏe Giá Cực Tốt",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "MSI",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-msi-vector.html",
+    "name": "MSI Vector - Laptop Gaming Cao Cấp Chính Hãng Giá Tốt Nhất",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "MSI",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-msi-titan.html",
+    "name": "MSI Titan - Laptop Gaming Cấu Hình Mạnh Nhất Thế Giới",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "MSI",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-hp-victus.html",
+    "name": "HP Victus - Laptop Gaming Cấu Hình Mạnh Giá Phải Chăng",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "HP",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-dell-gaming-g15.html",
+    "name": "Laptop Dell Gaming G15",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
     "specs": {
       "Tên đầy đủ": "",
       "Email": "",
@@ -479,37 +417,6 @@
     "features": {
       "Manufacturer": "Laptop",
       "CPU manufacturer": null,
-      "CPU brand modifier": "core i3",
-      "CPU generation": null,
-      "CPU Speed (GHz)": null,
-      "RAM (GB)": null,
-      "RAM Type": null,
-      "Bus (MHz)": null,
-      "Storage (GB)": null,
-      "Screen Size (inch)": "14",
-      "Screen Resolution": null,
-      "Refresh Rate (Hz)": null,
-      "GPU manufacturer": null,
-      "Weight (kg)": null,
-      "Battery": null,
-      "Price (VND)": "13890000"
-    }
-  },
-  {
-    "url": "https://www.anphatpc.com.vn/laptop-asus-gaming-v16-v3607vm-rp044w.html",
-    "name": "Laptop ASUS Gaming V16 V3607VM-RP044W (Intel Core 7 240H)",
-    "price": 33799000,
-    "price_raw": "33799000",
-    "image": "https://anphat.com.vn/media/product/52622_laptop_asus_gaming_v16_v3607vm_rp044w__1_.jpg",
-    "specs": {
-      "Tên đầy đủ": "",
-      "Email": "",
-      "Điện thoại": "",
-      "Thông tin liên hệ": ""
-    },
-    "features": {
-      "Manufacturer": "Laptop",
-      "CPU manufacturer": "Intel",
       "CPU brand modifier": null,
       "CPU generation": null,
       "CPU Speed (GHz)": null,
@@ -523,15 +430,15 @@
       "GPU manufacturer": null,
       "Weight (kg)": null,
       "Battery": null,
-      "Price (VND)": "33799000"
+      "Price (VND)": null
     }
   },
   {
-    "url": "https://www.anphatpc.com.vn/laptop-lenovo-thinkpad-e16-gen-3-22ay003tva.html",
-    "name": "Laptop Lenovo ThinkPad E16 Gen 3 22AY003TVA (Intel Core Ultra 7 258V)",
-    "price": 32990000,
-    "price_raw": "32990000",
-    "image": "https://anphat.com.vn/media/product/55542_laptop_lenovo_thinkpad_e16_gen_3_22ay003tva__5_.jpg",
+    "url": "https://www.anphatpc.com.vn/laptop-do-hoa.html",
+    "name": "Laptop đồ họa Intel, AMD Ryzen giá tốt nhất thị trường | An Phát Computer",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
     "specs": {
       "Tên đầy đủ": "",
       "Email": "",
@@ -541,68 +448,6 @@
     "features": {
       "Manufacturer": "Laptop",
       "CPU manufacturer": "Intel",
-      "CPU brand modifier": null,
-      "CPU generation": null,
-      "CPU Speed (GHz)": null,
-      "RAM (GB)": null,
-      "RAM Type": null,
-      "Bus (MHz)": null,
-      "Storage (GB)": null,
-      "Screen Size (inch)": null,
-      "Screen Resolution": null,
-      "Refresh Rate (Hz)": null,
-      "GPU manufacturer": null,
-      "Weight (kg)": null,
-      "Battery": null,
-      "Price (VND)": "32990000"
-    }
-  },
-  {
-    "url": "https://www.anphatpc.com.vn/laptop-lenovo-thinkpad-x9-15-gen-1-21q60055vn.html",
-    "name": "Laptop LENOVO ThinkPad X9-15 Gen 1 21Q60055VN (Intel Core Ultra 7 258V)",
-    "price": 54990000,
-    "price_raw": "54990000",
-    "image": "https://anphat.com.vn/media/product/55277_laptop_lenovo_thinkpad_x9_15_gen_1_21q60055vn__3_.jpg",
-    "specs": {
-      "Tên đầy đủ": "",
-      "Email": "",
-      "Điện thoại": "",
-      "Thông tin liên hệ": ""
-    },
-    "features": {
-      "Manufacturer": "Laptop",
-      "CPU manufacturer": "Intel",
-      "CPU brand modifier": null,
-      "CPU generation": null,
-      "CPU Speed (GHz)": null,
-      "RAM (GB)": null,
-      "RAM Type": null,
-      "Bus (MHz)": null,
-      "Storage (GB)": null,
-      "Screen Size (inch)": null,
-      "Screen Resolution": null,
-      "Refresh Rate (Hz)": null,
-      "GPU manufacturer": null,
-      "Weight (kg)": null,
-      "Battery": null,
-      "Price (VND)": "54990000"
-    }
-  },
-  {
-    "url": "https://www.anphatpc.com.vn/laptop-hp-omnibook-x-flip-14-fk0092au-bz7p5pa.html",
-    "name": "Laptop HP OmniBook X Flip 14-fk0092AU BZ7P5PA (AMD Ryzen AI 5 340)",
-    "price": 28990000,
-    "price_raw": "28990000",
-    "image": "https://anphat.com.vn/media/product/54769_bz7p5pa.jpg",
-    "specs": {
-      "Tên đầy đủ": "",
-      "Email": "",
-      "Điện thoại": "",
-      "Thông tin liên hệ": ""
-    },
-    "features": {
-      "Manufacturer": "Laptop",
-      "CPU manufacturer": "AMD",
       "CPU brand modifier": null,
       "CPU generation": null,
       "CPU Speed (GHz)": null,
@@ -616,15 +461,15 @@
       "GPU manufacturer": "AMD",
       "Weight (kg)": null,
       "Battery": null,
-      "Price (VND)": "28990000"
+      "Price (VND)": null
     }
   },
   {
-    "url": "https://www.anphatpc.com.vn/laptop-hp-omnibook-x-flip-14-fm0088tu-bz7q2pa.html",
-    "name": "Laptop HP OmniBook X Flip 14-fm0088TU BZ7Q2PA",
-    "price": 27590000,
-    "price_raw": "27590000",
-    "image": "https://anphat.com.vn/media/product/53843_laptop_hp_omnibook_x_flip_14_fm0088tu_bz7q2pa__1_.jpg",
+    "url": "https://www.anphatpc.com.vn/laptop-do-hoa-acer.html",
+    "name": "Laptop đồ họa Acer",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
     "specs": {
       "Tên đầy đủ": "",
       "Email": "",
@@ -647,15 +492,15 @@
       "GPU manufacturer": null,
       "Weight (kg)": null,
       "Battery": null,
-      "Price (VND)": "27590000"
+      "Price (VND)": null
     }
   },
   {
-    "url": "https://www.anphatpc.com.vn/laptop-hp-omnibook-x-flip-14-fm0086tu-bz7q0pa.html",
-    "name": "Laptop HP OmniBook X Flip 14-fm0086TU BZ7Q0PA",
-    "price": 28590000,
-    "price_raw": "28590000",
-    "image": "https://anphat.com.vn/media/product/53845_laptop_hp_omnibook_x_flip_14_fm0086tu_bz7q0pa__1_.jpg",
+    "url": "https://www.anphatpc.com.vn/laptop-do-hoa-asus.html",
+    "name": "Laptop đồ họa Asus",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
     "specs": {
       "Tên đầy đủ": "",
       "Email": "",
@@ -678,15 +523,15 @@
       "GPU manufacturer": null,
       "Weight (kg)": null,
       "Battery": null,
-      "Price (VND)": "28590000"
+      "Price (VND)": null
     }
   },
   {
-    "url": "https://www.anphatpc.com.vn/laptop-hp-omnibook-5-flip-14-fp0057tu-bz7q6pa.html",
-    "name": "Laptop HP OmniBook 5 Flip 14-fp0057TU BZ7Q6PA",
-    "price": 25290000,
-    "price_raw": "25290000",
-    "image": "https://anphat.com.vn/media/product/53901_laptop_hp_omnibook_5_flip_14_fp0057tu_bz7q6pa__1_.jpg",
+    "url": "https://www.anphatpc.com.vn/laptop-do-hoa-dell.html",
+    "name": "Laptop đồ họa Dell",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
     "specs": {
       "Tên đầy đủ": "",
       "Email": "",
@@ -709,46 +554,15 @@
       "GPU manufacturer": null,
       "Weight (kg)": null,
       "Battery": null,
-      "Price (VND)": "25290000"
+      "Price (VND)": null
     }
   },
   {
-    "url": "https://www.anphatpc.com.vn/laptop-hp-omnibook-5-flip-14-fp0055tu-bz7q4pa.html",
-    "name": "Laptop HP OmniBook 5 Flip 14-fp0055TU BZ7Q4PA (Intel Core 7 150U)",
-    "price": 29390000,
-    "price_raw": "29390000",
-    "image": "https://anphat.com.vn/media/product/53884_laptop_hp_omnibook_5_flip_14_fp0055tu_bz7q4pa___1_.jpg",
-    "specs": {
-      "Tên đầy đủ": "",
-      "Email": "",
-      "Điện thoại": "",
-      "Thông tin liên hệ": ""
-    },
-    "features": {
-      "Manufacturer": "Laptop",
-      "CPU manufacturer": "Intel",
-      "CPU brand modifier": null,
-      "CPU generation": null,
-      "CPU Speed (GHz)": null,
-      "RAM (GB)": null,
-      "RAM Type": null,
-      "Bus (MHz)": null,
-      "Storage (GB)": null,
-      "Screen Size (inch)": null,
-      "Screen Resolution": null,
-      "Refresh Rate (Hz)": null,
-      "GPU manufacturer": null,
-      "Weight (kg)": null,
-      "Battery": null,
-      "Price (VND)": "29390000"
-    }
-  },
-  {
-    "url": "https://www.anphatpc.com.vn/laptop-hp-omnibook-x-flip-14-fk0082au-bz7n8pa.html",
-    "name": "Laptop HP OmniBook X Flip 14-fk0082AU BZ7N8PA",
-    "price": 36990000,
-    "price_raw": "36990000",
-    "image": "https://anphat.com.vn/media/product/55479_laptop_hp_omnibook_x_flip_14_fk0082au_bz7n8pa___1_.jpg",
+    "url": "https://www.anphatpc.com.vn/laptop-do-hoa-hp.html",
+    "name": "Laptop đồ họa HP",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
     "specs": {
       "Tên đầy đủ": "",
       "Email": "",
@@ -771,77 +585,15 @@
       "GPU manufacturer": null,
       "Weight (kg)": null,
       "Battery": null,
-      "Price (VND)": "36990000"
+      "Price (VND)": null
     }
   },
   {
-    "url": "https://www.anphatpc.com.vn/laptop-hp-omnibook-x-flip-14-fm0076tu-bz7p6pa.html",
-    "name": "Laptop HP OmniBook X Flip 14-fm0076TU BZ7P6PA (Intel Core Ultra 7 258V)",
-    "price": 36690000,
-    "price_raw": "36690000",
-    "image": "https://anphat.com.vn/media/product/53893_bz7p6pa.jpg",
-    "specs": {
-      "Tên đầy đủ": "",
-      "Email": "",
-      "Điện thoại": "",
-      "Thông tin liên hệ": ""
-    },
-    "features": {
-      "Manufacturer": "Laptop",
-      "CPU manufacturer": "Intel",
-      "CPU brand modifier": null,
-      "CPU generation": null,
-      "CPU Speed (GHz)": null,
-      "RAM (GB)": null,
-      "RAM Type": null,
-      "Bus (MHz)": null,
-      "Storage (GB)": null,
-      "Screen Size (inch)": null,
-      "Screen Resolution": null,
-      "Refresh Rate (Hz)": null,
-      "GPU manufacturer": null,
-      "Weight (kg)": null,
-      "Battery": null,
-      "Price (VND)": "36690000"
-    }
-  },
-  {
-    "url": "https://www.anphatpc.com.vn/laptop-dell-xps-13-9350-71058714.html",
-    "name": "Laptop Dell XPS 13 9350 71058714 (Intel Core Ultra 5 226V)",
-    "price": 63990000,
-    "price_raw": "63990000",
-    "image": "https://anphat.com.vn/media/product/52675_6.jpg",
-    "specs": {
-      "Tên đầy đủ": "",
-      "Email": "",
-      "Điện thoại": "",
-      "Thông tin liên hệ": ""
-    },
-    "features": {
-      "Manufacturer": "Laptop",
-      "CPU manufacturer": "Intel",
-      "CPU brand modifier": null,
-      "CPU generation": null,
-      "CPU Speed (GHz)": null,
-      "RAM (GB)": null,
-      "RAM Type": null,
-      "Bus (MHz)": null,
-      "Storage (GB)": null,
-      "Screen Size (inch)": null,
-      "Screen Resolution": null,
-      "Refresh Rate (Hz)": null,
-      "GPU manufacturer": null,
-      "Weight (kg)": null,
-      "Battery": null,
-      "Price (VND)": "63990000"
-    }
-  },
-  {
-    "url": "https://www.anphatpc.com.vn/laptop-dell-xps-9350-xps9350-u5ia165w11gr-fp.html",
-    "name": "Laptop Dell XPS 9350 XPS9350-U5IA165W11GR-FP",
-    "price": 61990000,
-    "price_raw": "61990000",
-    "image": "https://anphat.com.vn/media/product/51529_laptop_dell_xps_9350_xps9350_u5ia165w11gr_fp__4_.jpg",
+    "url": "https://www.anphatpc.com.vn/laptop-do-hoa-lenovo.html",
+    "name": "Laptop đồ họa Lenovo",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
     "specs": {
       "Tên đầy đủ": "",
       "Email": "",
@@ -864,77 +616,15 @@
       "GPU manufacturer": null,
       "Weight (kg)": null,
       "Battery": null,
-      "Price (VND)": "61990000"
+      "Price (VND)": null
     }
   },
   {
-    "url": "https://www.anphatpc.com.vn/laptop-dell-15-dc15255-dc5r5802w1.html",
-    "name": "Laptop Dell 15 DC15255 DC5R5802W1 (Ryzen 5 7530U)",
-    "price": 18490000,
-    "price_raw": "18490000",
-    "image": "https://anphat.com.vn/media/product/54734_laptop_dell_15_dc15255_dc5r5802w1__5_.jpg",
-    "specs": {
-      "Tên đầy đủ": "",
-      "Email": "",
-      "Điện thoại": "",
-      "Thông tin liên hệ": ""
-    },
-    "features": {
-      "Manufacturer": "Laptop",
-      "CPU manufacturer": "AMD",
-      "CPU brand modifier": "ryzen 5",
-      "CPU generation": "5",
-      "CPU Speed (GHz)": null,
-      "RAM (GB)": null,
-      "RAM Type": null,
-      "Bus (MHz)": null,
-      "Storage (GB)": null,
-      "Screen Size (inch)": null,
-      "Screen Resolution": null,
-      "Refresh Rate (Hz)": null,
-      "GPU manufacturer": null,
-      "Weight (kg)": null,
-      "Battery": null,
-      "Price (VND)": "18490000"
-    }
-  },
-  {
-    "url": "https://www.anphatpc.com.vn/laptop-hp-250-g9-ag2k7at.html",
-    "name": "Laptop HP 250 G9 AG2K7AT (Intel Core i5-1235U)",
-    "price": 19590000,
-    "price_raw": "19590000",
-    "image": "https://anphat.com.vn/media/product/55517_laptop_hp_250_g9_ag2k7at___1_.jpg",
-    "specs": {
-      "Tên đầy đủ": "",
-      "Email": "",
-      "Điện thoại": "",
-      "Thông tin liên hệ": ""
-    },
-    "features": {
-      "Manufacturer": "Laptop",
-      "CPU manufacturer": "Intel",
-      "CPU brand modifier": "core i5",
-      "CPU generation": null,
-      "CPU Speed (GHz)": null,
-      "RAM (GB)": null,
-      "RAM Type": null,
-      "Bus (MHz)": null,
-      "Storage (GB)": null,
-      "Screen Size (inch)": null,
-      "Screen Resolution": null,
-      "Refresh Rate (Hz)": null,
-      "GPU manufacturer": null,
-      "Weight (kg)": null,
-      "Battery": null,
-      "Price (VND)": "19590000"
-    }
-  },
-  {
-    "url": "https://www.anphatpc.com.vn/laptop-hp-omnibook-5-ai-16-af1048tu-bz7q9pa.html",
-    "name": "Laptop HP OmniBook 5 AI 16-AF1048TU BZ7Q9PA",
-    "price": 26190000,
-    "price_raw": "26190000",
-    "image": "https://anphat.com.vn/media/product/53457_laptop_hp_omnibook_5_ai_16_af1048tu_bz7q9pa___4_.jpg",
+    "url": "https://www.anphatpc.com.vn/laptop-do-hoa-msi.html",
+    "name": "Laptop đồ họa MSI",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
     "specs": {
       "Tên đầy đủ": "",
       "Email": "",
@@ -957,15 +647,15 @@
       "GPU manufacturer": null,
       "Weight (kg)": null,
       "Battery": null,
-      "Price (VND)": "26190000"
+      "Price (VND)": null
     }
   },
   {
-    "url": "https://www.anphatpc.com.vn/laptop-gigabyte-gaming-a16-cthi3vn893sh.html",
-    "name": "Laptop Gigabyte GAMING A16 CTHI3VN893SH",
-    "price": 30990000,
-    "price_raw": "30990000",
-    "image": "https://anphat.com.vn/media/product/53728_93sh.jpg",
+    "url": "https://www.anphatpc.com.vn/laptop-gaming-rtx-50-series.html",
+    "name": "Laptop Gaming RTX 50 Series",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
     "specs": {
       "Tên đầy đủ": "",
       "Email": "",
@@ -988,77 +678,15 @@
       "GPU manufacturer": null,
       "Weight (kg)": null,
       "Battery": null,
-      "Price (VND)": "30990000"
+      "Price (VND)": null
     }
   },
   {
-    "url": "https://www.anphatpc.com.vn/laptop-gigabyte-gaming-a16-cthh3vn893sh.html",
-    "name": "Laptop Gigabyte GAMING A16 CTHH3VN893SH (Intel Core i5-13420H)",
-    "price": 28990000,
-    "price_raw": "28990000",
-    "image": "https://anphat.com.vn/media/product/53192_laptop_gigabyte_gaming_a16_cthh3vn893sh__intel_core_i5_13420h.jpg",
-    "specs": {
-      "Tên đầy đủ": "",
-      "Email": "",
-      "Điện thoại": "",
-      "Thông tin liên hệ": ""
-    },
-    "features": {
-      "Manufacturer": "Laptop",
-      "CPU manufacturer": "Intel",
-      "CPU brand modifier": "core i5",
-      "CPU generation": null,
-      "CPU Speed (GHz)": null,
-      "RAM (GB)": null,
-      "RAM Type": null,
-      "Bus (MHz)": null,
-      "Storage (GB)": null,
-      "Screen Size (inch)": null,
-      "Screen Resolution": null,
-      "Refresh Rate (Hz)": null,
-      "GPU manufacturer": null,
-      "Weight (kg)": null,
-      "Battery": null,
-      "Price (VND)": "28990000"
-    }
-  },
-  {
-    "url": "https://www.anphatpc.com.vn/laptop-dell-15-dc15250-dc5i7952w1.html",
-    "name": "Laptop Dell 15 DC15250 DC5I7952W1 (Intel Core i7-1355U)",
-    "price": 22590000,
-    "price_raw": "22590000",
-    "image": "https://anphat.com.vn/media/product/54766_laptop_dell_15_dc15250_dc5i7952w1__2_.jpg",
-    "specs": {
-      "Tên đầy đủ": "",
-      "Email": "",
-      "Điện thoại": "",
-      "Thông tin liên hệ": ""
-    },
-    "features": {
-      "Manufacturer": "Laptop",
-      "CPU manufacturer": "Intel",
-      "CPU brand modifier": "i7952",
-      "CPU generation": "95",
-      "CPU Speed (GHz)": null,
-      "RAM (GB)": null,
-      "RAM Type": null,
-      "Bus (MHz)": null,
-      "Storage (GB)": null,
-      "Screen Size (inch)": null,
-      "Screen Resolution": null,
-      "Refresh Rate (Hz)": null,
-      "GPU manufacturer": null,
-      "Weight (kg)": null,
-      "Battery": null,
-      "Price (VND)": "22590000"
-    }
-  },
-  {
-    "url": "https://www.anphatpc.com.vn/laptop-dell-15-dc15250-dc15250-i7u161w11slu-5.html",
-    "name": "Laptop Dell 15 DC15250 DC15250-i7U161W11SLU-5",
-    "price": 23590000,
-    "price_raw": "23590000",
-    "image": "https://anphat.com.vn/media/product/54991_laptop_dell_15_dc15250_dc15250_i7u161w11slu_5__4_.jpg",
+    "url": "https://www.anphatpc.com.vn/laptop-rtx-5090.html",
+    "name": "Laptop RTX 5090",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
     "specs": {
       "Tên đầy đủ": "",
       "Email": "",
@@ -1081,15 +709,15 @@
       "GPU manufacturer": null,
       "Weight (kg)": null,
       "Battery": null,
-      "Price (VND)": "23590000"
+      "Price (VND)": null
     }
   },
   {
-    "url": "https://www.anphatpc.com.vn/laptop-asus-tuf-gaming-a16-fa608um-rv266w.html",
-    "name": "Laptop ASUS TUF Gaming A16 FA608UM-RV266W",
-    "price": 41490000,
-    "price_raw": "41490000",
-    "image": "https://anphat.com.vn/media/product/55330_laptop_asus_tuf_gaming_a16_fa608um_rv266w__2_.jpg",
+    "url": "https://www.anphatpc.com.vn/laptop-rtx-5080.html",
+    "name": "Laptop RTX 5080",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
     "specs": {
       "Tên đầy đủ": "",
       "Email": "",
@@ -1112,108 +740,15 @@
       "GPU manufacturer": null,
       "Weight (kg)": null,
       "Battery": null,
-      "Price (VND)": "41490000"
+      "Price (VND)": null
     }
   },
   {
-    "url": "https://www.anphatpc.com.vn/laptop-asus-tuf-gaming-f16-fx608jh-rv039w.html",
-    "name": "Laptop ASUS TUF Gaming F16 FX608JH-RV039W (Intel Core i5-13450HX)",
-    "price": 31590000,
-    "price_raw": "31590000",
-    "image": "https://anphat.com.vn/media/product/52598_fx608jh_rv039w.jpg",
-    "specs": {
-      "Tên đầy đủ": "",
-      "Email": "",
-      "Điện thoại": "",
-      "Thông tin liên hệ": ""
-    },
-    "features": {
-      "Manufacturer": "Laptop",
-      "CPU manufacturer": "Intel",
-      "CPU brand modifier": "core i5",
-      "CPU generation": null,
-      "CPU Speed (GHz)": null,
-      "RAM (GB)": null,
-      "RAM Type": null,
-      "Bus (MHz)": null,
-      "Storage (GB)": null,
-      "Screen Size (inch)": null,
-      "Screen Resolution": null,
-      "Refresh Rate (Hz)": null,
-      "GPU manufacturer": null,
-      "Weight (kg)": null,
-      "Battery": null,
-      "Price (VND)": "31590000"
-    }
-  },
-  {
-    "url": "https://www.anphatpc.com.vn/laptop-asus-tuf-gaming-f16-fx608jh-rv131w.html",
-    "name": "Laptop ASUS TUF Gaming F16 FX608JH-RV131W (Intel Core i5-13450HX)",
-    "price": 31990000,
-    "price_raw": "31990000",
-    "image": "https://anphat.com.vn/media/product/54580_fx608jhrv131w.jpg",
-    "specs": {
-      "Tên đầy đủ": "",
-      "Email": "",
-      "Điện thoại": "",
-      "Thông tin liên hệ": ""
-    },
-    "features": {
-      "Manufacturer": "Laptop",
-      "CPU manufacturer": "Intel",
-      "CPU brand modifier": "core i5",
-      "CPU generation": null,
-      "CPU Speed (GHz)": null,
-      "RAM (GB)": null,
-      "RAM Type": null,
-      "Bus (MHz)": null,
-      "Storage (GB)": null,
-      "Screen Size (inch)": null,
-      "Screen Resolution": null,
-      "Refresh Rate (Hz)": null,
-      "GPU manufacturer": null,
-      "Weight (kg)": null,
-      "Battery": null,
-      "Price (VND)": "31990000"
-    }
-  },
-  {
-    "url": "https://www.anphatpc.com.vn/laptop-asus-tuf-gaming-f16-fx608jhr-rv037w.html",
-    "name": "Laptop ASUS TUF Gaming F16 FX608JHR-RV037W (Intel Core i7 14650HX)",
-    "price": 36890000,
-    "price_raw": "36890000",
-    "image": "https://anphat.com.vn/media/product/52645_laptop_asus_tuf_gaming_f16_fx608jhr_rv037w__3_.jpg",
-    "specs": {
-      "Tên đầy đủ": "",
-      "Email": "",
-      "Điện thoại": "",
-      "Thông tin liên hệ": ""
-    },
-    "features": {
-      "Manufacturer": "Laptop",
-      "CPU manufacturer": "Intel",
-      "CPU brand modifier": "core i7",
-      "CPU generation": null,
-      "CPU Speed (GHz)": null,
-      "RAM (GB)": null,
-      "RAM Type": null,
-      "Bus (MHz)": null,
-      "Storage (GB)": null,
-      "Screen Size (inch)": null,
-      "Screen Resolution": null,
-      "Refresh Rate (Hz)": null,
-      "GPU manufacturer": null,
-      "Weight (kg)": null,
-      "Battery": null,
-      "Price (VND)": "36890000"
-    }
-  },
-  {
-    "url": "https://www.anphatpc.com.vn/laptop-asus-tuf-gaming-f16-fx608jh-qt127w.html",
-    "name": "Laptop ASUS TUF Gaming F16 FX608JH-QT127W",
-    "price": 31990000,
-    "price_raw": "31990000",
-    "image": "https://anphat.com.vn/media/product/55493_laptop_asus_tuf_gaming_f16_fx608jh_qt127w__4_.jpg",
+    "url": "https://www.anphatpc.com.vn/laptop-rtx-5070.html",
+    "name": "Laptop RTX 5070/ 5070Ti",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
     "specs": {
       "Tên đầy đủ": "",
       "Email": "",
@@ -1236,15 +771,15 @@
       "GPU manufacturer": null,
       "Weight (kg)": null,
       "Battery": null,
-      "Price (VND)": "31990000"
+      "Price (VND)": null
     }
   },
   {
-    "url": "https://www.anphatpc.com.vn/laptop-dell-16-dc16251-dc6c7557w1.html",
-    "name": "Laptop Dell 16 DC16251 DC6C7557W1",
-    "price": 30990000,
-    "price_raw": "30990000",
-    "image": "https://anphat.com.vn/media/product/54080_laptop_dell_16_dc16251_dc6c7557w1__1_.jpg",
+    "url": "https://www.anphatpc.com.vn/laptop-rtx-5060-5060ti.html",
+    "name": "Laptop RTX 5060/ 5060Ti",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
     "specs": {
       "Tên đầy đủ": "",
       "Email": "",
@@ -1267,15 +802,15 @@
       "GPU manufacturer": null,
       "Weight (kg)": null,
       "Battery": null,
-      "Price (VND)": "30990000"
+      "Price (VND)": null
     }
   },
   {
-    "url": "https://www.anphatpc.com.vn/laptop-dell-15-dc15250-71084746.html",
-    "name": "Laptop Dell 15 DC15250-71084746 (Intel Core i5-1334U)",
-    "price": 19890000,
-    "price_raw": "19890000",
-    "image": "https://anphat.com.vn/media/product/55157_laptop_dell_15_dc15250_71084746__1_.jpg",
+    "url": "https://www.anphatpc.com.vn/laptop-rtx-5050.html",
+    "name": "Laptop RTX 5050",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
     "specs": {
       "Tên đầy đủ": "",
       "Email": "",
@@ -1284,8 +819,8 @@
     },
     "features": {
       "Manufacturer": "Laptop",
-      "CPU manufacturer": "Intel",
-      "CPU brand modifier": "core i5",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
       "CPU generation": null,
       "CPU Speed (GHz)": null,
       "RAM (GB)": null,
@@ -1298,15 +833,15 @@
       "GPU manufacturer": null,
       "Weight (kg)": null,
       "Battery": null,
-      "Price (VND)": "19890000"
+      "Price (VND)": null
     }
   },
   {
-    "url": "https://www.anphatpc.com.vn/laptop-dell-15-dc15250-dc5i5897w1.html",
-    "name": "Laptop Dell 15 DC15250 DC5I5897W1",
-    "price": 19890000,
-    "price_raw": "19890000",
-    "image": "https://anphat.com.vn/media/product/55093_laptop_dell_15_dc15250_dc5i5897w1__1_.jpg",
+    "url": "https://www.anphatpc.com.vn/laptop-gaming-rtx-40-series.html",
+    "name": "Laptop Gaming RTX 40 Series",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
     "specs": {
       "Tên đầy đủ": "",
       "Email": "",
@@ -1316,8 +851,8 @@
     "features": {
       "Manufacturer": "Laptop",
       "CPU manufacturer": null,
-      "CPU brand modifier": "i5897",
-      "CPU generation": "89",
+      "CPU brand modifier": null,
+      "CPU generation": null,
       "CPU Speed (GHz)": null,
       "RAM (GB)": null,
       "RAM Type": null,
@@ -1329,7 +864,1278 @@
       "GPU manufacturer": null,
       "Weight (kg)": null,
       "Battery": null,
-      "Price (VND)": "19890000"
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-rtx-4090.html",
+    "name": "Laptop RTX 4090 Chính Hãng 2026 Giá Tốt Nhất",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-rtx-4080.html",
+    "name": "Laptop RTX 4080",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-rtx-4070.html",
+    "name": "Laptop RTX 4070 Chính Hãng 2026 - An Phát Computer",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-rtx-4060.html",
+    "name": "Laptop RTX 4060 Chính Hãng 2026 - An Phát Computer",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-rtx-4050.html",
+    "name": "Laptop RTX 4050 - An Phát Computer",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-gaming-rtx-30-series.html",
+    "name": "Laptop Gaming RTX 30 Series",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-rtx-3070.html",
+    "name": "Laptop RTX 3070/3070Ti Giá Tốt, Chính Hãng 2026-Trả Góp 0%",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-rtx-3060.html",
+    "name": "Laptop RTX 3060 Giá Tốt, Bảo Hành Chính Hãng 2026-Trả Góp 0%",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-rtx-3050.html",
+    "name": "Laptop RTX 3050-3050Ti Giá Tốt, Chính Hãng 2026-Trả Góp 0%",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-rtx-2050.html",
+    "name": "Laptop RTX 2050 - 2050Ti Giá Tốt, Chính Hãng 2026-Trả Góp 0%",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-vga-chuyen-dung.html",
+    "name": "Laptop VGA chuyên dụng",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-theo-hang.html",
+    "name": "Laptop Theo Hãng",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/cb_35ad0c89ac14530f653a8673d4692528.jpg",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-lenovo-v-series.html",
+    "name": "Lenovo V Series",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Lenovo",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-thinkpad-mobile-workstation-thinkpad-p-series.html",
+    "name": "Laptop ThinkPad Mobile Workstation - ThinkPad P Series",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-hp-pho-thong.html",
+    "name": "HP Phổ Thông",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "HP",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-hp-workstation.html",
+    "name": "Laptop HP Workstation Chính Hãng Giá Tốt",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-msi-modern.html",
+    "name": "Laptop MSI Modern 14 giảm sốc 5 triệu ! Cam kết rẻ nhất !",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-gigabyte-g6.html",
+    "name": "Laptop Gigabyte G6",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-lg-gram-2024.html",
+    "name": "Laptop LG Gram 2024 Chính Hãng Giá Tốt",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-lg-gram-2023.html",
+    "name": "Laptop LG Gram 2023 Chính Hãng 2025, Trả Góp 0%",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-doanh-nghiep.html",
+    "name": "Laptop Doanh Nghiệp - Giá Tốt Nhất 2026",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-lenovo-cho-doanh-nghiep.html",
+    "name": "Laptop Lenovo dành cho doanh nghiệp",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-asus-cho-doanh-nghiep.html",
+    "name": "Laptop Asus dành cho doanh nghiệp",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-dell-cho-doanh-nghiep.html",
+    "name": "Laptop Dell cho doanh nghiệp",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-hp-cho-doanh-nghiep.html",
+    "name": "Laptop HP cho doanh nghiệp",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-cho-lap-trinh-vien.html",
+    "name": "Laptop cho lập trình viên tốt nhât 2026",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-cho-ke-toan.html",
+    "name": "Laptop Cho Người Làm Nghề Kế Toán Tốt Nhất 2026",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-doanh-nhan.html",
+    "name": "Laptop Cho Doanh Nhân Tốt Nhất 2026",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-cho-data-analystic.html",
+    "name": "Laptop Cho Data Analystic",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-hoc-tap-van-phong.html",
+    "name": "Laptop cấu hình dành cho học tập văn phòng giá rẻ 2026",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-pho-thong-gia-re.html",
+    "name": "Laptop giá rẻ tốt nhất thị trường 2026 | An Phát Computer",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-rtx-50-series.html",
+    "name": "Laptop RTX 50 SERIES",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-rtx-40-series.html",
+    "name": "Laptop RTX 40 SERIES - Sức mạnh đồ họa vượt trội",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-ai.html",
+    "name": "Laptop AI | Tích Hợp Trí Tuệ Nhân Tạo Mới Nhất 2026",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-asus-ai.html",
+    "name": "Laptop Asus AI",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-lenovo-ai.html",
+    "name": "Laptop Lenovo AI",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-acer-ai.html",
+    "name": "Laptop Acer AI",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-msi-ai.html",
+    "name": "Laptop MSI AI",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-hp-ai.html",
+    "name": "Laptop HP AI",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-dell-ai.html",
+    "name": "Laptop Dell AI",
+    "price": null,
+    "price_raw": null,
+    "image": "https://www.anphatpc.com.vn/media/category/0",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
+    }
+  },
+  {
+    "url": "https://www.anphatpc.com.vn/laptop-dell-va-hp-cai-nao-ben-hon.html",
+    "name": "Laptop Dell và HP cái nào bền hơn? Những điều cần biết khi chọn mua",
+    "price": null,
+    "price_raw": null,
+    "image": "https://anphat.com.vn/media/news/11473_laptop_dell_va_hp_cai_nao_ben_hon_thumb.jpg",
+    "specs": {
+      "Tên đầy đủ": "",
+      "Email": "",
+      "Điện thoại": "",
+      "Thông tin liên hệ": ""
+    },
+    "features": {
+      "Manufacturer": "Laptop",
+      "CPU manufacturer": null,
+      "CPU brand modifier": null,
+      "CPU generation": null,
+      "CPU Speed (GHz)": null,
+      "RAM (GB)": null,
+      "RAM Type": null,
+      "Bus (MHz)": null,
+      "Storage (GB)": null,
+      "Screen Size (inch)": null,
+      "Screen Resolution": null,
+      "Refresh Rate (Hz)": null,
+      "GPU manufacturer": null,
+      "Weight (kg)": null,
+      "Battery": null,
+      "Price (VND)": null
     }
   }
 ]
