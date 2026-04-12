@@ -4,7 +4,9 @@
   "load_more_selectors": [
     ".js-viewmore",
     ".btn-show-more",
-    ".show-more"
+    ".show-more",
+    ".view-more",
+    ".btn-loadmore"
   ],
   "brands": {
     "all": "https://www.anphatpc.com.vn/may-tinh-xach-tay-laptop.html"

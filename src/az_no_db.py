@@ -227,97 +227,184 @@ def to_int_price(text: Optional[str]) -> Optional[int]:
 
 
 def extract_features(title: str, specs: Dict[str, str], price_value: Optional[int]) -> Dict[str, Optional[str]]:
-    # reuse the same heuristics as in crawl_ap.py
+    """Extract normalised laptop features from product title + spec dict.
+
+    Uses a *spec-dict-first* strategy: each field is first looked up by matching
+    spec keys before falling back to the product title.  This avoids the previous
+    bug where a single greedy regex on the concatenated text would mis-assign
+    values (e.g. grabbing RAM size as Storage).
+    """
     fields = [
-        'Manufacturer', 'CPU manufacturer', 'CPU brand modifier', 'CPU generation', 'CPU Speed (GHz)',
-        'RAM (GB)', 'RAM Type', 'Bus (MHz)', 'Storage (GB)', 'Screen Size (inch)', 'Screen Resolution',
-        'Refresh Rate (Hz)', 'GPU manufacturer', 'Weight (kg)', 'Battery', 'Price (VND)'
+        'Manufacturer', 'CPU manufacturer', 'CPU brand modifier', 'CPU generation',
+        'CPU Speed (GHz)', 'RAM (GB)', 'RAM Type', 'Bus (MHz)', 'Storage (GB)',
+        'Screen Size (inch)', 'Screen Resolution', 'Refresh Rate (Hz)',
+        'GPU manufacturer', 'Weight (kg)', 'Battery', 'Price (VND)',
     ]
     out: Dict[str, Optional[str]] = {k: None for k in fields}
+    title_l = (title or '').lower()
 
-    all_text = ' '.join([f"{k}: {v}" for k, v in specs.items() if v]) + ' ' + (title or '')
-    all_text_l = all_text.lower()
+    # ---- helpers ----
+    def _find_spec(*keywords: str) -> Optional[str]:
+        for k, v in specs.items():
+            kl = k.lower()
+            for kw in keywords:
+                if kw in kl and v and v.strip():
+                    return v.strip()
+        return None
 
-    # Manufacturer
-    m = re.search(r"^(?:([A-Za-z0-9\-]+)\s+)", title)
-    if m:
-        out['Manufacturer'] = m.group(1)
-    for k, v in specs.items():
-        kl = k.lower()
-        if not out['Manufacturer'] and any(x in kl for x in ('hãng', 'thương hiệu', 'brand', 'manufacturer')):
-            out['Manufacturer'] = v
+    def _spec_or_title(*keywords: str) -> str:
+        return _find_spec(*keywords) or title or ''
 
-    # CPU manufacturer
-    if re.search(r"\bintel\b", all_text_l):
+    # ---- Manufacturer ----
+    brand_spec = _find_spec('hãng', 'thương hiệu', 'brand', 'manufacturer')
+    if brand_spec:
+        out['Manufacturer'] = brand_spec
+    else:
+        _mfr = [
+            ('asus', 'asus'), ('lenovo', 'lenovo'), ('dell', 'dell'),
+            ('acer', 'acer'), ('msi ', 'msi'), ('msi-', 'msi'),
+            ('apple', 'apple'), ('macbook', 'apple'),
+            ('hp ', 'hp'), ('hp-', 'hp'),
+            ('lg ', 'lg'), ('lg-', 'lg'),
+            ('samsung', 'samsung'), ('gigabyte', 'gigabyte'),
+            ('colorful', 'colorful'), ('masstel', 'masstel'),
+        ]
+        for tok, mfr in _mfr:
+            if tok in f' {title_l} ':
+                out['Manufacturer'] = mfr
+                break
+
+    # ---- CPU ----
+    cpu_text = ((_find_spec('cpu', 'bộ xử lý', 'vi xử lý', 'processor') or '') + ' ' + title_l).lower()
+
+    if re.search(r'\bintel\b', cpu_text):
         out['CPU manufacturer'] = 'Intel'
-    elif re.search(r"\bamd\b|\bryzen\b", all_text_l):
+    elif re.search(r'\bamd\b|\bryzen\b', cpu_text):
         out['CPU manufacturer'] = 'AMD'
+    elif re.search(r'\bapple\b|\bm[1-4]\b', cpu_text):
+        out['CPU manufacturer'] = 'Apple'
+    elif re.search(r'\bqualcomm\b|\bsnapdragon\b', cpu_text):
+        out['CPU manufacturer'] = 'Qualcomm'
+    elif re.search(r'\bi[3579]-?\d{4}', cpu_text):
+        # Infer Intel from model number pattern (i5-13420H etc.)
+        out['CPU manufacturer'] = 'Intel'
 
-    cpu_match = re.search(r"(i[3579]-?\d{2,4}|core\s+i[3579]|ryzen\s*\d+)", all_text_l, re.I)
-    if cpu_match:
-        cm = cpu_match.group(0)
-        out['CPU brand modifier'] = cm.strip()
-        gen = re.search(r"i[3579]-?(\d{2})", cm, re.I)
-        if gen:
-            out['CPU generation'] = gen.group(1)
-        ry = re.search(r"ryzen\s*(\d)", cm, re.I)
+    for pat in [
+        r'(core\s+ultra\s*\d+)', r'(ryzen\s*(?:ai\s*)?\d+)',
+        r'(i[3579]-?\d{4,5}[a-z]*)', r'(core\s+i[3579])',
+        r'(m[1-4]\s*(?:pro|max|ultra)?)',
+        r'(pentium|celeron|athlon)', r'(snapdragon\s*\w+)',
+    ]:
+        m = re.search(pat, cpu_text, re.I)
+        if m:
+            out['CPU brand modifier'] = m.group(1).strip()
+            break
+
+    gen = re.search(r'i[3579]-?(\d{2})\d{2,3}', cpu_text)
+    if gen:
+        out['CPU generation'] = gen.group(1)
+    else:
+        ry = re.search(r'ryzen\s*(?:ai\s*)?(\d)', cpu_text, re.I)
         if ry:
             out['CPU generation'] = ry.group(1)
-
-    speed = re.search(r"(\d+(?:\.\d+)?)\s*ghz", all_text_l, re.I)
-    if speed:
-        out['CPU Speed (GHz)'] = speed.group(1)
-
-    ram_m = re.search(r"(\d+)\s*gb", all_text_l, re.I)
-    if ram_m:
-        out['RAM (GB)'] = ram_m.group(1)
-    ram_type = re.search(r"(ddr[2345x])", all_text_l, re.I)
-    if ram_type:
-        out['RAM Type'] = ram_type.group(1).upper()
-    bus = re.search(r"(\d{3,4})\s*mhz", all_text_l, re.I)
-    if bus:
-        out['Bus (MHz)'] = bus.group(1)
-
-    st = re.search(r"(\d+(?:\.\d+)?)\s*(tb|gb)", all_text_l, re.I)
-    if st:
-        qty = float(st.group(1))
-        unit = st.group(2).lower()
-        if unit == 'tb':
-            out['Storage (GB)'] = str(int(qty * 1000))
         else:
-            out['Storage (GB)'] = str(int(qty))
+            ul = re.search(r'ultra\s*(\d)', cpu_text, re.I)
+            if ul:
+                out['CPU generation'] = ul.group(1)
 
-    sz = re.search(r"(\d+(?:\.\d+)?)\s*(inch|\")", all_text_l, re.I)
+    spd = re.search(r'(\d+(?:\.\d+)?)\s*ghz', cpu_text, re.I)
+    if spd:
+        out['CPU Speed (GHz)'] = spd.group(1)
+
+    # ---- RAM (search RAM-specific spec keys first) ----
+    ram_text = _find_spec('ram', 'bộ nhớ', 'memory')
+    ram_src = ram_text or title or ''
+    multi = re.search(r'(\d+)\s*[x×]\s*(\d+)\s*gb', ram_src, re.I)
+    if multi:
+        out['RAM (GB)'] = str(int(multi.group(1)) * int(multi.group(2)))
+    else:
+        rm = re.search(r'(\d+)\s*gb', ram_src, re.I)
+        if rm and int(rm.group(1)) <= 128:
+            out['RAM (GB)'] = rm.group(1)
+
+    rt = re.search(r'(lpddr\s*[45x]|ddr\s*[2345])', f'{ram_src} {title}', re.I)
+    if rt:
+        out['RAM Type'] = re.sub(r'\s+', '', rt.group(1)).upper()
+
+    bus_src = (_find_spec('bus', 'tốc độ ram', 'ram speed') or '') + ' ' + (ram_text or '')
+    bm = re.search(r'(\d{3,4})\s*mhz', bus_src, re.I)
+    if bm:
+        out['Bus (MHz)'] = bm.group(1)
+
+    # ---- Storage (search storage-specific spec keys first) ----
+    stor_text = _find_spec('ssd', 'ổ cứng', 'hard drive', 'storage', 'ổ lưu trữ', 'lưu trữ', 'hdd')
+    stor_src = stor_text or title or ''
+    tb = re.search(r'(\d+(?:\.\d+)?)\s*tb', stor_src, re.I)
+    if tb:
+        out['Storage (GB)'] = str(int(float(tb.group(1)) * 1000))
+    else:
+        # When falling back to title, find ALL GB matches and pick the one
+        # that looks like storage (>= 128GB).
+        for sg in re.finditer(r'(\d+)\s*gb', stor_src, re.I):
+            v = int(sg.group(1))
+            if v >= 128:
+                out['Storage (GB)'] = str(v)
+                break
+
+    # ---- Screen ----
+    scr_text = _find_spec('màn hình', 'kích thước màn', 'screen', 'display')
+    scr_src = f'{scr_text or ""} {title}'
+    sz = re.search(r'(\d+(?:\.\d+)?)\s*(?:inch|"|\'\')', scr_src, re.I)
     if sz:
         out['Screen Size (inch)'] = sz.group(1)
-    res = re.search(r"(\d{3,4}x\d{3,4})", all_text_l)
-    if res:
-        out['Screen Resolution'] = res.group(1)
-    rr = re.search(r"(\d{2,3})\s*hz", all_text_l, re.I)
+
+    res_src = (_find_spec('độ phân giải', 'resolution') or '') + ' ' + (scr_text or '')
+    rm2 = re.search(r'(\d{3,4})\s*[x×]\s*(\d{3,4})', res_src)
+    if rm2:
+        out['Screen Resolution'] = f'{rm2.group(1)} x {rm2.group(2)}'
+
+    rr_src = (_find_spec('tần số', 'refresh', 'tần số quét') or '') + ' ' + (scr_text or '')
+    rr = re.search(r'(\d{2,3})\s*hz', rr_src, re.I)
     if rr:
         out['Refresh Rate (Hz)'] = rr.group(1)
 
-    if re.search(r"\bnvidia\b", all_text_l):
+    # ---- GPU ----
+    gpu_text = _find_spec('card đồ họa', 'gpu', 'vga', 'card màn hình', 'đồ họa', 'graphics')
+    gpu_src = f'{gpu_text or ""} {title}'.lower()
+    if re.search(r'\bnvidia\b|geforce|rtx\s*\d|gtx\s*\d', gpu_src):
         out['GPU manufacturer'] = 'NVIDIA'
-    elif re.search(r"\bradeon\b|\bamd\b", all_text_l):
+    elif re.search(r'radeon\s*rx|rx\s*\d{4}', gpu_src):
         out['GPU manufacturer'] = 'AMD'
-    elif re.search(r"\bintel\b", all_text_l) and re.search(r"intel.*(uhd|iris|xe|hd)", all_text_l):
+    elif out.get('CPU manufacturer') == 'Apple':
+        out['GPU manufacturer'] = 'Apple'
+    elif re.search(r'intel.*(uhd|iris|xe|arc|graphics)', gpu_src):
         out['GPU manufacturer'] = 'Intel'
+    elif re.search(r'radeon|amd.*graphics', gpu_src):
+        out['GPU manufacturer'] = 'AMD'
 
-    w = re.search(r"(\d+(?:\.\d+)?)\s*kg", all_text_l, re.I)
-    if w:
-        out['Weight (kg)'] = w.group(1)
+    # ---- Weight ----
+    w_text = _find_spec('trọng lượng', 'cân nặng', 'weight', 'khối lượng', 'nặng')
+    w_src = w_text or title or ''
+    wm = re.search(r'(\d+(?:\.\d+)?)\s*kg', w_src, re.I)
+    if wm:
+        wt = float(wm.group(1))
+        if 0.5 <= wt <= 6.0:
+            out['Weight (kg)'] = wm.group(1)
 
-    batt = re.search(r"(\d+\s?m?ah|\d+\s?wh)", all_text_l, re.I)
-    if batt:
-        out['Battery'] = batt.group(0)
+    # ---- Battery (normalise to Wh) ----
+    bat_text = _find_spec('pin', 'battery', 'dung lượng pin')
+    bat_src = f'{bat_text or ""} {title}'
+    wh = re.search(r'(\d+(?:\.\d+)?)\s*wh', bat_src, re.I)
+    if wh:
+        out['Battery'] = f'{wh.group(1)} Wh'
+    else:
+        mah = re.search(r'(\d+)\s*mah', bat_src, re.I)
+        if mah:
+            out['Battery'] = f'{mah.group(1)} mAh'
 
+    # ---- Price ----
     if price_value is not None:
         out['Price (VND)'] = str(price_value)
-    else:
-        p = re.search(r"(\d[\d\.,]+)\s*(đ|vnd)", all_text_l, re.I)
-        if p:
-            out['Price (VND)'] = re.sub(r"[^0-9]", "", p.group(1))
 
     return out
 

@@ -1,0 +1,22 @@
+{
+  "Product Name": "Laptop HP 250 G9 AG2K7AT (Intel Core i5-1235U)",
+  "Manufacturer": "Laptop HP",
+  "CPU manufacturer": "Intel",
+  "CPU brand modifier": "i5-1235u",
+  "CPU generation": "12",
+  "CPU Speed (GHz)": null,
+  "RAM (GB)": null,
+  "RAM Type": null,
+  "Bus (MHz)": null,
+  "Storage (GB)": null,
+  "Screen Size (inch)": "15.6",
+  "Screen Resolution": "1920 x 1080",
+  "Refresh Rate (Hz)": null,
+  "GPU manufacturer": "Intel",
+  "Weight (kg)": "1.74",
+  "Battery": "41 Wh",
+  "Price (VND)": "19590000",
+  "url": "https://www.anphatpc.com.vn/laptop-hp-250-g9-ag2k7at.html",
+  "saved_path": "data/anphat/raw_htmls/0053.html",
+  "detail_specs_html_path": ""
+}

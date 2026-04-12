@@ -1,0 +1,22 @@
+{
+  "Product Name": "Laptop LENOVO ThinkPad X9-15 Gen 1 21Q60055VN (Intel Core Ultra 7 258V)",
+  "Manufacturer": "Laptop Lenovo",
+  "CPU manufacturer": "Intel",
+  "CPU brand modifier": "core ultra 7",
+  "CPU generation": "7",
+  "CPU Speed (GHz)": "4.8",
+  "RAM (GB)": null,
+  "RAM Type": null,
+  "Bus (MHz)": null,
+  "Storage (GB)": null,
+  "Screen Size (inch)": "15.3",
+  "Screen Resolution": "2880 x 1800",
+  "Refresh Rate (Hz)": null,
+  "GPU manufacturer": "Intel",
+  "Weight (kg)": "1.4",
+  "Battery": "80 Wh",
+  "Price (VND)": "54990000",
+  "url": "https://www.anphatpc.com.vn/laptop-lenovo-thinkpad-x9-15-gen-1-21q60055vn.html",
+  "saved_path": "data/anphat/raw_htmls/0041.html",
+  "detail_specs_html_path": ""
+}

@@ -1,0 +1,22 @@
+{
+  "Product Name": "Laptop ASUS ROG Strix G615J G615JMR-S5155W (Intel Core i7-14650HX)",
+  "Manufacturer": "Laptop Asus",
+  "CPU manufacturer": "Intel",
+  "CPU brand modifier": "i7-14650hx",
+  "CPU generation": "14",
+  "CPU Speed (GHz)": "2.20",
+  "RAM (GB)": null,
+  "RAM Type": null,
+  "Bus (MHz)": "5600",
+  "Storage (GB)": null,
+  "Screen Size (inch)": null,
+  "Screen Resolution": "2560 x 1600",
+  "Refresh Rate (Hz)": "240",
+  "GPU manufacturer": "NVIDIA",
+  "Weight (kg)": "2.73",
+  "Battery": "90 Wh",
+  "Price (VND)": "44999000",
+  "url": "https://www.anphatpc.com.vn/laptop-asus-rog-strix-g615j-g615jmr-s5155w.html",
+  "saved_path": "data/anphat/raw_htmls/0037.html",
+  "detail_specs_html_path": ""
+}

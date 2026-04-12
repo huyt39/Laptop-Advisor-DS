@@ -1,0 +1,51 @@
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script src="https://sf16-scmcdn-sg.ibytedtos.com/obj/static-sg/sec_sdk_build/3.3.4/captcha/index.js"></script>
+	</head>
+	<script>
+		const options = {
+			commonOptions: {
+				aid: 331981,
+				iid: '0',
+				did: '0',
+			},
+			captchaOptions: {
+				showMode: 'mask',
+				host: 'https://wafcompute-sg-proxy.byteintlapi.com',
+				fp: 'verify_1851151340',
+				successCb () {
+					console.log('éªè¯æå');
+					setTimeout(function() { window.location.reload(); }, 2000);
+				},
+				closeCb() {
+					sendCloseMessage();
+				},
+			}
+		}
+		window.TTGCaptcha.init(options)
+		window.TTGCaptcha.render({
+			verify_data: '{"code":"10000","from":"verify_center","type":"verify","version":"1","region":"cn","subtype":"slide","detail":"CVmFZYW0SZY0pEvuTLSnJuY4kGmyQwsy7Xae-K*Ti7o5R6mXyRW2qu5V8a2QOoIeOJcbh18Mb-wiJqHAmA2f3-V7GUNaIYjnPYlbcYa1pQgo23sKP7l4TXHesiiL9KaOag*JNh18syY4USYLhAMj3dfQymBjoaazuRZ5fHR77iEaFFMp76DrUV450IerYpy4GXttbVVLsUGxCbmSAC5U7MCiGC8Q41KsCDUtHU*o5wWYiJ9N6E2opRJdRB0krpVomA9IQpHaDZJwkS5-CGf6Z5M4xWt8*FeseGz2awBk*60vO3acF6dSLW6rqN605DaYGp3peTklKwqCSGFVG*WY0g2ag8WDRhq8npLpXJPoU1MX5V80W-DXd0adzcwJKUHV484gMDekuc-jrzCmVyggwDZ4-bQgucNRqCsts86-XKPLRrtb*4i4JVm1mq9p7gd7vVuF*7Khj--KHp5T","verify_event":"","fp":"verify_a160144b17f98b38388d6dbe3cae35fc","scene":"","verify_ticket":"","channel_mobile":"","sms_content":"","mobile":"","email":"","sec_user_id":"","auth_ticket":""}',
+			captchaOptions: {}
+		});
+		function sendCloseMessage() {
+			let result = {
+				type: 'sdk_result',
+				action: 'block',
+			};
+			console.log('éªè¯å³é­');
+			sendMessage(result);
+		}
+		function sendMessage(data, onlyWebView = false) {
+			if (window.webkit?.messageHandlers?.ReactNativeWebView) {
+				let dataStr = JSON.stringify(data);
+				window.webkit.messageHandlers.ReactNativeWebView.postMessage(dataStr);
+			} else if (window.ReactNativeWebView) {
+				let dataStr = JSON.stringify(data);
+				window.ReactNativeWebView.postMessage(dataStr);
+			} else if (!onlyWebView && window.parent != window) {
+				window.parent.postMessage(data, '*');
+			}
+		}
+	</script>
+</html>

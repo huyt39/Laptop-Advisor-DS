@@ -2,8 +2,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 from urllib.parse import urljoin, urlparse
 
@@ -78,40 +81,54 @@ def _normalize_url(href: str, base_url: str) -> Optional[str]:
 def _is_likely_product_url(url: str, shop: Optional[str]) -> bool:
     p = urlparse(url)
     path = p.path.lower()
+
     if shop == "anphat":
         if not path.endswith(".html"):
             return False
-        if any(x in path for x in ("/tim", "/collection/", "_id", "_dm", "he-thong-showroom", "tin-khuyen-mai")):
+        if any(x in path for x in (
+            "/tim", "/collection/", "_id", "_dm",
+            "he-thong-showroom", "tin-khuyen-mai", "/trang-",
+        )):
             return False
-        # Keep broad candidate set, final validation happens after parsing.
-        return "/laptop-" in path or "/notebook-" in path
+        slug = path.rsplit("/", 1)[-1].replace(".html", "")
+        # Real product slugs contain model numbers (digits); pure category
+        # slugs like "laptop-gaming-do-hoa" do not.
+        if not re.search(r'\d', slug):
+            return False
+        return "/laptop-" in path or "/notebook-" in path or "/may-tinh" in path
+
     if shop == "fpt":
         if not path.startswith("/may-tinh-xach-tay/"):
             return False
         slug = path.rsplit("/", 1)[-1]
-        # Exclude obvious category/filter slugs; keep the rest as potential product pages.
         category_like = {
-            "gaming-do-hoa",
-            "asus",
-            "lenovo",
-            "hp",
-            "acer",
-            "msi",
-            "gigabyte",
-            "apple-macbook",
-            "lg",
-            "dell",
-            "samsung",
-            "colorful",
-            "masstel",
-            "sinh-vien-van-phong",
-            "mong-nhe",
-            "doanh-nhan",
-            "ai",
+            "gaming-do-hoa", "asus", "lenovo", "hp", "acer", "msi",
+            "gigabyte", "apple-macbook", "lg", "dell", "samsung",
+            "colorful", "masstel", "sinh-vien-van-phong", "mong-nhe",
+            "doanh-nhan", "ai",
         }
-        if slug in category_like:
+        return slug not in category_like
+
+    if shop == "cellphones":
+        # Drop duplicate hash-fragment URLs
+        if p.fragment:
+            return False
+        if "/laptop" not in path:
+            return False
+        # Exclude the bare category page itself
+        stripped = path.rstrip("/")
+        if stripped in ("/laptop.html", "/laptop"):
             return False
         return True
+
+    if shop == "phongvu":
+        # /c/ paths are category listing pages, not product pages
+        if "/c/" in path:
+            return False
+        if "/laptop-" not in path:
+            return False
+        return True
+
     return True
 
 
@@ -164,14 +181,6 @@ def crawl_dynamic_links(
     headless: bool = True,
 ) -> List[str]:
     selectors = load_more_selectors or DEFAULT_LOAD_MORE_SELECTORS
-
-    # An Phat is often better captured through classic pagination than load-more UI.
-    if shop == "anphat":
-        return crawl_anphat_paginated_links(
-            category_url=category_url,
-            product_link_selector=product_link_selector,
-            max_pages=max(3, max_clicks),
-        )
 
     driver = create_driver(headless=headless)
     try:
@@ -309,36 +318,118 @@ def _extract_price_generic(soup: BeautifulSoup, selectors: List[str]) -> Tuple[O
     return best[0], best[1]
 
 
+_CONTACT_KEYWORDS = frozenset({
+    "email", "điện thoại", "phone", "fax", "cửa hàng", "trung tâm bảo hành",
+    "liên hệ", "chịu trách nhiệm", "chuỗi nhà thuốc", "hotline",
+})
+
+
+def _table_to_dict(table) -> Dict[str, str]:
+    d: Dict[str, str] = {}
+    for row in table.find_all("tr"):
+        cols = row.find_all(["td", "th"])
+        if len(cols) >= 2:
+            k = cols[0].get_text(" ", strip=True)
+            v = cols[1].get_text(" ", strip=True)
+            if k:
+                d[k] = v
+    return d
+
+
+def _dl_to_dict(dl) -> Dict[str, str]:
+    d: Dict[str, str] = {}
+    for dt, dd in zip(dl.find_all("dt"), dl.find_all("dd")):
+        k = dt.get_text(strip=True)
+        v = dd.get_text(strip=True)
+        if k:
+            d[k] = v
+    return d
+
+
+def _is_contact_table(kv: Dict[str, str]) -> bool:
+    if not kv:
+        return True
+    hits = sum(1 for k in kv if any(c in k.lower() for c in _CONTACT_KEYWORDS))
+    return hits > len(kv) * 0.3
+
+
 def _extract_specs_common(soup: BeautifulSoup) -> Dict[str, str]:
     specs: Dict[str, str] = {}
-    table = soup.find("table")
-    if table:
-        for row in table.find_all("tr"):
-            cols = row.find_all(["td", "th"])
-            if len(cols) >= 2:
-                k = cols[0].get_text(" ", strip=True)
-                v = cols[1].get_text(" ", strip=True)
-                if k:
-                    specs[k] = v
-    if not specs:
-        for dl in soup.find_all("dl"):
-            for dt, dd in zip(dl.find_all("dt"), dl.find_all("dd")):
-                k = dt.get_text(strip=True)
-                v = dd.get_text(strip=True)
-                if k:
-                    specs[k] = v
-    if not specs:
-        for li in soup.find_all("li"):
-            text = li.get_text(" ", strip=True)
-            if ":" in text:
-                k, v = [p.strip() for p in text.split(":", 1)]
-                if k:
-                    specs[k] = v
+
+    # 1) Try well-known spec containers first (class / id containing spec keywords)
+    for container in soup.select(
+        "[class*='spec'], [class*='thong-so'], [class*='parameter'], "
+        "[class*='config'], [id*='spec'], [id*='thong-so'], "
+        ".product-info-table, .product-specs, .box-specifi"
+    ):
+        for tbl in container.find_all("table"):
+            ts = _table_to_dict(tbl)
+            if ts and not _is_contact_table(ts):
+                specs.update(ts)
+        if not specs:
+            for dl in container.find_all("dl"):
+                ds = _dl_to_dict(dl)
+                if ds:
+                    specs.update(ds)
+    if specs:
+        return specs
+
+    # 2) Scan ALL tables, pick the largest non-contact one
+    best: Dict[str, str] = {}
+    for tbl in soup.find_all("table"):
+        ts = _table_to_dict(tbl)
+        if ts and not _is_contact_table(ts) and len(ts) > len(best):
+            best = ts
+    if best:
+        return best
+
+    # 3) dl elements
+    for dl in soup.find_all("dl"):
+        ds = _dl_to_dict(dl)
+        if ds and not _is_contact_table(ds):
+            specs.update(ds)
+    if specs:
+        return specs
+
+    # 4) li with ":" pattern
+    for li in soup.find_all("li"):
+        text = li.get_text(" ", strip=True)
+        if ":" in text and len(text) < 300:
+            k, v = [p.strip() for p in text.split(":", 1)]
+            if k and len(k) < 80 and not any(c in k.lower() for c in _CONTACT_KEYWORDS):
+                specs[k] = v
     return specs
 
 
-def parse_product_page_anphat(html: str, url: str) -> Dict:
+_PRICE_SELECTORS: Dict[str, List[str]] = {
+    "fpt": [
+        "[itemprop='price']", ".st-price-main", ".price",
+        ".price-current", ".product__price", "[class*='price']", "[class*='gia']",
+    ],
+    "anphat": [
+        "[itemprop='price']", ".price-main", ".product-price",
+        ".p-price", ".price", "[class*='price']", "[class*='gia']",
+    ],
+    "cellphones": [
+        "[itemprop='price']", ".product__price--show",
+        ".product__price", ".price", "[class*='price']",
+    ],
+    "phongvu": [
+        "[itemprop='price']", ".product-price__current",
+        ".product-price", ".price", "[class*='price']",
+    ],
+}
+
+_DEFAULT_PRICE_SELECTORS = [
+    "[itemprop='price']", ".price", "[class*='price']", "[class*='gia']",
+]
+
+
+def _parse_product_page_generic(html: str, url: str, shop: Optional[str]) -> Dict:
+    """Unified product-page parser used by all shops."""
     soup = BeautifulSoup(html, "html.parser")
+
+    # ---- name ----
     name = ""
     og = soup.select_one("meta[property='og:title'], meta[name='title']")
     if og and og.get("content"):
@@ -347,24 +438,23 @@ def parse_product_page_anphat(html: str, url: str) -> Dict:
         h1 = soup.find("h1")
         if h1:
             name = h1.get_text(strip=True)
-    price_raw, price = _extract_price_generic(
-        soup,
-        selectors=[
-            "[itemprop='price']",
-            ".price-main",
-            ".product-price",
-            ".p-price",
-            ".price",
-            "[class*='price']",
-            "[class*='gia']",
-        ],
-    )
+
+    # ---- price ----
+    selectors = _PRICE_SELECTORS.get(shop or "", _DEFAULT_PRICE_SELECTORS)
+    price_raw, price = _extract_price_generic(soup, selectors)
+
+    # ---- image ----
     image = None
     ogi = soup.select_one("meta[property='og:image']")
     if ogi and ogi.get("content"):
         image = ogi["content"]
+
+    # ---- specs ----
     specs = _extract_specs_common(soup)
+
+    # ---- features ----
     features = extract_features(name, specs, price)
+
     return {
         "url": url,
         "name": name,
@@ -376,88 +466,88 @@ def parse_product_page_anphat(html: str, url: str) -> Dict:
     }
 
 
-def parse_product_page_fpt(html: str, url: str) -> Dict:
-    soup = BeautifulSoup(html, "html.parser")
-    name = ""
-    og = soup.select_one("meta[property='og:title'], meta[name='title']")
-    if og and og.get("content"):
-        name = og["content"].strip()
-    else:
-        h1 = soup.find("h1")
-        if h1:
-            name = h1.get_text(strip=True)
+def _is_valid_product(item: Dict) -> bool:
+    """Heuristic check: does this look like a real product page?"""
+    if not item.get("name"):
+        return False
 
-    price_raw, price = _extract_price_generic(
-        soup,
-        selectors=[
-            "[itemprop='price']",
-            ".st-price-main",
-            ".price",
-            ".price-current",
-            ".product__price",
-            "[class*='price']",
-            "[class*='gia']",
-        ],
+    specs = item.get("specs") or {}
+    # Count non-contact spec keys
+    real_specs = sum(
+        1 for k in specs
+        if not any(c in k.lower() for c in _CONTACT_KEYWORDS)
     )
 
-    image = None
-    ogi = soup.select_one("meta[property='og:image']")
-    if ogi and ogi.get("content"):
-        image = ogi["content"]
+    features = item.get("features") or {}
+    filled = sum(1 for v in features.values() if v)
 
-    specs = _extract_specs_common(soup)
+    price = item.get("price")
 
-    features = extract_features(name, specs, price)
-    return {
-        "url": url,
-        "name": name,
-        "price": price,
-        "price_raw": price_raw,
-        "image": image,
-        "specs": specs,
-        "features": features,
-    }
+    # Must have price OR enough real information
+    if price is None and real_specs < 3 and filled < 4:
+        return False
+    return True
 
 
-def parse_product_page(html: str, url: str, shop: Optional[str]) -> Dict:
-    if shop == "anphat":
-        return parse_product_page_anphat(html, url)
-    if shop == "fpt":
-        return parse_product_page_fpt(html, url)
-    return parse_product_page_fpt(html, url)
-
-
-def crawl_and_parse_products(urls: List[str], shop: Optional[str], request_delay: float = 0.1) -> List[Dict]:
-    session = requests.Session()
-    session.headers.update(
-        {
+def _fetch_url(url: str) -> Tuple[str, Optional[str]]:
+    """Fetch a single URL, returning (url, html_or_None)."""
+    try:
+        s = requests.Session()
+        s.headers.update({
             "User-Agent": (
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
                 "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
             )
-        }
-    )
+        })
+        r = s.get(url, timeout=20)
+        if r.status_code == 200:
+            return url, r.text
+    except Exception:
+        pass
+    return url, None
+
+
+def crawl_and_parse_products(
+    urls: List[str],
+    shop: Optional[str],
+    max_workers: int = 5,
+    save_html: bool = True,
+) -> List[Dict]:
+    # ---- Phase 1: Parallel fetch ----
+    html_dir: Optional[Path] = None
+    if save_html:
+        html_dir = Path("data") / (shop or "unknown") / "raw_htmls"
+        html_dir.mkdir(parents=True, exist_ok=True)
+
+    html_map: Dict[str, str] = {}
+    print(f"  Fetching {len(urls)} product pages ({max_workers} workers)...")
+    with ThreadPoolExecutor(max_workers=max_workers) as ex:
+        futures = {ex.submit(_fetch_url, u): u for u in urls}
+        for fut in as_completed(futures):
+            url, html = fut.result()
+            if html:
+                html_map[url] = html
+
+    print(f"  Fetched {len(html_map)}/{len(urls)} pages successfully.")
+
+    # ---- Phase 2: Parse + validate + save HTML ----
     items: List[Dict] = []
-    for u in urls:
-        try:
-            r = session.get(u, timeout=20)
-            if r.status_code != 200:
-                continue
-            item = parse_product_page(r.text, u, shop=shop)
-            if not item.get("name"):
-                continue
-            # Final product-page guardrails to reduce category/landing false positives.
-            specs_len = len(item.get("specs", {}) or {})
-            if shop == "anphat":
-                if item.get("price") is None and specs_len < 3:
-                    continue
-            if shop == "fpt":
-                if item.get("price") is None and specs_len < 2:
-                    continue
-            items.append(item)
-            time.sleep(request_delay)
-        except Exception:
+    for idx, (url, html) in enumerate(html_map.items()):
+        if save_html and html_dir:
+            html_path = html_dir / f"{idx:04d}.html"
+            html_path.write_text(html, encoding="utf-8")
+
+        item = _parse_product_page_generic(html, url, shop)
+
+        if not _is_valid_product(item):
             continue
+
+        if save_html and html_dir:
+            item["saved_path"] = str(html_dir / f"{idx:04d}.html")
+
+        items.append(item)
+
+    print(f"  Validated {len(items)} products.")
     return items
 
 

@@ -1,6 +1,6 @@
 {
   "shop": "cellphones",
-  "product_link_selector": "a[href*='/laptop/']",
+  "product_link_selector": "a[href*='/laptop/'], a[href*='/laptop-']",
   "load_more_selectors": [
     ".button__show-more-product",
     ".btn-show-more",
