@@ -85,30 +85,31 @@ Nguồn dữ liệu chính:
 
 ## 2.2 Pipeline thu thập dữ liệu tổng thể
 
-Pipeline crawl hiện tại được tổ chức thành ba stage chính: thu thập link sản phẩm, tải trang chi tiết sản phẩm, và parse/chuẩn hóa thông số.
+Pipeline crawl hiện tại được tổ chức thành ba stage chính: thu thập link/SKU sản phẩm, tải trang chi tiết sản phẩm, và parse/chuẩn hóa thông số. Khác với bản thiết kế ban đầu dựa trên giao diện "xem thêm", pipeline hiện tại ưu tiên FPT category API để lấy đầy đủ SKU; Selenium chỉ còn là fallback khi API không trả dữ liệu.
 
 ```mermaid
 flowchart TD
-    A["Start Crawling"] --> B["Load FPT Configuration"]
-    B --> C["Stage 1: Collect Product Links"]
-    C --> D["Stage 2: Crawl Product Pages<br/>(HTML, Specs, Prices)"]
-    D --> E["Stage 3: Parse and Normalize Specifications"]
-    E --> F["Store FPT Raw Data"]
-    F --> G["Build FPT Feature CSV"]
-    G --> H["End Crawling"]
+    A["Bắt đầu thu thập"] --> B["Đọc cấu hình FPT"]
+    B --> C["Giai đoạn 1: Lấy link/SKU<br/>(ưu tiên API)"]
+    C --> D["Giai đoạn 2: Tải trang sản phẩm<br/>(HTML, thông số, giá)"]
+    D --> E["Giai đoạn 3: Gộp dữ liệu API<br/>và chuẩn hóa thông số"]
+    E --> F["Lưu dữ liệu thô FPT"]
+    F --> G["Tạo bảng đặc trưng CSV"]
+    G --> H["Kết thúc"]
 ```
 
-**Figure 1:** Overall flowchart of the FPT Shop laptop data crawling pipeline.
+**Hình 1:** Pipeline crawl dữ liệu FPT.
 
 Pipeline gồm các bước:
 
 1. Đọc cấu hình FPT trong `config/shops/fpt.json`.
-2. Dùng Selenium để mở trang danh mục laptop FPT.
-3. Cuộn trang và bấm nút "xem thêm" để load thêm sản phẩm.
-4. Trích xuất URL sản phẩm bằng BeautifulSoup.
-5. Tải từng trang sản phẩm và parse giá, ảnh, specs.
-6. Lưu raw JSON vào `data/fpt_laptops.json`.
-7. Build feature CSV bằng `src/build_dataset.py`.
+2. Gọi FPT category API theo batch để lấy danh sách sản phẩm/SKU laptop.
+3. Trích xuất slug SKU và cache metadata từ API như tên SKU, giá, giá gốc, ảnh, brand và key selling points.
+4. Nếu API không trả dữ liệu, dùng Selenium để cuộn trang và bấm "xem thêm" như phương án fallback.
+5. Tải từng trang chi tiết sản phẩm và parse giá, ảnh, specs.
+6. Merge metadata từ API với JSON-LD/specs trên trang chi tiết.
+7. Lưu raw JSON vào `data/fpt_laptops.json`.
+8. Build feature CSV bằng `src/build_dataset.py`.
 
 Lệnh chạy sau này:
 
@@ -117,38 +118,52 @@ python3 src/run_shop.py --max-clicks 50 --out data/fpt_laptops.json
 python3 src/build_dataset.py
 ```
 
-Kết quả cần cập nhật sau khi chạy:
+Kết quả chạy ngày 2026-06-11:
 
-| Artifact | Trạng thái hiện tại | Cập nhật sau khi chạy |
-|---|---:|---|
-| Số link sản phẩm thu được | Chưa chạy lại trong phiên báo cáo | TBD |
-| Số sản phẩm raw hợp lệ | 412 raw hiện có | TBD |
-| Số sản phẩm vào feature CSV | 162 valid hiện có | TBD |
-| File output | `data/fpt_laptops_features.csv` | TBD |
+| Artifact | Kết quả |
+|---|---:|
+| Số link/SKU sản phẩm thu được | 417 |
+| Số sản phẩm raw hợp lệ | 417 |
+| Số sản phẩm vào feature CSV | 417 |
+| File output | `data/fpt_laptops_features.csv` |
 
 ## 2.3 Giai đoạn 1: Thu thập đường dẫn sản phẩm
 
-Stage đầu tiên thu thập toàn bộ URL sản phẩm laptop từ trang danh mục FPT Shop. Trang FPT sử dụng cơ chế tải động bằng JavaScript, người dùng cần cuộn xuống và bấm "xem thêm" để hiển thị thêm sản phẩm. Vì vậy, crawler dùng Selenium WebDriver thay vì chỉ dùng HTTP request tĩnh.
+Stage đầu tiên thu thập toàn bộ URL/SKU laptop từ trang danh mục FPT Shop. Dù giao diện người dùng có cơ chế cuộn và bấm "xem thêm", hệ thống hiện tại dùng API danh mục của FPT làm nguồn chính vì API trả được danh sách SKU ổn định hơn và tránh phụ thuộc vào trạng thái render của trình duyệt.
 
 Quy trình:
 
 ```mermaid
 flowchart TD
-    A["Open FPT Laptop Category Page"] --> B["Wait for Page Rendering"]
-    B --> C["Scroll Page"]
-    C --> D{"Load More Button Available?"}
-    D -- Yes --> E["Click Xem thêm"]
-    E --> C
-    D -- No --> F["Parse HTML with BeautifulSoup"]
-    F --> G["Extract FPT Product URLs"]
-    G --> H["Remove Duplicates"]
-    H --> I["Save Links or Continue Full Parse"]
-    I --> J["End Stage 1"]
+    A["Bắt đầu giai đoạn 1"] --> B["Gọi API danh mục FPT"]
+    B --> C["Tham số: slug, skipCount,<br/>maxResultCount, categoryType"]
+    C --> D{"API có dữ liệu?"}
+    D -- Có --> E["Lấy product.skus[].slug"]
+    E --> F["Lưu metadata SKU<br/>(tên, giá, hãng, ảnh, KSP)"]
+    F --> G{"Còn batch tiếp?"}
+    G -- Có --> C
+    G -- Không --> H["Khử trùng lặp URL SKU"]
+    D -- Không --> I["Dự phòng Selenium<br/>cuộn/bấm xem thêm"]
+    I --> J["Tách link từ HTML đang hiển thị"]
+    J --> H
+    H --> K["Trả về URL sản phẩm FPT"]
 ```
 
-**Figure 2:** Detailed flowchart of Stage 1: Collecting FPT laptop product links.
+**Hình 2:** Thu thập link/SKU laptop FPT.
 
-Selector chính được lưu trong:
+Thông tin triển khai chính:
+
+| Thành phần | Giá trị |
+|---|---|
+| Hàm API-first | `crawl_fpt_links_via_api()` |
+| FPT API | `https://papi.fptshop.com.vn/gw/v1/public/fulltext-search-service/category` |
+| Category slug | `may-tinh-xach-tay` |
+| Batch size hiện tại | `24` SKU/lần gọi |
+| Trường URL chính | `product.skus[].slug` |
+| Metadata cache | `displayName`, `currentPrice`, `originalPrice`, `image`, `brand`, `keySellingPoints` |
+| Fallback UI | `crawl_fpt_links()` bằng Selenium |
+
+Selector fallback được lưu trong:
 
 ```json
 {
@@ -172,7 +187,7 @@ Sau khi có danh sách URL, hệ thống tải từng trang chi tiết sản ph�
 
 ### 2.4.1 Tải HTML của từng laptop
 
-Module `src/dynamic_load_crawler.py` dùng `requests` để tải trang chi tiết sản phẩm theo URL đã thu được. Việc tải trang chi tiết tách khỏi bước Selenium giúp pipeline nhẹ hơn, vì Selenium chỉ cần dùng cho trang danh mục có nút "xem thêm".
+Module `src/dynamic_load_crawler.py` dùng `requests` để tải trang chi tiết sản phẩm theo URL đã thu được. Việc tải trang chi tiết tách khỏi bước thu thập link giúp pipeline nhẹ hơn; Selenium chỉ được dùng khi API danh mục không hoạt động hoặc cần debug giao diện.
 
 Hàm chính:
 
@@ -201,9 +216,9 @@ Kết quả hiện tại trong CSV:
 
 | Chỉ số giá | Giá trị hiện tại |
 |---|---:|
-| Min price | 11,290,000 VND |
-| Median price | 27,740,000 VND |
-| Max price | 198,990,000 VND |
+| Min price | 6,890,000 VND |
+| Median price | 30,690,000 VND |
+| Max price | 199,490,000 VND |
 
 ### 2.4.3 Crawl đa luồng với ThreadPoolExecutor
 
@@ -217,20 +232,24 @@ Thông số hiện tại:
 | Request timeout | 20 giây |
 | Output raw JSON | `data/fpt_laptops.json` |
 
-Kết quả chạy chính thức sẽ được cập nhật tại đây sau khi thực hiện crawl.
+Kết quả chạy chính thức ngày 2026-06-11: crawler thu được 417 sản phẩm/SKU hợp lệ, không thiếu URL, tên, giá hoặc ảnh.
 
 ## 2.5 Giai đoạn 3: Parse và chuẩn hóa thông số sản phẩm
 
 ### 2.5.1 Chiến lược parse
 
-Trang sản phẩm FPT có thể trình bày specs trong nhiều dạng HTML khác nhau. Parser ưu tiên các container có class/id liên quan đến specs như:
+Trang sản phẩm FPT có thể trình bày specs trong nhiều dạng HTML khác nhau. Parser hiện dùng chiến lược nhiều tầng theo thứ tự ưu tiên:
 
-- `spec`
-- `thong-so`
-- `parameter`
-- `config`
-- `product-info-table`
-- `product-specs`
+1. Metadata đã cache từ FPT category API.
+2. JSON-LD trên trang chi tiết, đặc biệt là `additionalProperty`.
+3. Các container HTML có class/id liên quan đến specs như:
+
+   - `spec`
+   - `thong-so`
+   - `parameter`
+   - `config`
+   - `product-info-table`
+   - `product-specs`
 
 Nếu không tìm thấy container rõ ràng, parser quét bảng HTML và danh sách `li` có cấu trúc `key: value`.
 
@@ -257,6 +276,16 @@ Vì dữ liệu FPT hiện có một số trang thiếu bảng specs đầy đ�
 - GPU/gaming signal
 - Installment 0%
 
+Riêng với FPT, metadata từ API category giúp ổn định các trường retail và nhận diện SKU:
+
+| Nguồn tín hiệu | Mục đích |
+|---|---|
+| `sku.displayName` | Tên SKU đầy đủ để infer RAM/Storage/CPU/GPU |
+| `currentPrice`, `originalPrice` | Giá bán và giá gốc |
+| `brand` | Manufacturer fallback |
+| `image` | Ảnh sản phẩm |
+| `keySellingPoints` | Bổ sung thông số nổi bật khi trang chi tiết thiếu specs |
+
 ### 2.5.3 Chuẩn hóa và làm sạch dữ liệu
 
 Chuẩn hóa bao gồm:
@@ -275,19 +304,19 @@ Output chính:
 data/fpt_laptops_features.csv
 ```
 
-Hiện trạng trước khi chạy lại pipeline chính thức:
+Hiện trạng sau khi chạy lại pipeline ngày 2026-06-11:
 
 | Chỉ số | Giá trị hiện tại |
 |---|---:|
-| Số dòng | 162 |
+| Số dòng | 417 |
 | Số cột | 50 |
-| Số brand | 10 |
+| Số brand | 11 |
 | Price fill rate | 100.0% |
-| RAM fill rate | 82.7% |
-| Storage fill rate | 82.7% |
-| Screen size fill rate | 37.7% |
-| GPU manufacturer fill rate | 25.3% |
-| CPU manufacturer fill rate | 54.9% |
+| RAM fill rate | 100.0% |
+| Storage fill rate | 99.8% |
+| Screen size fill rate | 100.0% |
+| GPU manufacturer fill rate | 99.0% |
+| CPU manufacturer fill rate | 86.1% |
 | Weight fill rate | 0.0% |
 | Battery fill rate | 0.0% |
 | Stock status fill rate | 100.0% |
@@ -302,7 +331,7 @@ Pipeline crawl hiện tại đã được thu gọn thành FPT-only. Project ch�
 - `data/fpt_evaluation_results.json`
 - `data/fpt_metrics_summary.json`
 
-Sau khi chạy lại crawler, cần cập nhật các bảng ở Section 2 để phản ánh số lượng sản phẩm mới và chất lượng dữ liệu mới.
+Sau khi chạy lại crawler, dataset đã tăng từ 162 lên 417 sản phẩm/SKU hợp lệ. Các cột phục vụ matching chính như giá, RAM, Storage, Screen Size và GPU đã có fill rate cao; Weight và Battery vẫn cần cải thiện ở các lần phát triển sau.
 
 ---
 
@@ -310,114 +339,148 @@ Sau khi chạy lại crawler, cần cập nhật các bảng ở Section 2 để
 
 ## 3.1 Tổng quan dữ liệu
 
-Dataset hiện tại gồm 162 sản phẩm hợp lệ từ FPT Shop sau khi build từ `data/fpt_laptops.json`. Mỗi sản phẩm có 50 cột sau khi bổ sung feature runtime/scoring.
+Dataset hiện tại gồm 417 sản phẩm/SKU hợp lệ từ FPT Shop sau khi build từ `data/fpt_laptops.json`. Mỗi sản phẩm có 50 cột sau khi bổ sung feature runtime/scoring.
 
-**Figure 8:** Dataset Structure Overview.  
-Trạng thái: cần cập nhật bằng hình/table sau khi chạy EDA chính thức.
+Code tạo biểu đồ EDA:
+
+```bash
+python3 src/eda/visualize_fpt.py --csv data/fpt_laptops_features.csv --out-dir reports/figures
+```
+
+**Hình 8:** Tổng quan dataset.  
+Trạng thái: đã cập nhật số liệu; chưa tạo hình.
+
+Checklist biểu đồ:
+
+| Hình | Nội dung | Dữ liệu | Biểu đồ |
+|---|---|---|---|
+| Hình 8 | Tổng quan dataset | Đã có | Chưa tạo |
+| Hình 9 | Phân phối giá | Đã có | Chưa tạo |
+| Hình 10 | Phân khúc giá | Cần tính | Chưa tạo |
+| Hình 11 | Số mẫu theo hãng | Đã có | Chưa tạo |
+| Hình 12 | Cấu hình phổ biến | Cần tổng hợp | Chưa tạo |
+| Hình 13 | Giá theo RAM | Đã có | Chưa tạo |
+| Hình 14 | Nhóm GPU | Đã có | Chưa tạo |
+| Hình 15 | Model GPU | Chưa có cột | Chưa áp dụng |
+| Hình 16 | Giá theo GPU | Đã có mức hãng | Chưa tạo |
 
 Key observations hiện tại:
 
 - Dataset đã được thu gọn về FPT-only.
 - Giá bán có fill rate 100%.
-- RAM và Storage có fill rate 82.7%, đủ để chạy matching cơ bản.
-- CPU/GPU/Screen còn thiếu ở một phần lớn sản phẩm do raw specs FPT hiện có chưa đầy đủ.
+- RAM có fill rate 100.0%, Storage 99.8%, Screen Size 100.0% và GPU manufacturer 99.0%, đủ tốt cho matching Top-K theo cấu hình.
+- CPU manufacturer đạt 86.1%; phần thiếu chủ yếu rơi vào các model có tên CPU chưa thể map chắc chắn.
 - Weight và Battery hiện chưa có trong dataset, nên các scoring liên quan portability/battery dùng fallback trung lập.
 
 ## 3.2 Phân tích đơn biến
 
 ### 3.2.1 Phân phối giá và phân khúc ngân sách
 
-**Figure 9:** Distribution of Laptop Prices.  
-Trạng thái: cần tạo sau khi chạy EDA.
+**Hình 9:** Phân phối giá laptop.  
+Trạng thái: đã có số liệu; chưa tạo biểu đồ.
 
 Thống kê giá hiện tại:
 
-| Metric | Value |
+| Chỉ số | Giá trị |
 |---|---:|
-| Minimum | 11,290,000 VND |
-| Median | 27,740,000 VND |
-| Maximum | 198,990,000 VND |
+| Thấp nhất | 6,890,000 VND |
+| Trung vị | 30,690,000 VND |
+| Cao nhất | 199,490,000 VND |
 
-Phân khúc đề xuất để cập nhật khi chạy EDA:
+Phân khúc đề xuất để tính khi chạy EDA:
 
-| Segment | Range |
+| Phân khúc | Khoảng giá |
 |---|---|
-| Budget | `< 15M` |
-| Mid-range | `15M - 25M` |
-| Upper mid-range | `25M - 40M` |
-| Premium | `> 40M` |
+| Giá rẻ | `< 15M` |
+| Tầm trung | `15M - 25M` |
+| Cận cao cấp | `25M - 40M` |
+| Cao cấp | `> 40M` |
 
-**Figure 10:** Distribution of Laptops by User Budget Segment.  
-Trạng thái: cần cập nhật sau khi chạy script EDA.
+**Hình 10:** Số laptop theo phân khúc giá.  
+Trạng thái: cần chạy EDA để tạo.
 
 ### 3.2.2 Thị phần nhà sản xuất
 
-Brand distribution hiện tại:
+Phân bố hãng hiện tại:
 
-| Manufacturer | Số mẫu |
+| Hãng | Số mẫu |
 |---|---:|
-| Apple | 43 |
-| HP | 27 |
-| Asus | 24 |
-| Acer | 19 |
-| Lenovo | 16 |
-| Dell | 14 |
-| MSI | 13 |
-| Gigabyte | 4 |
-| Colorful | 1 |
+| Apple | 105 |
+| Asus | 84 |
+| Acer | 52 |
+| HP | 50 |
+| Lenovo | 38 |
+| Dell | 35 |
+| MSI | 33 |
+| Gigabyte | 11 |
+| Colorful | 7 |
 | LG | 1 |
+| Masstel | 1 |
 
-**Figure 11:** Number of Models by Manufacturer.  
-Trạng thái: cần cập nhật bằng chart sau khi chạy EDA.
+**Hình 11:** Số mẫu theo hãng.  
+Trạng thái: đã có bảng; chưa tạo biểu đồ.
 
 ## 3.3 Xu hướng phần cứng
 
 ### 3.3.1 Cấu hình RAM sau chuẩn hóa
 
-RAM distribution hiện tại:
+Phân bố RAM hiện tại:
 
 | RAM | Số mẫu |
 |---:|---:|
-| 16GB | 78 |
-| Missing | 28 |
-| 32GB | 20 |
-| 24GB | 18 |
-| 8GB | 7 |
-| 48GB | 5 |
-| 64GB | 3 |
-| 36GB | 2 |
+| 4GB | 1 |
+| 8GB | 20 |
+| 12GB | 1 |
+| 16GB | 259 |
+| 24GB | 47 |
+| 32GB | 69 |
+| 36GB | 5 |
+| 48GB | 8 |
+| 64GB | 6 |
 | 128GB | 1 |
 
-Storage distribution hiện tại:
+Phân bố ổ cứng hiện tại:
 
 | Storage | Số mẫu |
 |---:|---:|
-| 512GB | 81 |
-| 1TB | 30 |
-| Missing | 28 |
-| 2TB | 13 |
-| 4TB | 5 |
-| 256GB | 4 |
+| 128GB | 1 |
+| 256GB | 6 |
+| 512GB | 279 |
+| 1TB | 91 |
+| 2TB | 27 |
+| 3TB | 1 |
+| 4TB | 9 |
+| 6TB | 1 |
 | 8TB | 1 |
+| Thiếu | 1 |
 
-**Figure 12:** Top 10 Most Common Configurations.  
-Trạng thái: cần cập nhật sau khi chạy EDA.
+**Hình 12:** Top 10 cấu hình phổ biến.  
+Trạng thái: cần chạy EDA để tổng hợp.
 
-**Figure 13:** Price Distribution by RAM Capacity.  
-Trạng thái: cần cập nhật sau khi chạy EDA.
+**Hình 13:** Giá theo dung lượng RAM.  
+Trạng thái: đã có dữ liệu; chưa tạo biểu đồ.
 
 ### 3.3.2 Bức tranh GPU
 
-GPU manufacturer fill rate hiện tại là 25.3%. Đây là hạn chế của dataset hiện tại vì nhiều trang FPT trong raw JSON không có specs chi tiết. Để tránh recommendation rỗng cho gaming, hệ thống bổ sung tín hiệu từ tên sản phẩm như `Gaming`, `TUF`, `ROG`, `Nitro`, `LOQ`, `Legion`, `Victus`, `Predator`.
+Tỷ lệ nhận diện hãng GPU hiện tại là 99.0%. Dataset dùng metadata API, tên SKU và JSON-LD để suy luận GPU.
 
-**Figure 14:** Laptop Types based on GPU Category.  
-Trạng thái: cần cập nhật sau khi crawl/parse specs đầy đủ hơn.
+| Hãng GPU | Số mẫu |
+|---|---:|
+| Intel | 137 |
+| NVIDIA | 112 |
+| Apple | 110 |
+| AMD | 50 |
+| Qualcomm | 4 |
+| Thiếu | 4 |
 
-**Figure 15:** Top 10 Most Common GPU Models.  
-Trạng thái: chưa áp dụng do dataset hiện chỉ chuẩn hóa `GPU manufacturer`, chưa có `gpu_model` chi tiết.
+**Hình 14:** Nhóm laptop theo GPU.  
+Trạng thái: đã có dữ liệu; chưa tạo biểu đồ.
 
-**Figure 16:** Price Distribution by Top GPU Groups.  
-Trạng thái: cần cập nhật sau khi cải thiện GPU extraction.
+**Hình 15:** Top 10 model GPU.  
+Trạng thái: chưa áp dụng vì chưa có cột `gpu_model`.
+
+**Hình 16:** Giá theo nhóm GPU.  
+Trạng thái: có thể tạo theo hãng GPU; muốn chi tiết hơn cần thêm `gpu_model`.
 
 ## 3.4 Phân tích tính di động và đặc điểm vật lý
 
@@ -432,8 +495,8 @@ Khi chạy lại crawler và parser, cần ưu tiên trích xuất:
 
 ## 3.5 Phân tích đánh đổi tính di động
 
-**Figure 17:** Portability Trade-off: Screen Size vs. Weight.  
-Trạng thái: chờ dữ liệu Weight.
+**Hình 17:** Màn hình và trọng lượng.  
+Trạng thái: chờ dữ liệu cân nặng.
 
 Khi có dữ liệu weight đầy đủ, phân tích sẽ tập trung vào:
 
@@ -443,8 +506,8 @@ Khi có dữ liệu weight đầy đủ, phân tích sẽ tập trung vào:
 
 ### 3.5.1 "Chi phí trọng lượng" của hiệu năng
 
-**Figure 18:** Weight vs. Price for Gaming/High-performance Models.  
-Trạng thái: chờ dữ liệu Weight và GPU tốt hơn.
+**Hình 18:** Cân nặng và giá của laptop hiệu năng cao.  
+Trạng thái: chờ dữ liệu cân nặng và GPU chi tiết hơn.
 
 Dự kiến insight cần kiểm chứng: laptop gaming hoặc workstation thường có trọng lượng cao hơn do yêu cầu tản nhiệt, trong khi ultrabook và MacBook tập trung vào tính di động.
 
@@ -470,9 +533,9 @@ Các cột còn thiếu nhiều và cần cải thiện parser:
 
 | Cột | Fill rate hiện tại | Ghi chú |
 |---|---:|---|
-| CPU manufacturer | 54.9% | Có thể cải thiện từ tên và specs |
-| GPU manufacturer | 25.3% | Cần parse GPU model tốt hơn |
-| Screen Size | 37.7% | Có thể infer từ tên |
+| CPU manufacturer | 86.1% | Có thể cải thiện thêm với mapping CPU mới |
+| GPU manufacturer | 99.0% | Đủ tốt cho scoring theo GPU manufacturer |
+| Screen Size | 100.0% | Đã infer tốt từ SKU/specs |
 | Weight | 0.0% | Cần selector/spec parser bổ sung |
 | Battery | 0.0% | Cần selector/spec parser bổ sung |
 
@@ -660,7 +723,7 @@ Thông tin hiện tại:
 
 | Chỉ số | Giá trị |
 |---|---:|
-| Rows | 162 |
+| Rows | 417 |
 | Columns | 50 |
 | Main source | FPT Shop |
 | Recommendation input | Có |
@@ -703,17 +766,17 @@ Luồng chatbot:
 
 ```mermaid
 flowchart TD
-    U["User"] --> FE["Frontend HTML/JS"]
-    FE --> API["FastAPI /chat or /chat/stream"]
-    API --> INTENT["Intent Extraction<br/>Gemini + Rule Patch"]
-    INTENT --> REC["Recommendation Engine"]
+    U["Người dùng"] --> FE["Giao diện HTML/JS"]
+    FE --> API["FastAPI /chat hoặc /chat/stream"]
+    API --> INTENT["Trích xuất ý định<br/>Gemini + luật bổ sung"]
+    INTENT --> REC["Bộ máy gợi ý"]
     REC --> CSV["data/fpt_laptops_features.csv"]
     REC --> API
-    API --> LLM["Advice Generation<br/>Gemini or Fallback"]
+    API --> LLM["Sinh câu tư vấn<br/>Gemini hoặc fallback"]
     LLM --> FE
 ```
 
-**Figure 19:** Chatbot architecture for FPT Shop Laptop Advisor.
+**Hình 19:** Kiến trúc chatbot tư vấn laptop FPT.
 
 ### 6.3.1 Giao diện người dùng (Frontend)
 
@@ -770,23 +833,23 @@ Nếu không có `GEMINI_API_KEY` hoặc SDK chưa sẵn sàng, hệ thống v�
 
 ```mermaid
 sequenceDiagram
-    participant User
-    participant Frontend
+    participant U as Người dùng
+    participant FE as Giao diện
     participant API
-    participant Recommender
+    participant REC as Bộ gợi ý
     participant LLM
 
-    User->>Frontend: Nhập nhu cầu
-    Frontend->>API: POST /chat/stream
-    API->>API: Extract + patch intent
-    API->>Recommender: build_query_from_intent()
-    Recommender->>Recommender: apply_filters()
-    Recommender->>Recommender: apply_scoring()
-    Recommender-->>API: Top-K recommendations
-    API-->>Frontend: metadata JSON-line
+    U->>FE: Nhập nhu cầu
+    FE->>API: POST /chat/stream
+    API->>API: Trích xuất và vá intent
+    API->>REC: build_query_from_intent()
+    REC->>REC: Lọc ứng viên
+    REC->>REC: Chấm điểm
+    REC-->>API: Top-K sản phẩm
+    API-->>FE: Metadata JSON-line
     API->>LLM: generate_advice_stream()
-    LLM-->>API: text chunks
-    API-->>Frontend: text JSON-lines
+    LLM-->>API: Luồng nội dung
+    API-->>FE: Text JSON-lines
 ```
 
 ## 6.5 Thiết kế recommendation engine
@@ -1016,7 +1079,7 @@ Hệ thống hiện có đầy đủ các thành phần cốt lõi:
 
 Điểm mạnh của hệ thống là tính minh bạch: recommendation không phụ thuộc vào model học máy khó giải thích, mà dựa trên scoring rõ ràng và có thể kiểm thử. Điều này phù hợp với bài toán tư vấn bán lẻ, nơi hệ thống cần tránh bịa thông tin và chỉ tư vấn dựa trên dữ liệu sản phẩm có thật.
 
-Các bước tiếp theo là chạy lại pipeline chính thức, cải thiện parser cho specs/retail fields, sinh chart EDA, và cập nhật báo cáo này bằng kết quả thực nghiệm mới.
+Các bước tiếp theo là chạy pipeline chính thức, cải thiện parser cho specs/retail fields, tạo biểu đồ EDA, và cập nhật báo cáo bằng kết quả thực nghiệm mới.
 
 ---
 
@@ -1038,3 +1101,5 @@ Phần này dùng để cập nhật kết quả sau mỗi lần chạy pipeline
 | Date | Step | Command | Result | Notes |
 |---|---|---|---|---|
 | 2026-06-11 | Initial report draft | N/A | Created report structure | Chờ chạy pipeline chính thức |
+| 2026-06-11 | Crawl FPT laptop data | `python3 src/run_shop.py --max-clicks 50 --out data/fpt_laptops.json` | 417 raw products/SKUs | Không thiếu URL, tên, giá, ảnh |
+| 2026-06-11 | Build feature dataset | `python3 src/build_dataset.py` | 417 rows, 50 columns | RAM 100.0%, Storage 99.8%, GPU 99.0% |
