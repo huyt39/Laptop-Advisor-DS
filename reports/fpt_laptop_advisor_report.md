@@ -57,6 +57,8 @@ Dự án hiện tại chuyển hướng từ một hệ thống tư vấn laptop
 
 Phương pháp được lựa chọn là rule-based scoring kết hợp LLM. Phần scoring giữ tính xác định và dễ kiểm chứng; phần LLM hỗ trợ hiểu ngôn ngữ tự nhiên và diễn giải kết quả theo phong cách tư vấn viên FPT Shop.
 
+Ở phiên bản dữ liệu hiện tại, hệ thống đã sử dụng được tên SKU, giá bán, hãng, ảnh, URL và phần lớn thông số cấu hình. Các trường bán lẻ mở rộng gồm giá gốc, trả góp 0%, ưu đãi học sinh - sinh viên, quà tặng và tình trạng tồn kho đã được thiết kế trong schema nhưng chưa được nguồn crawl hiện tại cung cấp đầy đủ. Vì vậy, recommendation và báo cáo thực nghiệm hiện chủ yếu dựa trên giá bán và cấu hình; hệ thống không dùng các giá trị retail mặc định để khẳng định một chương trình ưu đãi đang thực sự áp dụng.
+
 ---
 
 # 2. Thu thập dữ liệu
@@ -123,8 +125,9 @@ Kết quả chạy ngày 2026-06-11:
 | Artifact | Kết quả |
 |---|---:|
 | Số link/SKU sản phẩm thu được | 417 |
-| Số sản phẩm raw hợp lệ | 417 |
-| Số sản phẩm vào feature CSV | 417 |
+| Số SKU raw hợp lệ | 417 |
+| Số SKU vào feature CSV | 417 |
+| Số tên sản phẩm duy nhất | 364 |
 | File output | `data/fpt_laptops_features.csv` |
 
 ## 2.3 Giai đoạn 1: Thu thập đường dẫn sản phẩm
@@ -199,12 +202,13 @@ Chế độ `save_html=True` chỉ dùng khi cần debug selector, tránh giữ 
 
 ### 2.4.2 Trích xuất giá
 
-Giá bán được trích xuất theo thứ tự ưu tiên:
+Giá bán cuối cùng được chọn theo thứ tự ưu tiên:
 
-1. JSON-LD hoặc structured data có `"priceCurrency": "VND"`.
-2. Meta tag như `meta[itemprop='price']`.
-3. CSS selector giá phổ biến trên FPT.
-4. Lọc token số nằm trong khoảng giá laptop hợp lý.
+1. `currentPrice` của SKU từ FPT category API.
+2. JSON-LD hoặc structured data trên trang chi tiết có `"priceCurrency": "VND"`.
+3. Meta tag như `meta[itemprop='price']`.
+4. CSS selector giá phổ biến trên FPT.
+5. Lọc token số nằm trong khoảng giá laptop hợp lý.
 
 Giá được chuẩn hóa về số nguyên VND. Ví dụ:
 
@@ -232,7 +236,7 @@ Thông số hiện tại:
 | Request timeout | 20 giây |
 | Output raw JSON | `data/fpt_laptops.json` |
 
-Kết quả chạy chính thức ngày 2026-06-11: crawler thu được 417 sản phẩm/SKU hợp lệ, không thiếu URL, tên, giá hoặc ảnh.
+Kết quả chạy chính thức ngày 2026-06-11: crawler thu được 417 SKU hợp lệ, tương ứng 364 tên sản phẩm duy nhất. Không có SKU nào thiếu URL, tên, giá hoặc ảnh.
 
 ## 2.5 Giai đoạn 3: Parse và chuẩn hóa thông số sản phẩm
 
@@ -264,9 +268,22 @@ Các thuộc tính chuẩn hóa hiện tại:
 | Memory | `RAM (GB)`, `RAM Type`, `Bus (MHz)` |
 | Storage | `Storage (GB)` |
 | Display | `Screen Size (inch)`, `Screen Resolution`, `Refresh Rate (Hz)` |
-| Graphics | `GPU manufacturer` |
+| Graphics | `GPU manufacturer`, `GPU model`, `GPU type` |
 | Portability | `Weight (kg)`, `Battery`, `Battery (Wh)` |
 | Retail | `Price (VND)`, `Original Price (VND)`, `Is Installment 0%`, `Student Discount (VND)`, `Gifts`, `Stock Status` |
+
+Mức độ sẵn sàng của nhóm retail trong dataset hiện tại:
+
+| Thuộc tính | Dữ liệu thực tế |
+|---|---:|
+| `Price (VND)` | 417/417 SKU |
+| `Original Price (VND)` | 0/417 SKU |
+| `Is Installment 0%` | Chưa nhận diện được; 417 giá trị mặc định `False` |
+| `Student Discount (VND)` | Chưa nhận diện được; 417 giá trị mặc định `0` |
+| `Gifts` | 0/417 SKU |
+| `Stock Status` | Chưa crawl được; 417 giá trị fallback `In Stock` |
+
+Các giá trị mặc định giúp schema và API hoạt động ổn định nhưng không được xem là bằng chứng về chương trình ưu đãi hoặc tồn kho thực tế.
 
 Vì dữ liệu FPT hiện có một số trang thiếu bảng specs đầy đủ, hệ thống có thêm inference từ tên sản phẩm, đặc biệt cho:
 
@@ -274,14 +291,15 @@ Vì dữ liệu FPT hiện có một số trang thiếu bảng specs đầy đ�
 - RAM
 - Storage
 - GPU/gaming signal
-- Installment 0%
+- Tín hiệu trả góp 0% nếu nguồn text có đề cập
 
-Riêng với FPT, metadata từ API category giúp ổn định các trường retail và nhận diện SKU:
+Riêng với FPT, metadata từ API category giúp ổn định việc nhận diện SKU và các trường retail mà API thực sự trả về:
 
 | Nguồn tín hiệu | Mục đích |
 |---|---|
 | `sku.displayName` | Tên SKU đầy đủ để infer RAM/Storage/CPU/GPU |
-| `currentPrice`, `originalPrice` | Giá bán và giá gốc |
+| `currentPrice` | Giá bán hiện tại |
+| `originalPrice` | Giá gốc nếu API cung cấp; batch hiện tại chưa có giá trị |
 | `brand` | Manufacturer fallback |
 | `image` | Ảnh sản phẩm |
 | `keySellingPoints` | Bổ sung thông số nổi bật khi trang chi tiết thiếu specs |
@@ -292,7 +310,7 @@ Chuẩn hóa bao gồm:
 
 - Chuyển giá, RAM, SSD, màn hình, refresh rate, weight sang numeric.
 - Chuẩn hóa pin Wh nếu có.
-- Gán `Stock Status = In Stock` nếu nguồn dữ liệu chưa có trạng thái rõ ràng.
+- Gán fallback `Stock Status = In Stock` nếu nguồn dữ liệu chưa có trạng thái rõ ràng; không dùng fallback này để kết luận tồn kho.
 - Bổ sung score chuẩn hóa (`norm_ram`, `norm_storage`, `norm_price`, `norm_weight`, `norm_screen`, `norm_battery`).
 - Loại bỏ dòng không có tên hoặc không có giá.
 
@@ -308,18 +326,21 @@ Hiện trạng sau khi chạy lại pipeline ngày 2026-06-11:
 
 | Chỉ số | Giá trị hiện tại |
 |---|---:|
-| Số dòng | 417 |
-| Số cột | 50 |
+| Số SKU | 417 |
+| Số tên sản phẩm duy nhất | 364 |
+| Số cột | 52 |
 | Số brand | 11 |
 | Price fill rate | 100.0% |
 | RAM fill rate | 100.0% |
 | Storage fill rate | 99.8% |
 | Screen size fill rate | 100.0% |
 | GPU manufacturer fill rate | 99.0% |
-| CPU manufacturer fill rate | 86.1% |
+| GPU model fill rate | 99.0% |
+| GPU type fill rate | 99.0% |
+| CPU manufacturer fill rate | 84.9% |
 | Weight fill rate | 0.0% |
 | Battery fill rate | 0.0% |
-| Stock status fill rate | 100.0% |
+| Stock status fill rate | 100.0% fallback; chưa có dữ liệu tồn kho thực |
 
 ## 2.6 Tổng kết
 
@@ -331,7 +352,7 @@ Pipeline crawl hiện tại đã được thu gọn thành FPT-only. Project ch�
 - `data/fpt_evaluation_results.json`
 - `data/fpt_metrics_summary.json`
 
-Sau khi chạy lại crawler, dataset đã tăng từ 162 lên 417 sản phẩm/SKU hợp lệ. Các cột phục vụ matching chính như giá, RAM, Storage, Screen Size và GPU đã có fill rate cao; Weight và Battery vẫn cần cải thiện ở các lần phát triển sau.
+Sau khi chạy lại crawler, dataset đã tăng từ 162 lên 417 SKU hợp lệ, tương ứng 364 tên sản phẩm duy nhất. Các cột phục vụ matching chính như giá, RAM, Storage, Screen Size và GPU đã có fill rate cao. Weight, Battery và nhóm retail mở rộng vẫn cần cải thiện ở các lần phát triển sau.
 
 ---
 
@@ -339,7 +360,7 @@ Sau khi chạy lại crawler, dataset đã tăng từ 162 lên 417 sản phẩm/
 
 ## 3.1 Tổng quan dữ liệu
 
-Dataset hiện tại gồm 417 sản phẩm/SKU hợp lệ từ FPT Shop sau khi build từ `data/fpt_laptops.json`. Mỗi sản phẩm có 50 cột sau khi bổ sung feature runtime/scoring.
+Dataset hiện tại gồm 417 SKU hợp lệ từ FPT Shop, tương ứng 364 tên sản phẩm duy nhất. Sau khi bổ sung `GPU model`, `GPU type` và các feature runtime/scoring, feature CSV có 52 cột. Các thống kê trong chương này được tính theo SKU vì mỗi màu hoặc cấu hình bán hàng có URL/SKU riêng.
 
 Code tạo biểu đồ EDA:
 
@@ -348,28 +369,29 @@ python3 src/eda/visualize_fpt.py --csv data/fpt_laptops_features.csv --out-dir r
 ```
 
 **Hình 8:** Tổng quan dataset.  
-Trạng thái: đã cập nhật số liệu; chưa tạo hình.
+![Tỷ lệ dữ liệu có giá trị](figures/fig8_tong_quan_dataset.png)
 
 Checklist biểu đồ:
 
 | Hình | Nội dung | Dữ liệu | Biểu đồ |
 |---|---|---|---|
-| Hình 8 | Tổng quan dataset | Đã có | Chưa tạo |
-| Hình 9 | Phân phối giá | Đã có | Chưa tạo |
-| Hình 10 | Phân khúc giá | Cần tính | Chưa tạo |
-| Hình 11 | Số mẫu theo hãng | Đã có | Chưa tạo |
-| Hình 12 | Cấu hình phổ biến | Cần tổng hợp | Chưa tạo |
-| Hình 13 | Giá theo RAM | Đã có | Chưa tạo |
-| Hình 14 | Nhóm GPU | Đã có | Chưa tạo |
-| Hình 15 | Model GPU | Chưa có cột | Chưa áp dụng |
-| Hình 16 | Giá theo GPU | Đã có mức hãng | Chưa tạo |
+| Hình 8 | Tổng quan dataset | Đã có | Đã tạo |
+| Hình 9 | Phân phối giá | Đã có | Đã tạo |
+| Hình 10 | Phân khúc giá | Đã có | Đã tạo |
+| Hình 11 | Số SKU theo hãng | Đã có | Đã tạo |
+| Hình 12 | Cấu hình phổ biến | Đã có | Đã tạo |
+| Hình 13 | Giá theo RAM | Đã có | Đã tạo |
+| Hình 14 | Loại GPU | Đã có | Đã tạo |
+| Hình 15 | Model GPU | Đã có | Đã tạo |
+| Hình 16 | Giá theo model GPU | Đã có | Đã tạo |
 
-Key observations hiện tại:
+Nhận xét chính:
 
 - Dataset đã được thu gọn về FPT-only.
+- Dataset không trùng URL; 417 SKU tương ứng 364 tên sản phẩm duy nhất.
 - Giá bán có fill rate 100%.
-- RAM có fill rate 100.0%, Storage 99.8%, Screen Size 100.0% và GPU manufacturer 99.0%, đủ tốt cho matching Top-K theo cấu hình.
-- CPU manufacturer đạt 86.1%; phần thiếu chủ yếu rơi vào các model có tên CPU chưa thể map chắc chắn.
+- RAM có fill rate 100.0%, Storage 99.8%, Screen Size 100.0%, GPU manufacturer/model/type 99.0%, đủ tốt cho matching Top-K theo cấu hình.
+- Hãng CPU đạt 84.9%; phần thiếu chủ yếu rơi vào các SKU có tên CPU chưa thể map chắc chắn.
 - Weight và Battery hiện chưa có trong dataset, nên các scoring liên quan portability/battery dùng fallback trung lập.
 
 ## 3.2 Phân tích đơn biến
@@ -377,7 +399,7 @@ Key observations hiện tại:
 ### 3.2.1 Phân phối giá và phân khúc ngân sách
 
 **Hình 9:** Phân phối giá laptop.  
-Trạng thái: đã có số liệu; chưa tạo biểu đồ.
+![Phân phối giá laptop](figures/fig9_phan_phoi_gia.png)
 
 Thống kê giá hiện tại:
 
@@ -387,23 +409,32 @@ Thống kê giá hiện tại:
 | Trung vị | 30,690,000 VND |
 | Cao nhất | 199,490,000 VND |
 
-Phân khúc đề xuất để tính khi chạy EDA:
+Phân khúc sử dụng trong EDA:
 
 | Phân khúc | Khoảng giá |
 |---|---|
 | Giá rẻ | `< 15M` |
-| Tầm trung | `15M - 25M` |
-| Cận cao cấp | `25M - 40M` |
-| Cao cấp | `> 40M` |
+| Tầm trung | `15M đến < 25M` |
+| Cận cao cấp | `25M đến < 40M` |
+| Cao cấp | `>= 40M` |
 
-**Hình 10:** Số laptop theo phân khúc giá.  
-Trạng thái: cần chạy EDA để tạo.
+**Hình 10:** Số SKU theo phân khúc giá.
+![Số SKU theo phân khúc giá](figures/fig10_phan_khuc_gia.png)
+
+| Phân khúc | Số SKU | Tỷ lệ |
+|---|---:|---:|
+| Giá rẻ | 8 | 1.9% |
+| Tầm trung | 118 | 28.3% |
+| Cận cao cấp | 158 | 37.9% |
+| Cao cấp | 133 | 31.9% |
+
+Phần lớn danh mục tập trung từ 25 triệu đồng trở lên: hai nhóm cận cao cấp và cao cấp chiếm 69.8% tổng số SKU.
 
 ### 3.2.2 Thị phần nhà sản xuất
 
 Phân bố hãng hiện tại:
 
-| Hãng | Số mẫu |
+| Hãng | Số SKU |
 |---|---:|
 | Apple | 105 |
 | Asus | 84 |
@@ -417,8 +448,10 @@ Phân bố hãng hiện tại:
 | LG | 1 |
 | Masstel | 1 |
 
-**Hình 11:** Số mẫu theo hãng.  
-Trạng thái: đã có bảng; chưa tạo biểu đồ.
+**Hình 11:** Số SKU theo hãng.
+![Số SKU theo hãng](figures/fig11_so_mau_theo_hang.png)
+
+Apple và Asus là hai hãng có số SKU lớn nhất, lần lượt chiếm 25.2% và 20.1% dataset.
 
 ## 3.3 Xu hướng phần cứng
 
@@ -426,7 +459,7 @@ Trạng thái: đã có bảng; chưa tạo biểu đồ.
 
 Phân bố RAM hiện tại:
 
-| RAM | Số mẫu |
+| RAM | Số SKU |
 |---:|---:|
 | 4GB | 1 |
 | 8GB | 20 |
@@ -441,7 +474,7 @@ Phân bố RAM hiện tại:
 
 Phân bố ổ cứng hiện tại:
 
-| Storage | Số mẫu |
+| Storage | Số SKU |
 |---:|---:|
 | 128GB | 1 |
 | 256GB | 6 |
@@ -454,33 +487,75 @@ Phân bố ổ cứng hiện tại:
 | 8TB | 1 |
 | Thiếu | 1 |
 
-**Hình 12:** Top 10 cấu hình phổ biến.  
-Trạng thái: cần chạy EDA để tổng hợp.
+**Hình 12:** Top cấu hình RAM, ổ cứng và hãng GPU.
+![Top cấu hình RAM, ổ cứng và hãng GPU](figures/fig12_cau_hinh_pho_bien.png)
+
+Cấu hình phổ biến nhất là 16GB RAM, 512GB và GPU Intel với 87 SKU; tiếp theo là 16GB RAM, 512GB và GPU NVIDIA với 73 SKU.
 
 **Hình 13:** Giá theo dung lượng RAM.  
-Trạng thái: đã có dữ liệu; chưa tạo biểu đồ.
+![Giá theo dung lượng RAM](figures/fig13_gia_theo_ram.png)
+
+Giá có xu hướng tăng theo dung lượng RAM. Các nhóm 4GB, 12GB và 128GB chỉ có một SKU nên đường biểu diễn của các nhóm này không đại diện cho một phân phối hoàn chỉnh.
 
 ### 3.3.2 Bức tranh GPU
 
-Tỷ lệ nhận diện hãng GPU hiện tại là 99.0%. Dataset dùng metadata API, tên SKU và JSON-LD để suy luận GPU.
+Dataset chuẩn hóa GPU ở ba mức: hãng GPU, model GPU và loại GPU. Nguồn trích xuất gồm trường `Card đồ hoạ` trong raw specs, tên SKU và thông tin CPU/SoC. Cả ba trường đạt fill rate 99.0%, tương ứng 413/417 SKU.
 
-| Hãng GPU | Số mẫu |
+| Hãng GPU | Số SKU |
 |---|---:|
-| Intel | 137 |
+| Intel | 141 |
 | NVIDIA | 112 |
-| Apple | 110 |
+| Apple | 105 |
 | AMD | 50 |
-| Qualcomm | 4 |
+| Qualcomm | 5 |
 | Thiếu | 4 |
 
-**Hình 14:** Nhóm laptop theo GPU.  
-Trạng thái: đã có dữ liệu; chưa tạo biểu đồ.
+Phân loại GPU:
+
+| Loại GPU | Số SKU | Tỷ lệ |
+|---|---:|---:|
+| GPU tích hợp | 301 | 72.2% |
+| GPU rời | 112 | 26.9% |
+| Chưa xác định | 4 | 1.0% |
+
+Toàn bộ SKU NVIDIA hiện tại dùng RTX hoặc MX570A và được xếp vào GPU rời. GPU Intel, AMD Radeon tích hợp, Apple và Qualcomm được xếp vào GPU tích hợp.
+
+**Hình 14:** Số SKU theo loại GPU.
+![Số SKU theo loại GPU](figures/fig14_nhom_gpu.png)
 
 **Hình 15:** Top 10 model GPU.  
-Trạng thái: chưa áp dụng vì chưa có cột `gpu_model`.
+![Top 10 model GPU phổ biến](figures/fig15_model_gpu_pho_bien.png)
 
-**Hình 16:** Giá theo nhóm GPU.  
-Trạng thái: có thể tạo theo hãng GPU; muốn chi tiết hơn cần thêm `gpu_model`.
+| Model GPU | Số SKU |
+|---|---:|
+| Intel Graphics | 70 |
+| Apple M5 10-core GPU | 65 |
+| AMD Radeon Graphics | 41 |
+| Intel UHD | 40 |
+| RTX 5060 | 25 |
+| RTX 3050 | 22 |
+| Intel Arc Graphics | 22 |
+| RTX 4050 | 18 |
+| RTX 5050 | 17 |
+| Intel Iris Xe | 9 |
+
+**Hình 16:** Giá theo Top 10 model GPU.
+![Giá theo Top 10 model GPU](figures/fig16_gia_theo_gpu.png)
+
+| Model GPU | Giá trung vị |
+|---|---:|
+| AMD Radeon Graphics | 18.99M |
+| Intel UHD | 21.29M |
+| Intel Iris Xe | 22.99M |
+| Intel Arc Graphics | 25.79M |
+| RTX 3050 | 26.04M |
+| Intel Graphics | 27.49M |
+| RTX 4050 | 29.14M |
+| RTX 5050 | 37.39M |
+| RTX 5060 | 46.99M |
+| Apple M5 10-core GPU | 49.49M |
+
+Nhìn chung, giá trung vị tăng theo phân khúc GPU. Tuy nhiên, GPU không phải yếu tố duy nhất quyết định giá; thương hiệu, CPU, RAM, màn hình và thiết kế cũng tạo ra độ phân tán lớn trong từng nhóm.
 
 ## 3.4 Phân tích tính di động và đặc điểm vật lý
 
@@ -525,16 +600,18 @@ Các bước đã triển khai:
 - Loại sản phẩm không có giá bán.
 - Deduplicate theo URL.
 - Convert numeric columns bằng `pd.to_numeric`.
-- Fill `Stock Status = In Stock` nếu thiếu.
-- Fill retail fields mặc định: `Student Discount = 0`, `Gifts = ""`.
+- Fill `Stock Status = In Stock` nếu thiếu để giữ tương thích schema; giá trị này không đại diện cho tồn kho thực tế.
+- Fill retail fields mặc định: `Student Discount = 0`, `Gifts = ""`; các giá trị mặc định không được dùng để xác nhận ưu đãi.
 - Infer RAM/Storage/Manufacturer từ tên sản phẩm khi specs thiếu.
 
 Các cột còn thiếu nhiều và cần cải thiện parser:
 
 | Cột | Fill rate hiện tại | Ghi chú |
 |---|---:|---|
-| CPU manufacturer | 86.1% | Có thể cải thiện thêm với mapping CPU mới |
+| CPU manufacturer | 84.9% | Có thể cải thiện thêm với mapping CPU mới |
 | GPU manufacturer | 99.0% | Đủ tốt cho scoring theo GPU manufacturer |
+| GPU model | 99.0% | Dùng cho EDA và phân tích giá theo model |
+| GPU type | 99.0% | Phân loại GPU tích hợp hoặc GPU rời |
 | Screen Size | 100.0% | Đã infer tốt từ SKU/specs |
 | Weight | 0.0% | Cần selector/spec parser bổ sung |
 | Battery | 0.0% | Cần selector/spec parser bổ sung |
@@ -543,12 +620,11 @@ Các cột còn thiếu nhiều và cần cải thiện parser:
 
 ### 4.2.1 Trích xuất và chuẩn hóa
 
-Hiện tại GPU được chuẩn hóa ở mức manufacturer:
+GPU hiện được chuẩn hóa ở ba mức:
 
-- NVIDIA
-- AMD
-- Intel
-- Apple
+- `GPU manufacturer`: Intel, NVIDIA, Apple, AMD hoặc Qualcomm.
+- `GPU model`: ví dụ RTX 5060, Intel Arc Graphics, AMD Radeon Graphics hoặc Apple M5 10-core GPU.
+- `GPU type`: `Integrated` hoặc `Dedicated`.
 
 Ngoài ra, hệ thống dùng tín hiệu tên dòng máy để hỗ trợ gaming score trong trường hợp GPU thiếu:
 
@@ -630,7 +706,7 @@ Score này đóng vai trò nền cho gaming, AI/graphics và general-purpose ran
 
 ## 5.3 Điểm hiệu năng GPU
 
-GPU score được xác định bằng luật dựa trên tên GPU hoặc tên sản phẩm. Với dataset hiện tại, gaming-line signals đóng vai trò quan trọng vì nhiều sản phẩm FPT chưa có GPU specs đầy đủ.
+GPU score được xác định bằng luật dựa trên model GPU, hãng GPU và tên sản phẩm. Dataset hiện nhận diện được GPU cho 99.0% SKU; tín hiệu tên dòng gaming vẫn được dùng để hỗ trợ xếp hạng và tăng độ bền khi thông tin GPU chi tiết bị thiếu.
 
 Ví dụ:
 
@@ -724,7 +800,7 @@ Thông tin hiện tại:
 | Chỉ số | Giá trị |
 |---|---:|
 | Rows | 417 |
-| Columns | 50 |
+| Columns | 52 |
 | Main source | FPT Shop |
 | Recommendation input | Có |
 | Benchmark input | Có |
@@ -1033,12 +1109,14 @@ Kết quả hiện tại cho thấy:
 - CSR đạt 100% vì hard constraints được phân biệt rõ với soft preferences.
 - Query gaming không bị trả rỗng nhờ chuyển gaming từ hard-filter sang scoring.
 - Brand, RAM, Storage, khoảng giá và retail intent được patch bằng rule từ text.
+- Retail intent được nhận diện ở tầng hội thoại, nhưng bonus tương ứng chưa tạo khác biệt đáng kể vì dữ liệu ưu đãi hiện chưa được populate.
 
 Các hạn chế cần tiếp tục cải thiện:
 
 - Weight và Battery chưa có trong dataset hiện tại.
-- GPU extraction còn thiếu, phải dùng thêm tín hiệu tên dòng máy.
+- Bốn SKU chưa xác định được GPU; logic vẫn dùng thêm tín hiệu tên dòng máy làm fallback.
 - Retail fields như `Gifts`, `Original Price`, `Student Discount` cần parse tốt hơn từ trang FPT.
+- `Stock Status` hiện là fallback `In Stock`, chưa phản ánh tồn kho thực tế.
 - Gemini judge chưa chạy trong benchmark chính thức.
 
 ## 7.6 Thảo luận
@@ -1056,7 +1134,7 @@ Checklist cập nhật sau khi chạy:
 
 | Bước | Command | Kết quả cần ghi |
 |---|---|---|
-| Crawl FPT | `python3 src/run_shop.py --max-clicks 50 --out data/fpt_laptops.json` | Số sản phẩm raw |
+| Crawl FPT | `python3 src/run_shop.py --max-clicks 50 --out data/fpt_laptops.json` | Số SKU raw |
 | Build CSV | `python3 src/build_dataset.py` | Rows, columns, fill rates |
 | API smoke test | `POST /chat` | Số recommendations, sample output |
 | Benchmark | `python3 -m src.evaluation.run_evaluation ...` | Precision@K, NDCG@K, MRR, CSR |
@@ -1079,7 +1157,7 @@ Hệ thống hiện có đầy đủ các thành phần cốt lõi:
 
 Điểm mạnh của hệ thống là tính minh bạch: recommendation không phụ thuộc vào model học máy khó giải thích, mà dựa trên scoring rõ ràng và có thể kiểm thử. Điều này phù hợp với bài toán tư vấn bán lẻ, nơi hệ thống cần tránh bịa thông tin và chỉ tư vấn dựa trên dữ liệu sản phẩm có thật.
 
-Các bước tiếp theo là chạy pipeline chính thức, cải thiện parser cho specs/retail fields, tạo biểu đồ EDA, và cập nhật báo cáo bằng kết quả thực nghiệm mới.
+Các bước tiếp theo là cải thiện parser cho Weight, Battery và retail fields; chạy lại benchmark trên feature CSV 52 cột; sau đó cập nhật kết quả đánh giá và thử nghiệm chatbot bằng dữ liệu mới.
 
 ---
 
@@ -1101,5 +1179,5 @@ Phần này dùng để cập nhật kết quả sau mỗi lần chạy pipeline
 | Date | Step | Command | Result | Notes |
 |---|---|---|---|---|
 | 2026-06-11 | Initial report draft | N/A | Created report structure | Chờ chạy pipeline chính thức |
-| 2026-06-11 | Crawl FPT laptop data | `python3 src/run_shop.py --max-clicks 50 --out data/fpt_laptops.json` | 417 raw products/SKUs | Không thiếu URL, tên, giá, ảnh |
-| 2026-06-11 | Build feature dataset | `python3 src/build_dataset.py` | 417 rows, 50 columns | RAM 100.0%, Storage 99.8%, GPU 99.0% |
+| 2026-06-11 | Crawl FPT laptop data | `python3 src/run_shop.py --max-clicks 50 --out data/fpt_laptops.json` | 417 raw SKU, 364 tên duy nhất | Không thiếu URL, tên, giá, ảnh |
+| 2026-06-11 | Build feature dataset | `python3 src/build_dataset.py` | 417 rows, 52 columns | RAM 100.0%, Storage 99.8%, GPU manufacturer/model/type 99.0% |
