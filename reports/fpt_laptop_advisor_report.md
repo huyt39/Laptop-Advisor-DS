@@ -113,13 +113,6 @@ Pipeline gồm các bước:
 7. Lưu raw JSON vào `data/fpt_laptops.json`.
 8. Build feature CSV bằng `src/build_dataset.py`.
 
-Lệnh chạy sau này:
-
-```bash
-python3 src/run_shop.py --max-clicks 50 --out data/fpt_laptops.json
-python3 src/build_dataset.py
-```
-
 Kết quả chạy ngày 2026-06-11:
 
 | Artifact | Kết quả |
@@ -269,7 +262,7 @@ Các thuộc tính chuẩn hóa hiện tại:
 | Storage | `Storage (GB)` |
 | Display | `Screen Size (inch)`, `Screen Resolution`, `Refresh Rate (Hz)` |
 | Graphics | `GPU manufacturer`, `GPU model`, `GPU type` |
-| Portability | `Weight (kg)`, `Battery`, `Battery (Wh)` |
+| Portability | `Weight (kg)`, `Battery`, `Battery (Wh)`, `Battery life (hours)` |
 | Retail | `Price (VND)`, `Original Price (VND)`, `Is Installment 0%`, `Student Discount (VND)`, `Gifts`, `Stock Status` |
 
 Mức độ sẵn sàng của nhóm retail trong dataset hiện tại:
@@ -308,7 +301,7 @@ Riêng với FPT, metadata từ API category giúp ổn định việc nhận di
 
 Chuẩn hóa bao gồm:
 
-- Chuyển giá, RAM, SSD, màn hình, refresh rate, weight sang numeric.
+- Chuyển giá, RAM, SSD, màn hình, tần số quét và cân nặng sang dữ liệu số.
 - Chuẩn hóa pin Wh nếu có.
 - Gán fallback `Stock Status = In Stock` nếu nguồn dữ liệu chưa có trạng thái rõ ràng; không dùng fallback này để kết luận tồn kho.
 - Bổ sung score chuẩn hóa (`norm_ram`, `norm_storage`, `norm_price`, `norm_weight`, `norm_screen`, `norm_battery`).
@@ -328,7 +321,7 @@ Hiện trạng sau khi chạy lại pipeline ngày 2026-06-11:
 |---|---:|
 | Số SKU | 417 |
 | Số tên sản phẩm duy nhất | 364 |
-| Số cột | 52 |
+| Số cột | 53 |
 | Số brand | 11 |
 | Price fill rate | 100.0% |
 | RAM fill rate | 100.0% |
@@ -338,8 +331,10 @@ Hiện trạng sau khi chạy lại pipeline ngày 2026-06-11:
 | GPU model fill rate | 99.0% |
 | GPU type fill rate | 99.0% |
 | CPU manufacturer fill rate | 84.9% |
-| Weight fill rate | 0.0% |
-| Battery fill rate | 0.0% |
+| Weight fill rate | 1.4% |
+| Battery fill rate | 16.1% |
+| Battery (Wh) fill rate | 1.0% |
+| Battery life fill rate | 15.1% |
 | Stock status fill rate | 100.0% fallback; chưa có dữ liệu tồn kho thực |
 
 ## 2.6 Tổng kết
@@ -352,7 +347,7 @@ Pipeline crawl hiện tại đã được thu gọn thành FPT-only. Project ch�
 - `data/fpt_evaluation_results.json`
 - `data/fpt_metrics_summary.json`
 
-Sau khi chạy lại crawler, dataset đã tăng từ 162 lên 417 SKU hợp lệ, tương ứng 364 tên sản phẩm duy nhất. Các cột phục vụ matching chính như giá, RAM, Storage, Screen Size và GPU đã có fill rate cao. Weight, Battery và nhóm retail mở rộng vẫn cần cải thiện ở các lần phát triển sau.
+Sau khi chạy lại crawler, dataset đã tăng từ 162 lên 417 SKU hợp lệ, tương ứng 364 tên sản phẩm duy nhất. Các cột phục vụ matching chính như giá, RAM, Storage, Screen Size và GPU đã có fill rate cao. Weight, Battery và nhóm retail mở rộng vẫn cần cải thiện; dữ liệu pin hiện mới tập trung ở một số dòng sản phẩm.
 
 ---
 
@@ -360,13 +355,9 @@ Sau khi chạy lại crawler, dataset đã tăng từ 162 lên 417 SKU hợp l�
 
 ## 3.1 Tổng quan dữ liệu
 
-Dataset hiện tại gồm 417 SKU hợp lệ từ FPT Shop, tương ứng 364 tên sản phẩm duy nhất. Sau khi bổ sung `GPU model`, `GPU type` và các feature runtime/scoring, feature CSV có 52 cột. Các thống kê trong chương này được tính theo SKU vì mỗi màu hoặc cấu hình bán hàng có URL/SKU riêng.
+Dataset hiện tại gồm 417 SKU hợp lệ từ FPT Shop, tương ứng 364 tên sản phẩm duy nhất. Sau khi bổ sung GPU và các thuộc tính pin, feature CSV có 53 cột. Các thống kê trong chương này được tính theo SKU vì mỗi màu hoặc cấu hình bán hàng có URL/SKU riêng.
 
-Code tạo biểu đồ EDA:
-
-```bash
-python3 src/eda/visualize_fpt.py --csv data/fpt_laptops_features.csv --out-dir reports/figures
-```
+Các biểu đồ EDA được tạo từ `data/fpt_laptops_features.csv` bằng mô-đun `src/eda/visualize_fpt.py`.
 
 **Hình 8:** Tổng quan dataset.  
 ![Tỷ lệ dữ liệu có giá trị](figures/fig8_tong_quan_dataset.png)
@@ -384,6 +375,8 @@ Checklist biểu đồ:
 | Hình 14 | Loại GPU | Đã có | Đã tạo |
 | Hình 15 | Model GPU | Đã có | Đã tạo |
 | Hình 16 | Giá theo model GPU | Đã có | Đã tạo |
+| Hình 17 | Màn hình và giá | Đã có | Đã tạo |
+| Hình 18 | Đánh đổi theo nhóm màn hình | Đã có | Đã tạo |
 
 Nhận xét chính:
 
@@ -392,7 +385,7 @@ Nhận xét chính:
 - Giá bán có fill rate 100%.
 - RAM có fill rate 100.0%, Storage 99.8%, Screen Size 100.0%, GPU manufacturer/model/type 99.0%, đủ tốt cho matching Top-K theo cấu hình.
 - Hãng CPU đạt 84.9%; phần thiếu chủ yếu rơi vào các SKU có tên CPU chưa thể map chắc chắn.
-- Weight và Battery hiện chưa có trong dataset, nên các scoring liên quan portability/battery dùng fallback trung lập.
+- Weight chỉ đạt 1.4% và Battery đạt 16.1%; các scoring portability/battery vẫn chủ yếu dùng fallback trung lập.
 
 ## 3.2 Phân tích đơn biến
 
@@ -535,8 +528,8 @@ Toàn bộ SKU NVIDIA hiện tại dùng RTX hoặc MX570A và được xếp v�
 | RTX 5060 | 25 |
 | RTX 3050 | 22 |
 | Intel Arc Graphics | 22 |
-| RTX 4050 | 18 |
-| RTX 5050 | 17 |
+| RTX 5050 | 20 |
+| RTX 4050 | 17 |
 | Intel Iris Xe | 9 |
 
 **Hình 16:** Giá theo Top 10 model GPU.
@@ -550,8 +543,8 @@ Toàn bộ SKU NVIDIA hiện tại dùng RTX hoặc MX570A và được xếp v�
 | Intel Arc Graphics | 25.79M |
 | RTX 3050 | 26.04M |
 | Intel Graphics | 27.49M |
-| RTX 4050 | 29.14M |
-| RTX 5050 | 37.39M |
+| RTX 4050 | 28.99M |
+| RTX 5050 | 37.69M |
 | RTX 5060 | 46.99M |
 | Apple M5 10-core GPU | 49.49M |
 
@@ -559,104 +552,186 @@ Nhìn chung, giá trung vị tăng theo phân khúc GPU. Tuy nhiên, GPU không 
 
 ## 3.4 Phân tích tính di động và đặc điểm vật lý
 
-Weight hiện chưa có trong dataset FPT hiện tại. Do đó, phân tích portability chưa thể kết luận chính thức.
+Ba tín hiệu chính phục vụ phân tích tính di động là kích thước màn hình, cân nặng và pin. Mức độ đầy đủ hiện tại:
 
-Khi chạy lại crawler và parser, cần ưu tiên trích xuất:
+| Thuộc tính | Số SKU có dữ liệu | Fill rate |
+|---|---:|---:|
+| Kích thước màn hình | 417 | 100.0% |
+| Cân nặng | 6 | 1.4% |
+| Thông tin pin tổng quát | 67 | 16.1% |
+| Thời lượng pin theo giờ | 63 | 15.1% |
+| Dung lượng pin Wh | 4 | 1.0% |
 
-- `Weight (kg)`
-- `Battery`
-- `Battery (Wh)`
-- Kích thước màn hình
+Dữ liệu cân nặng quá thưa để suy rộng cho toàn bộ danh mục. Sáu SKU có cân nặng nằm trong khoảng 1.2–1.4kg và chủ yếu là laptop 14 inch, nhưng đây không phải mẫu đại diện cho 417 SKU.
+
+Phân bố theo nhóm màn hình:
+
+| Nhóm màn hình | Số SKU | Tỷ lệ |
+|---|---:|---:|
+| Tối đa 14 inch | 169 | 40.5% |
+| Trên 14 đến 15.6 inch | 142 | 34.1% |
+| Trên 15.6 inch | 106 | 25.4% |
+
+Trong 63 SKU có thời lượng pin theo giờ, mức phổ biến nhất là 24 giờ với 24 SKU và 18 giờ với 23 SKU. Phần lớn các giá trị này thuộc dòng MacBook, vì vậy không nên xem đây là phân phối pin đại diện cho toàn bộ FPT Shop.
 
 ## 3.5 Phân tích đánh đổi tính di động
 
-**Hình 17:** Màn hình và trọng lượng.  
-Trạng thái: chờ dữ liệu cân nặng.
+Do dữ liệu cân nặng chỉ đạt 1.4%, phân tích đánh đổi được thực hiện bằng kích thước màn hình, giá và loại GPU. Màn hình nhỏ được dùng như một proxy thận trọng cho tính gọn nhẹ, nhưng không thay thế hoàn toàn cân nặng thực tế.
 
-Khi có dữ liệu weight đầy đủ, phân tích sẽ tập trung vào:
+**Hình 17:** Kích thước màn hình và giá theo loại GPU.
+![Kích thước màn hình và giá theo loại GPU](figures/fig17_man_hinh_va_gia.png)
 
-- Nhóm 13-14 inch mỏng nhẹ.
-- Nhóm 15.6-16 inch phổ thông/gaming.
-- Quan hệ giữa trọng lượng, giá và scoring hiệu năng.
+Biểu đồ cho thấy GPU rời xuất hiện chủ yếu ở nhóm màn hình từ 15.6 inch trở lên. Nhóm 13–14 inch phần lớn sử dụng GPU tích hợp, nhưng giá vẫn có thể cao do thương hiệu, CPU, chất lượng màn hình và thiết kế.
 
-### 3.5.1 "Chi phí trọng lượng" của hiệu năng
+### 3.5.1 Đánh đổi giữa màn hình, giá và GPU
 
-**Hình 18:** Cân nặng và giá của laptop hiệu năng cao.  
-Trạng thái: chờ dữ liệu cân nặng và GPU chi tiết hơn.
+**Hình 18:** Giá và tỷ lệ GPU rời theo nhóm màn hình.
+![Giá và tỷ lệ GPU rời theo nhóm màn hình](figures/fig18_danh_doi_man_hinh.png)
 
-Dự kiến insight cần kiểm chứng: laptop gaming hoặc workstation thường có trọng lượng cao hơn do yêu cầu tản nhiệt, trong khi ultrabook và MacBook tập trung vào tính di động.
+| Nhóm màn hình | Số SKU | Giá trung vị | Tỷ lệ GPU rời |
+|---|---:|---:|---:|
+| Tối đa 14 inch | 169 | 30.49M | 2.4% |
+| Trên 14 đến 15.6 inch | 142 | 27.99M | 34.5% |
+| Trên 15.6 inch | 106 | 35.99M | 55.7% |
+
+Nhóm trên 15.6 inch có giá trung vị cao nhất và hơn một nửa số SKU dùng GPU rời, phản ánh xu hướng tập trung laptop gaming/hiệu năng cao ở màn hình lớn. Nhóm tối đa 14 inch gần như không có GPU rời nhưng giá trung vị vẫn cao hơn nhóm trung gian, chủ yếu do sự hiện diện của ultrabook và MacBook cao cấp. Đây là đánh đổi giữa không gian hiển thị, hiệu năng đồ họa và tính gọn nhẹ; kết luận về cân nặng cần được kiểm chứng lại khi coverage Weight đủ lớn.
 
 ---
 
 # 4. Tiền xử lý dữ liệu
 
-Data preprocessing chuyển raw FPT data thành format phù hợp cho recommendation engine.
+Tiền xử lý chuyển dữ liệu đã trích xuất thành tập đặc trưng ổn định cho hệ thống gợi ý. Trước khi chọn phương pháp xử lý, hệ thống thực hiện kiểm tra để đo giá trị thiếu, dữ liệu trùng lặp, giá trị ngoài miền và mức sẵn sàng của dữ liệu bán lẻ.
 
-## 4.1 Làm sạch dữ liệu và điền khuyết
+Trong audit, “trước xử lý” là bảng feature cơ sở được parse lại từ raw JSON bằng `extract_features()`, trước khi thêm default retail, ép kiểu toàn bộ DataFrame, chuẩn hóa và tạo scoring features. “Sau xử lý” là `data/fpt_laptops_features.csv`.
 
-Các bước đã triển khai:
+Quá trình kiểm tra chất lượng dữ liệu được triển khai trong `src/preprocessing/audit_data_quality.py`.
 
-- Loại sản phẩm không có tên.
-- Loại sản phẩm không có giá bán.
-- Deduplicate theo URL.
-- Convert numeric columns bằng `pd.to_numeric`.
-- Fill `Stock Status = In Stock` nếu thiếu để giữ tương thích schema; giá trị này không đại diện cho tồn kho thực tế.
-- Fill retail fields mặc định: `Student Discount = 0`, `Gifts = ""`; các giá trị mặc định không được dùng để xác nhận ưu đãi.
-- Infer RAM/Storage/Manufacturer từ tên sản phẩm khi specs thiếu.
+Các artifact được tạo:
 
-Các cột còn thiếu nhiều và cần cải thiện parser:
+- `reports/preprocessing/summary.json`
+- `reports/preprocessing/missing_values.csv`
+- `reports/preprocessing/quality_issues.csv`
+- `reports/preprocessing/retail_availability.csv`
 
-| Cột | Fill rate hiện tại | Ghi chú |
-|---|---:|---|
-| CPU manufacturer | 84.9% | Có thể cải thiện thêm với mapping CPU mới |
-| GPU manufacturer | 99.0% | Đủ tốt cho scoring theo GPU manufacturer |
-| GPU model | 99.0% | Dùng cho EDA và phân tích giá theo model |
-| GPU type | 99.0% | Phân loại GPU tích hợp hoặc GPU rời |
-| Screen Size | 100.0% | Đã infer tốt từ SKU/specs |
-| Weight | 0.0% | Cần selector/spec parser bổ sung |
-| Battery | 0.0% | Cần selector/spec parser bổ sung |
+## 4.1 Chẩn đoán chất lượng dữ liệu
 
-## 4.2 Phân loại GPU
+### 4.1.1 Quy mô và trùng lặp
 
-### 4.2.1 Trích xuất và chuẩn hóa
+| Chỉ số | Kết quả |
+|---|---:|
+| Số dòng raw | 417 |
+| Số dòng feature CSV | 417 |
+| Số URL duy nhất | 417 |
+| Dòng trùng URL | 0 |
+| Dòng trùng hoàn toàn | 0 |
+| Tên sản phẩm duy nhất | 364 |
+| Dòng có tên sản phẩm lặp | 53 |
+| Dòng thiếu tên, URL hoặc giá | 0 |
 
-GPU hiện được chuẩn hóa ở ba mức:
+Không có trùng lặp theo URL hoặc trùng lặp toàn bộ dòng. Có 53 dòng lặp tên sản phẩm, nhưng các dòng này có URL/SKU riêng và thường đại diện cho màu sắc hoặc cấu hình bán hàng khác nhau. Vì vậy, khóa khử trùng lặp được chọn là URL thay vì `Product Name`; xóa theo tên sẽ làm mất biến thể SKU hợp lệ.
+
+### 4.1.2 Giá trị thiếu
+
+Các cột ảnh hưởng trực tiếp đến recommendation:
+
+| Thuộc tính | Thiếu | Tỷ lệ thiếu | Cách xử lý |
+|---|---:|---:|---|
+| Hãng CPU | 63 | 15.1% | Suy luận từ CPU spec/tên SKU; giữ thiếu nếu không chắc chắn |
+| Thế hệ CPU | 226 | 54.2% | Không điền theo trung vị; scoring dùng tín hiệu dòng CPU |
+| Xung CPU | 417 | 100.0% | Không dùng làm hard filter |
+| Loại RAM | 417 | 100.0% | Giữ cột cho lần crawl sau, chưa dùng để lọc |
+| Bus RAM | 417 | 100.0% | Giữ thiếu, không suy đoán từ dung lượng RAM |
+| Storage | 1 | 0.2% | Suy luận từ tên SKU và chuẩn hóa GB/TB |
+| Độ phân giải | 417 | 100.0% | Chưa dùng làm ràng buộc bắt buộc |
+| Tần số quét | 417 | 100.0% | Gaming ranking dựa thêm vào GPU và tên dòng máy |
+| Model GPU | 4 | 1.0% | Kết hợp raw specs, tên SKU và CPU/SoC |
+| Cân nặng | 411 | 98.6% | Giữ thiếu; dùng fallback trung lập khi scoring |
+| Thông tin pin | 350 | 83.9% | Tách riêng Wh và thời lượng giờ, không quy đổi chéo |
+
+**Hình 19:** Tỷ lệ thiếu trước và sau tiền xử lý.
+![Tỷ lệ thiếu trước và sau tiền xử lý](figures/fig19_missing_truoc_sau.png)
+
+Nhiều cột có tỷ lệ thiếu sau tiền xử lý không giảm. Đây là chủ đích: pipeline chỉ điền khi có tín hiệu đáng tin cậy từ specs hoặc tên SKU, không dùng mean/median/mode để tạo thông số kỹ thuật không có thật. Missing được giữ ở lớp dữ liệu; fallback `0.5` chỉ được dùng ở lớp scoring để tránh lỗi tính toán.
+
+### 4.1.3 Giá trị ngoài miền và trường bắt buộc
+
+Các miền kiểm tra được chọn theo phạm vi laptop hợp lý:
+
+| Kiểm tra | Miền hợp lệ | Số vi phạm |
+|---|---|---:|
+| Giá bán | 3–300 triệu VND | 0 |
+| RAM | 4–128GB | 0 |
+| Storage | 128–8192GB | 0 |
+| Màn hình | 10–20 inch | 0 |
+| Cân nặng | 0.5–6kg | 0 |
+| Pin | 20–150Wh | 0 |
+
+Không có dòng nào thiếu bất kỳ trường bắt buộc nào trong ba trường tên, URL và giá. Vì vậy, lần build hiện tại giữ đủ 417 SKU sau validation.
+
+**Hình 20:** Các vấn đề chất lượng dữ liệu.
+![Các vấn đề chất lượng dữ liệu](figures/fig20_van_de_chat_luong.png)
+
+### 4.1.4 Dữ liệu retail và thiếu ngữ nghĩa
+
+Một giá trị không rỗng chưa chắc là dữ liệu quan sát được. Ba cột retail được điền default để giữ schema nhưng nguồn crawl không cung cấp bằng chứng thực tế:
+
+| Trường | Có dữ liệu nguồn | Giá trị lưu trong CSV | Cách sử dụng |
+|---|---:|---|---|
+| Giá gốc | 0/417 | Missing | Không tính mức giảm |
+| Trả góp 0% | 0/417 | `False` mặc định | Không khẳng định không hỗ trợ trả góp |
+| Ưu đãi HSSV | 0/417 | `0` mặc định | Không dùng làm bonus thực tế |
+| Quà tặng | 0/417 | Missing | Không hiển thị ưu đãi |
+| Tồn kho | 0/417 | `In Stock` fallback | Không xem là tồn kho thời gian thực |
+
+Do đó, audit phân biệt **thiếu vật lý** và **thiếu ngữ nghĩa**. Giá trị mặc định chỉ phục vụ khả năng tương thích API, không được dùng làm bằng chứng kinh doanh.
+
+### 4.1.5 Ánh xạ vấn đề sang phương pháp
+
+| Điểm yếu quan sát được | Phương pháp triển khai | Lý do lựa chọn |
+|---|---|---|
+| Có tên lặp nhưng URL khác nhau | Loại trùng theo URL | Bảo toàn các biến thể SKU |
+| Thiếu trường bắt buộc | Loại dòng thiếu tên/URL/giá | Recommendation cần định danh và giá hợp lệ |
+| Thiếu CPU/GPU một phần | Rule-based inference từ specs và tên SKU | Dữ liệu kỹ thuật có pattern rõ, dễ kiểm chứng |
+| Thiếu Weight/Battery lớn | Giữ missing, fallback trung lập khi scoring | Tránh bịa thông số và bias về một nhóm sản phẩm |
+| Đơn vị GB/TB, VND, inch không đồng nhất | Phân tích và chuyển về dữ liệu số theo một đơn vị chuẩn | Cho phép lọc, so sánh và chuẩn hóa |
+| Numeric có nguy cơ sai miền | Range validation | Bắt lỗi regex như nhầm mã GPU thành dung lượng |
+| Retail default nhưng không có nguồn thật | Tách source availability khỏi fill rate | Tránh báo cáo sai về ưu đãi/tồn kho |
+
+## 4.2 Làm sạch và xử lý thiếu
+
+Các bước triển khai trong `src/build_dataset.py` và `src/advisor/features.py`:
+
+1. Loại trùng theo URL trước khi tạo các dòng đặc trưng.
+2. Loại dòng không có tên hoặc giá và yêu cầu tối thiểu hai feature có ý nghĩa.
+3. Chạy lại `extract_features()` để mọi lần build dùng logic parser mới nhất.
+4. Chuẩn hóa giá, RAM, dung lượng lưu trữ, màn hình, cân nặng và pin về dữ liệu số.
+5. Suy luận Manufacturer, RAM và Storage từ tên SKU khi raw specs thiếu.
+6. Giữ `NaN` cho thông số không đủ bằng chứng.
+7. Dùng fallback trung lập `0.5` ở feature chuẩn hóa khi scoring cần giá trị số.
+8. Điền default retail để giữ schema, đồng thời ghi rõ đây không phải dữ liệu quan sát.
+
+Việc không dùng mean/median imputation cho thông số kỹ thuật là lựa chọn có chủ đích. Ví dụ, điền Weight trung vị cho 411 SKU thiếu sẽ làm sai ranking portability; điền tần số quét trung vị có thể khiến laptop văn phòng bị hiểu nhầm là phù hợp gaming.
+
+## 4.3 Chuẩn hóa GPU
+
+GPU được chuẩn hóa ở ba mức:
 
 - `GPU manufacturer`: Intel, NVIDIA, Apple, AMD hoặc Qualcomm.
 - `GPU model`: ví dụ RTX 5060, Intel Arc Graphics, AMD Radeon Graphics hoặc Apple M5 10-core GPU.
 - `GPU type`: `Integrated` hoặc `Dedicated`.
 
-Ngoài ra, hệ thống dùng tín hiệu tên dòng máy để hỗ trợ gaming score trong trường hợp GPU thiếu:
+Nguồn tín hiệu theo thứ tự:
 
-- `tuf`
-- `rog`
-- `nitro`
-- `loq`
-- `legion`
-- `victus`
-- `predator`
-- `gaming`
+1. Trường `Card đồ hoạ` trong raw specs.
+2. Tên SKU.
+3. CPU/SoC để suy luận GPU tích hợp.
+4. Tên dòng gaming làm fallback cho scoring.
 
-### 4.2.2 Logic phân loại model
+Kết quả là 413/417 SKU có đủ hãng, model và loại GPU; bốn SKU còn lại được giữ `NaN` thay vì gán một GPU mặc định.
 
-Logic scoring GPU hiện tại nằm trong `src/advisor/features.py`:
+## 4.4 Chuẩn hóa dữ liệu số
 
-| Tín hiệu | Điểm gần đúng |
-|---|---:|
-| RTX 40/50 | 1.00 |
-| RTX 30 | 0.88 |
-| RTX 20/GTX | 0.72 |
-| NVIDIA/GeForce | 0.66 |
-| Gaming line name | 0.64 |
-| Radeon RX | 0.70 |
-| Intel Iris/Arc | 0.55 |
-| Integrated/common GPU | 0.48 |
-
-Mục tiêu là giữ recommendation không bị rỗng khi specs chưa đầy đủ, nhưng vẫn ưu tiên dòng gaming khi user hỏi gaming.
-
-## 4.3 Chuẩn hóa và scoring
-
-Các feature numeric được chuẩn hóa bằng robust quantile scaling:
+Các đặc trưng số được chuẩn hóa bằng phương pháp phân vị bền vững:
 
 ```text
 norm_x = clip((x - q05) / (q95 - q05), 0, 1)
@@ -672,7 +747,7 @@ Các cột normalize chính:
 - `norm_battery`
 - `norm_cpu`
 
-Với trường thiếu dữ liệu, hệ thống dùng fallback trung lập để scoring không bị lỗi.
+Quantile 5% và 95% giảm ảnh hưởng của các SKU cực trị tốt hơn min-max scaling trực tiếp. Giá trị sau chuẩn hóa được clip về `[0, 1]`; riêng Weight dùng chiều nghịch đảo vì cân nặng thấp phù hợp hơn với portability. Khi toàn bộ cột hoặc một ô bị thiếu, scoring dùng fallback trung lập `0.5`, nhưng dữ liệu gốc vẫn giữ missing.
 
 ---
 
@@ -687,8 +762,16 @@ Các nhóm feature chính:
 - Base performance score
 - GPU score
 - Task-oriented scores
-- Retail preference bonuses
 - Binary tags for explainability
+
+Các đặc trưng được xây dựng bằng luật và trọng số cố định vì dataset hiện chưa có nhãn mức độ phù hợp do người dùng đánh giá. Cách tiếp cận này được lựa chọn dựa trên:
+
+- Vai trò chức năng của CPU, GPU, RAM, dung lượng lưu trữ, cân nặng, pin và màn hình.
+- Kỳ vọng phổ biến của người dùng đối với gaming, AI/đồ họa, văn phòng và tính di động.
+- Các điểm nghẽn kỹ thuật đặc trưng của từng tác vụ, chẳng hạn gaming và AI phụ thuộc nhiều vào GPU.
+- Yêu cầu giải thích được lý do một sản phẩm được xếp hạng cao.
+
+Các trọng số có tổng bằng 1, được công khai trong công thức và có thể hiệu chỉnh sau khi thu thập được dữ liệu đánh giá hoặc phản hồi người dùng. Nhóm ưu đãi bán lẻ không được tạo ở bước này; chúng chỉ được xét ở recommendation engine khi có yêu cầu cụ thể và có dữ liệu nguồn đáng tin cậy.
 
 ## 5.2 Điểm cơ sở
 
@@ -704,15 +787,29 @@ base_performance_score =
 
 Score này đóng vai trò nền cho gaming, AI/graphics và general-purpose ranking.
 
+`gpu_score` được đưa vào điểm hiệu năng cơ sở vì danh mục FPT Shop gồm laptop văn phòng, MacBook và laptop gaming với năng lực đồ họa khác biệt rõ rệt. Thành phần này giúp hệ thống phân biệt tốt hơn giữa các nhóm sản phẩm ngay từ lớp biểu diễn hiệu năng nền. CPU vẫn nhận trọng số cao nhất vì ảnh hưởng rộng đến phần lớn tác vụ.
+
 ## 5.3 Điểm hiệu năng GPU
 
-GPU score được xác định bằng luật dựa trên model GPU, hãng GPU và tên sản phẩm. Dataset hiện nhận diện được GPU cho 99.0% SKU; tín hiệu tên dòng gaming vẫn được dùng để hỗ trợ xếp hạng và tăng độ bền khi thông tin GPU chi tiết bị thiếu.
+GPU score được xác định bằng luật dựa trên model GPU, loại GPU, hãng GPU và tên sản phẩm. Dataset hiện nhận diện được GPU cho 99.0% SKU. Mỗi tín hiệu chỉ có thể nâng điểm lên mức tương ứng; luật tổng quát như `NVIDIA` hoặc tên dòng gaming không thể ghi đè và làm giảm điểm đã nhận diện từ model GPU cụ thể.
 
-Ví dụ:
+| Nhóm tín hiệu | Điểm |
+|---|---:|
+| RTX 50 series | 1.00 |
+| RTX 40 series | 0.95 |
+| RTX 30 series | 0.86 |
+| RTX 20 series | 0.74 |
+| Radeon RX | 0.72 |
+| GTX | 0.68 |
+| Dòng gaming khi thiếu model rõ ràng | 0.64 |
+| GPU rời/NVIDIA chung | 0.62 |
+| Intel Arc | 0.60 |
+| Apple Silicon GPU | 0.58 |
+| Intel Iris | 0.54 |
+| GPU tích hợp phổ thông | 0.48 |
+| Không nhận diện được | 0.45 |
 
-```text
-Asus TUF / ROG / Acer Nitro / Lenovo LOQ / HP Victus -> gaming signal
-```
+Các tên dòng như Asus TUF/ROG, Acer Nitro/Predator, Lenovo LOQ/Legion và HP Victus chỉ đóng vai trò fallback. Cách triển khai này ưu tiên bằng chứng cụ thể từ `GPU model` trước tín hiệu marketing trong tên SKU.
 
 ## 5.4 Điểm tổng hợp theo tác vụ
 
@@ -729,6 +826,8 @@ gaming_score =
 
 Gaming ưu tiên GPU và hiệu năng tổng thể.
 
+GPU chiếm 60% vì đây thường là điểm nghẽn chính của hiệu năng game. Điểm hiệu năng cơ sở chiếm 25% để phản ánh CPU và dung lượng lưu trữ, còn RAM chiếm 15% để phân biệt các cấu hình có khả năng chạy game và đa nhiệm tốt hơn.
+
 ### 5.4.2 Điểm AI và đồ họa
 
 ```text
@@ -740,6 +839,8 @@ ai_graphics_score =
 
 Score này dùng cho query liên quan AI, graphics, rendering hoặc lập trình cần cấu hình mạnh.
 
+GPU vẫn là thành phần chính nhưng có trọng số thấp hơn gaming một chút, do các tác vụ AI và dựng hình còn phụ thuộc đáng kể vào CPU và RAM.
+
 ### 5.4.3 Điểm văn phòng và doanh nghiệp
 
 ```text
@@ -749,7 +850,7 @@ office_score =
   + battery_score * 0.20
 ```
 
-Vì weight/battery hiện còn thiếu, score này đang phụ thuộc nhiều vào performance fallback. Sau khi parser thu được weight/battery, score sẽ phản ánh tốt hơn nhu cầu văn phòng/di chuyển.
+Vì Weight chỉ đạt 1.4% và Battery đạt 16.1%, các giá trị thiếu dùng mức trung lập `0.5` khi tính score. `battery_score` ưu tiên dung lượng Wh nếu có; nếu Wh thiếu nhưng nguồn cung cấp thời lượng theo giờ, score được chuẩn hóa trực tiếp trong nhóm thời lượng đó. Hệ thống không quy đổi giờ sang Wh. Khi coverage hai trường tăng, score sẽ phản ánh tốt hơn nhu cầu văn phòng/di chuyển.
 
 ### 5.4.4 Điểm tính di động
 
@@ -760,7 +861,7 @@ portability_score =
   + (1 - norm_screen) * 0.20
 ```
 
-Portability score cần được cập nhật lại sau khi crawler trích xuất được weight/battery.
+Màn hình nhỏ đóng góp tích cực cho tính di động. Tuy nhiên, portability score hiện vẫn mang tính hỗ trợ vì dữ liệu cân nặng và pin chưa phủ đủ danh mục.
 
 ### 5.4.5 Điểm sử dụng tổng quát
 
@@ -775,17 +876,19 @@ Score này dùng cho query không có nhu cầu rõ ràng hoặc nhu cầu phổ
 
 ## 5.5 Nhãn nhị phân phục vụ giải thích
 
-Các binary tags phục vụ giải thích và UI:
+Các binary tags phục vụ giải thích và UI. Khác với score liên tục, tag phụ thuộc cân nặng hoặc pin chỉ được gắn khi trường tương ứng có dữ liệu quan sát thực tế; giá trị fallback không được xem là bằng chứng.
 
-| Tag | Ý nghĩa |
+| Tag | Điều kiện |
 |---|---|
-| `is_gaming_ready` | Có tín hiệu phù hợp gaming |
-| `is_ai_ready` | Phù hợp AI/graphics |
-| `is_business_ready` | Phù hợp văn phòng/doanh nhân |
-| `is_ultrabook` | Mỏng nhẹ/pin tốt theo feature hiện có |
-| `is_light` | Trọng lượng <= 1.7kg nếu có dữ liệu |
-| `is_small_screen` | Màn hình nhỏ gọn |
-| `is_large_screen` | Màn hình lớn |
+| `is_gaming_ready` | `gaming_score >= 0.60` |
+| `is_ai_ready` | `ai_graphics_score >= 0.60` |
+| `is_business_ready` | `office_score >= 0.55` |
+| `is_ultrabook` | Có dữ liệu cân nặng và pin, đồng thời `norm_weight >= 0.70` và `battery_score >= 0.55` |
+| `is_light` | Có dữ liệu cân nặng và trọng lượng không quá 1.7kg |
+| `is_small_screen` | Kích thước màn hình không quá 14.1 inch |
+| `is_large_screen` | Kích thước màn hình từ 15.6 inch |
+
+Ngưỡng `is_business_ready` được đặt thấp hơn gaming và AI vì score văn phòng còn chịu ảnh hưởng lớn của fallback trung lập ở Weight/Battery. Đây là nhãn hỗ trợ giải thích, không phải hard filter. `is_ultrabook` có thể rất ít hoặc bằng 0 trên dataset hiện tại; điều này phản ánh thiếu dữ liệu quan sát thay vì tự động suy đoán từ tên dòng máy.
 
 ## 5.6 Bộ dữ liệu đặc trưng đầu ra
 
@@ -800,10 +903,33 @@ Thông tin hiện tại:
 | Chỉ số | Giá trị |
 |---|---:|
 | Rows | 417 |
-| Columns | 52 |
+| Columns | 53 |
 | Main source | FPT Shop |
 | Recommendation input | Có |
 | Benchmark input | Có |
+
+Kết quả sau khi xây dựng đặc trưng:
+
+| Chỉ số | Số SKU | Tỷ lệ |
+|---|---:|---:|
+| Gaming-ready | 155 | 37.2% |
+| AI-ready | 156 | 37.4% |
+| Business-ready | 99 | 23.7% |
+| Ultrabook có đủ bằng chứng | 0 | 0.0% |
+| Nhẹ không quá 1.7kg | 6 | 1.4% |
+| Màn hình không quá 14.1 inch | 169 | 40.5% |
+| Màn hình từ 15.6 inch | 202 | 48.4% |
+
+Không có SKU nào được gắn nhãn ultrabook vì chưa có sản phẩm đồng thời thỏa điều kiện về dữ liệu cân nặng và pin. Kết quả này được giữ nguyên thay vì suy đoán từ tên sản phẩm.
+
+Các cột đầu ra của bước feature engineering gồm:
+
+- Đặc trưng chuẩn hóa: `norm_ram`, `norm_storage`, `norm_price`, `norm_weight`, `norm_screen`, `norm_battery`, `norm_cpu`.
+- Điểm trung gian: `gpu_score`, `battery_score`, `base_performance_score`.
+- Điểm theo tác vụ: `gaming_score`, `ai_graphics_score`, `office_score`, `portability_score`, `general_score`.
+- Nhãn giải thích: `is_gaming_ready`, `is_ai_ready`, `is_business_ready`, `is_ultrabook`, `is_light`, `is_small_screen`, `is_large_screen`.
+
+Việc tách feature engineering khỏi crawler và recommendation engine giúp các luật chấm điểm có thể được kiểm thử, hiệu chỉnh và tái sử dụng mà không cần thu thập lại dữ liệu thô.
 
 ---
 
@@ -821,11 +947,11 @@ Ví dụ nhu cầu:
 
 Hệ thống cần trả về:
 
-- Intent đã trích xuất.
-- Query object cho recommendation engine.
 - Top-K laptop phù hợp.
 - Câu trả lời tư vấn tự nhiên.
 - Product cards trên frontend.
+
+Intent và query có cấu trúc vẫn được API trả về để phục vụ kiểm thử và đánh giá, nhưng không hiển thị trực tiếp trên giao diện người dùng.
 
 ## 6.2 Tổng quan tính năng
 
@@ -833,7 +959,8 @@ Luồng chatbot:
 
 1. User nhập message.
 2. API trích xuất intent bằng Gemini nếu có API key, fallback rule-based nếu không.
-3. Intent được patch bằng regex/rule để bắt ngân sách, RAM, SSD, brand, trả góp, quà tặng.
+3. Intent được bổ sung bằng luật để bắt ngân sách, RAM, SSD, hãng ưu tiên/loại trừ, mục đích sử dụng và nhu cầu bán lẻ.
+   Các luật bổ sung hiện cũng nhận diện kích thước màn hình theo inch, cân nặng tối đa theo kg và dung lượng pin tối thiểu theo Wh.
 4. Recommendation engine lọc và chấm điểm.
 5. API trả metadata sản phẩm trước, sau đó stream câu trả lời.
 6. Frontend render product cards và text streaming.
@@ -841,18 +968,18 @@ Luồng chatbot:
 ## 6.3 Kiến trúc hệ thống và công nghệ
 
 ```mermaid
-flowchart TD
-    U["Người dùng"] --> FE["Giao diện HTML/JS"]
-    FE --> API["FastAPI /chat hoặc /chat/stream"]
-    API --> INTENT["Trích xuất ý định<br/>Gemini + luật bổ sung"]
-    INTENT --> REC["Bộ máy gợi ý"]
-    REC --> CSV["data/fpt_laptops_features.csv"]
-    REC --> API
-    API --> LLM["Sinh câu tư vấn<br/>Gemini hoặc fallback"]
-    LLM --> FE
+flowchart TB
+    U["Người dùng"] --> FE["Giao diện trò chuyện"]
+    FE --> API["Dịch vụ FastAPI<br/>/chat hoặc /chat/stream"]
+    API --> INTENT["Phân tích và chuẩn hóa nhu cầu<br/>Gemini kết hợp luật dự phòng"]
+    INTENT --> REC["Lọc điều kiện, chấm điểm<br/>và xếp hạng Top-K"]
+    CSV[("Tập đặc trưng laptop FPT<br/>417 SKU, 53 thuộc tính")] --> REC
+    REC --> RESPONSE["Tạo lý do gợi ý<br/>và lời tư vấn tiếng Việt"]
+    RESPONSE --> API
+    API --> FE
 ```
 
-**Hình 19:** Kiến trúc chatbot tư vấn laptop FPT.
+**Hình 21:** Kiến trúc chatbot tư vấn laptop FPT.
 
 ### 6.3.1 Giao diện người dùng (Frontend)
 
@@ -869,7 +996,9 @@ Chức năng chính:
 - Đọc streaming JSON-lines.
 - Render bot answer theo từng chunk.
 - Render product cards.
+- Hiển thị GPU và lý do phù hợp trên card/modal.
 - Modal xem thông số và link mua FPT.
+- Không hiển thị raw score, intent hoặc query nội bộ.
 
 ### 6.3.2 Dịch vụ backend
 
@@ -897,13 +1026,17 @@ data/fpt_laptops_features.csv
 
 LLM được dùng cho:
 
-- Structured intent extraction.
-- Advice generation.
+- Trích xuất ý định có cấu trúc.
+- Sinh câu trả lời tư vấn tự nhiên.
+
+LLM không quyết định sản phẩm nào được gợi ý. Toàn bộ lọc, chấm điểm và Top-K được tính bằng luật xác định trên dataset. LLM chỉ đóng vai trò diễn giải đầu vào và trình bày kết quả đã được recommendation engine lựa chọn.
 
 Nếu không có `GEMINI_API_KEY` hoặc SDK chưa sẵn sàng, hệ thống vẫn chạy bằng fallback rule-based:
 
 - Intent mặc định `general`, sau đó patch từ text.
 - Advice fallback bằng template tiếng Việt.
+
+Prompt sinh tư vấn chỉ cho phép đề cập ưu đãi, tồn kho, bảo hành hoặc giao hàng khi response có dữ liệu nguồn tương ứng. Các giá trị retail mặc định không được dùng để tạo khẳng định bán hàng.
 
 ## 6.4 Quy trình hoạt động của chatbot
 
@@ -953,7 +1086,9 @@ Hard filters:
 - Battery requirements
 - Stock status
 
-Gaming không còn bị hard-filter tuyệt đối để tránh trả rỗng khi dữ liệu GPU thiếu; thay vào đó gaming được ưu tiên trong scoring.
+Hãng ưu tiên là soft preference, trong khi hãng bị loại trừ là hard constraint. Cụm từ phủ định như “không thích Asus” được giữ thành điều kiện loại trừ thay vì bị hiểu nhầm là hãng ưu tiên.
+
+Gaming không bị hard-filter tuyệt đối để tránh trả rỗng khi dữ liệu GPU thiếu; thay vào đó gaming được ưu tiên trong scoring. Các điều kiện Weight, Battery, Display và Stock chỉ đáng tin cậy khi trường nguồn có dữ liệu thực tế; coverage còn thấp có thể làm tập ứng viên nhỏ hoặc rỗng.
 
 ### 6.5.2 Module scoring (Multi-Criteria Ranking)
 
@@ -978,17 +1113,31 @@ Scorer kết hợp:
 Final score:
 
 ```text
-final_score = weighted_task_affordability_weight + soft_bonuses
+final_score =
+    task_score * w_task
+  + affordability_score * w_price
+  + weight_score * w_weight
+  + soft_bonuses
 ```
 
-Sau đó kết quả được sort giảm dần theo `final_score`.
+Trong đó `w_task + w_price + w_weight = 1`. Trọng số được điều chỉnh theo intent: sinh viên/học tập ưu tiên giá và tính di động hơn; gaming ưu tiên gần như toàn bộ cho task score. Khi người dùng nhấn mạnh “rẻ” hoặc “nhẹ”, trọng số tương ứng được tăng trong giới hạn định trước.
+
+`norm_weight` đã được chuẩn hóa theo chiều điểm cao tương ứng với máy nhẹ, vì vậy `weight_score` sử dụng trực tiếp giá trị này. Sản phẩm có cân nặng thực tế cao còn nhận thêm penalty khi người dùng yêu cầu máy nhẹ.
+
+Soft bonus chỉ tạo khác biệt khi có dữ liệu thật:
+
+- Hãng được ưu tiên.
+- Trả góp, ưu đãi HSSV và quà tặng.
+- Pin, tần số quét và các nhãn phù hợp tác vụ.
+
+Sau khi cộng bonus và áp dụng penalty, điểm được giới hạn trong `[0, 1]`, sắp xếp giảm dần, khử trùng lặp theo tên sản phẩm rồi mới lấy Top-K. Bước khử trùng lặp này giúp tránh trả nhiều SKU gần giống nhau của cùng một mẫu máy trong một phản hồi tư vấn.
 
 ### 6.5.3 Module advisor (Explainability Layer)
 
 Advisor layer gồm:
 
+- `src/advisor/advisor.py`: gọi filter, scorer và tạo lý do phù hợp từ các tín hiệu có cấu trúc.
 - `src/advisor/recommend_service.py`: chuyển dataframe Top-K thành JSON.
-- `src/advisor/advisor.py`: gọi filter + scorer.
 - `src/llm/prompts.py`: persona tư vấn viên FPT Shop.
 
 Output recommendation JSON gồm:
@@ -997,10 +1146,22 @@ Output recommendation JSON gồm:
 - Brand.
 - Giá bán.
 - Giá gốc nếu có.
-- RAM/Storage/Screen/CPU.
+- RAM/Storage/Screen/CPU/GPU/Pin.
 - Retail fields: trả góp, quà tặng, ưu đãi HSSV.
-- Scores và flags.
+- Lý do phù hợp theo intent.
+- Scores và flags phục vụ đánh giá nội bộ.
 - Link mua hàng.
+
+Fallback template cũng sử dụng tên máy, giá, cấu hình nổi bật, GPU và lý do phù hợp. Vì vậy chatbot vẫn trả được nội dung có căn cứ khi không cấu hình Gemini.
+
+Các kiểm thử cục bộ bao phủ:
+
+- Máy nhẹ nhận điểm Weight cao hơn máy nặng.
+- Intel thế hệ 14 thỏa điều kiện tối thiểu thế hệ 13.
+- Hãng bị phủ định được đưa vào danh sách loại trừ.
+- Màn hình, cân nặng, pin Wh và cụm "giá hợp lý" được trích xuất từ câu người dùng.
+- `/chat` trả đúng Top-K, cấu hình GPU và lý do phù hợp ở chế độ fallback.
+- `/chat/stream` trả metadata trước và các đoạn văn bản sau.
 
 ---
 
@@ -1014,7 +1175,7 @@ Benchmark hiện tại dùng:
 data/fpt_test_queries.json
 ```
 
-Số query hiện tại: 10.
+Số query hiện tại: 16.
 
 Các nhóm query:
 
@@ -1025,6 +1186,8 @@ Các nhóm query:
 - MacBook/pin tốt/doanh nhân.
 - RAM/SSD constraints.
 - AI/lập trình.
+- Màn hình, cân nặng, CPU generation và pin Wh.
+- Retail stress test cho dữ liệu quà tặng.
 - Query phổ thông.
 
 ## 7.2 Chấm điểm độ phù hợp
@@ -1058,6 +1221,32 @@ Các metric giống cấu trúc benchmark mẫu:
 Precision@K = số item relevant trong Top-K / K
 ```
 
+Trong benchmark này, item được xem là relevant nếu relevance score là `1` hoặc `2`.
+
+### Strict Precision@K
+
+Strict Precision@K chỉ tính item có relevance score bằng `2`, tức là phù hợp đầy đủ với nhu cầu. Chỉ số này nghiêm hơn Precision@K và phản ánh tốt hơn mức độ khớp sâu của recommendation.
+
+```text
+Strict Precision@K = số item có relevance = 2 trong Top-K / K
+```
+
+### Normalized Relevance@K
+
+Normalized Relevance@K dùng trực tiếp thang relevance `0-2` và chuẩn hóa về `[0, 1]`. Chỉ số này không chỉ phân biệt đúng/sai mà còn phản ánh mức độ phù hợp trung bình của toàn bộ Top-K.
+
+```text
+Normalized Relevance@K = tổng relevance trong Top-K / (2 * K)
+```
+
+### Full-Match Query Rate
+
+Full-Match Query Rate đo tỷ lệ query có toàn bộ Top-K vừa đạt relevance `2` vừa thỏa tất cả hard constraints. Đây là chỉ số nghiêm nhất trong benchmark hiện tại.
+
+```text
+Full-Match Query Rate = số query đạt full-match / tổng số query
+```
+
 ### NDCG@K
 
 Đo chất lượng thứ tự ranking, ưu tiên item relevance cao ở vị trí đầu.
@@ -1074,46 +1263,71 @@ Constraint Satisfaction Rate đo tỷ lệ recommendations thỏa tất cả har
 CSR = số recommendation thỏa constraints / số recommendation
 ```
 
+### Unique Name Rate
+
+Do dataset FPT được tổ chức theo SKU, cùng một mẫu máy có thể xuất hiện ở nhiều màu hoặc cấu hình gần giống nhau. Unique Name Rate đo tỷ lệ tên sản phẩm không bị lặp trong Top-K.
+
+```text
+Unique Name Rate = số tên sản phẩm duy nhất trong Top-K / số recommendation trong Top-K
+```
+
 ## 7.4 Kết quả
 
-Kết quả benchmark hiện tại:
+Kết quả benchmark offline ngày 2026-06-12 được chia thành hai nhóm: metric chính dùng để trình bày chất lượng hệ thống, và metric chẩn đoán dùng để kiểm tra các thuộc tính phụ.
+
+Metric chính:
 
 | Metric | Value |
 |---|---:|
-| Num queries | 10 |
+| Num queries | 16 |
 | Top-K | 3 |
-| Precision@K | 1.0000 |
-| NDCG@K | 0.9766 |
-| MRR | 1.0000 |
-| CSR | 1.0000 |
+| Strict Precision@K | 0.9375 |
+| Normalized Relevance@K | 0.9688 |
+| Full-Match Query Rate | 0.9375 |
+| CSR | 0.9375 |
 
-Lệnh chạy:
+Metric chẩn đoán:
 
-```bash
-python3 -m src.evaluation.run_evaluation \
-  --file data/fpt_test_queries.json \
-  --top-k 3 \
-  --judge rule \
-  --mode direct \
-  --output data/fpt_evaluation_results.json \
-  --metrics-output data/fpt_metrics_summary.json
-```
+| Metric | Value | Diễn giải |
+|---|---:|---|
+| Precision@K | 1.0000 | Không có recommendation bị chấm `0` |
+| NDCG@K | 1.0000 | Các item có cùng mức relevance trong từng Top-K nên thứ tự không tạo lỗi |
+| MRR | 1.0000 | Recommendation đầu tiên của mọi query đều có liên quan |
+| Unique Name Rate | 1.0000 | Top-K không lặp cùng tên sản phẩm |
 
-Kết quả này là benchmark offline/rule-based trên dataset hiện tại. Sau khi crawl lại FPT, cần chạy lại benchmark và cập nhật bảng này.
+Kết quả này được tạo bởi mô-đun đánh giá `src/evaluation/run_evaluation.py`, theo phương pháp benchmark offline dựa trên luật trên dataset hiện tại.
+
+Phân bố relevance trong 48 recommendation được chấm:
+
+| Mức relevance | Ý nghĩa | Số recommendation |
+|---|---|---:|
+| 2 | Phù hợp đầy đủ | 45 |
+| 1 | Phù hợp một phần / lựa chọn thay thế hợp lý | 3 |
+| 0 | Không phù hợp | 0 |
+
+Precision@K đạt 1.0000 vì cả relevance `1` và `2` đều được xem là recommendation có liên quan, nên chỉ số này chủ yếu chứng minh hệ thống không trả item sai rõ ràng. Khi dùng thước đo nghiêm hơn, Strict Precision@K đạt 0.9375 và Normalized Relevance@K đạt 0.9688. Ba recommendation chưa đạt full-match thuộc query yêu cầu quà tặng kèm; các máy vẫn đúng ngân sách và phù hợp học tập, nhưng chưa thỏa điều kiện quà tặng do trường `Gifts` trong dataset hiện chưa được populate đầy đủ.
+
+Unique Name Rate đạt 100% sau khi recommendation engine khử trùng lặp theo tên sản phẩm ở bước chọn Top-K. Điều này quan trọng vì dữ liệu FPT là dữ liệu SKU; nếu không khử trùng lặp, một query có thể nhận nhiều biến thể cùng tên, làm giảm trải nghiệm tư vấn.
 
 ## 7.5 Phân tích
 
 Kết quả hiện tại cho thấy:
 
-- Matching Top-K hoạt động ổn trên các query benchmark đã định nghĩa.
-- CSR đạt 100% vì hard constraints được phân biệt rõ với soft preferences.
+- Matching Top-K hoạt động ổn trên 16 query benchmark đã định nghĩa.
+- Strict Precision@K ở mức 0.9375 cho thấy phần lớn kết quả đã khớp đầy đủ với nhu cầu.
+- Normalized Relevance@K đạt 0.9688, cho thấy mức phù hợp trung bình của Top-K cao nhưng vẫn còn khoảng cách ở nhóm retail.
+- Full-Match Query Rate đạt 0.9375, tương ứng 15/16 query có toàn bộ Top-K đạt đầy đủ relevance và constraints.
+- CSR đạt 0.9375; phần chưa đạt đến từ query có yêu cầu quà tặng kèm trong khi dữ liệu quà tặng chưa đầy đủ.
 - Query gaming không bị trả rỗng nhờ chuyển gaming từ hard-filter sang scoring.
-- Brand, RAM, Storage, khoảng giá và retail intent được patch bằng rule từ text.
+- Brand, RAM, Storage, khoảng giá, màn hình, cân nặng, pin Wh và retail intent được patch bằng rule từ text.
+- Top-K không còn lặp cùng tên sản phẩm, phù hợp hơn với cách người dùng kỳ vọng nhận danh sách lựa chọn.
 - Retail intent được nhận diện ở tầng hội thoại, nhưng bonus tương ứng chưa tạo khác biệt đáng kể vì dữ liệu ưu đãi hiện chưa được populate.
+
+Một điểm cần diễn giải thận trọng là Precision@K, NDCG@K, MRR và Unique Name Rate đều đạt 1.0 trên bộ benchmark hiện tại không có nghĩa hệ thống đã đúng trong mọi tình huống. Vì vậy, các chỉ số này chỉ được xem là metric chẩn đoán. Phần đánh giá chính nên dựa vào Strict Precision@K, Normalized Relevance@K, Full-Match Query Rate và CSR vì các chỉ số này phản ánh rõ hơn các hạn chế thực tế, đặc biệt là dữ liệu retail chưa đầy đủ. Bộ query hiện gồm 16 câu đại diện cho các nhóm nhu cầu chính; ở các vòng sau nên mở rộng thêm query khó hơn, ví dụ phủ định phức tạp, yêu cầu tồn kho theo khu vực, yêu cầu khuyến mãi cụ thể, hoặc so sánh giữa nhiều tác vụ cùng lúc.
 
 Các hạn chế cần tiếp tục cải thiện:
 
-- Weight và Battery chưa có trong dataset hiện tại.
+- Weight và Battery đã trích xuất được một phần nhưng coverage còn thấp, lần lượt 1.4% và 16.1%.
 - Bốn SKU chưa xác định được GPU; logic vẫn dùng thêm tín hiệu tên dòng máy làm fallback.
 - Retail fields như `Gifts`, `Original Price`, `Student Discount` cần parse tốt hơn từ trang FPT.
 - `Stock Status` hiện là fallback `In Stock`, chưa phản ánh tồn kho thực tế.
@@ -1130,14 +1344,14 @@ Hướng đánh giá tiếp theo:
 5. Nếu có Gemini key, chạy thêm Gemini relevance judge.
 6. Cập nhật các bảng Section 2, 3 và 7.
 
-Checklist cập nhật sau khi chạy:
+Checklist cập nhật kết quả:
 
-| Bước | Command | Kết quả cần ghi |
+| Bước | Thành phần thực hiện | Kết quả cần ghi |
 |---|---|---|
-| Crawl FPT | `python3 src/run_shop.py --max-clicks 50 --out data/fpt_laptops.json` | Số SKU raw |
-| Build CSV | `python3 src/build_dataset.py` | Rows, columns, fill rates |
-| API smoke test | `POST /chat` | Số recommendations, sample output |
-| Benchmark | `python3 -m src.evaluation.run_evaluation ...` | Precision@K, NDCG@K, MRR, CSR |
+| Thu thập dữ liệu FPT | Mô-đun thu thập dữ liệu | Số SKU thô |
+| Xây dựng bảng đặc trưng | Mô-đun xây dựng dataset | Số dòng, số cột và tỷ lệ có dữ liệu |
+| Kiểm tra nhanh API | Endpoint hội thoại | Số sản phẩm gợi ý và kết quả mẫu |
+| Đánh giá hệ thống | Mô-đun benchmark | Precision@K, NDCG@K, MRR, CSR |
 
 ---
 
@@ -1157,7 +1371,7 @@ Hệ thống hiện có đầy đủ các thành phần cốt lõi:
 
 Điểm mạnh của hệ thống là tính minh bạch: recommendation không phụ thuộc vào model học máy khó giải thích, mà dựa trên scoring rõ ràng và có thể kiểm thử. Điều này phù hợp với bài toán tư vấn bán lẻ, nơi hệ thống cần tránh bịa thông tin và chỉ tư vấn dựa trên dữ liệu sản phẩm có thật.
 
-Các bước tiếp theo là cải thiện parser cho Weight, Battery và retail fields; chạy lại benchmark trên feature CSV 52 cột; sau đó cập nhật kết quả đánh giá và thử nghiệm chatbot bằng dữ liệu mới.
+Các bước tiếp theo là tiếp tục cải thiện parser cho Weight, Battery và retail fields; chạy lại benchmark trên feature CSV 53 cột; sau đó cập nhật kết quả đánh giá và thử nghiệm chatbot bằng dữ liệu mới.
 
 ---
 
@@ -1176,8 +1390,8 @@ Các bước tiếp theo là cải thiện parser cho Weight, Battery và retail
 
 Phần này dùng để cập nhật kết quả sau mỗi lần chạy pipeline.
 
-| Date | Step | Command | Result | Notes |
+| Ngày | Bước | Thành phần thực hiện | Kết quả | Ghi chú |
 |---|---|---|---|---|
-| 2026-06-11 | Initial report draft | N/A | Created report structure | Chờ chạy pipeline chính thức |
-| 2026-06-11 | Crawl FPT laptop data | `python3 src/run_shop.py --max-clicks 50 --out data/fpt_laptops.json` | 417 raw SKU, 364 tên duy nhất | Không thiếu URL, tên, giá, ảnh |
-| 2026-06-11 | Build feature dataset | `python3 src/build_dataset.py` | 417 rows, 52 columns | RAM 100.0%, Storage 99.8%, GPU manufacturer/model/type 99.0% |
+| 2026-06-11 | Tạo bản thảo báo cáo | Tài liệu báo cáo | Hoàn thành cấu trúc báo cáo | Chờ thực hiện pipeline chính thức |
+| 2026-06-11 | Thu thập dữ liệu laptop FPT | Mô-đun thu thập dữ liệu | 417 SKU thô, 364 tên duy nhất | Không thiếu URL, tên, giá, ảnh |
+| 2026-06-11 | Xây dựng bảng đặc trưng | Mô-đun xây dựng dataset | 417 dòng, 53 cột | RAM 100.0%, Storage 99.8%, GPU 99.0%, Weight 1.4%, Battery 16.1% |
