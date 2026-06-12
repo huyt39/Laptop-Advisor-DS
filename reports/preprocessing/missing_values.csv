@@ -1,0 +1,29 @@
+column,label_vi,missing_before,missing_before_pct,missing_after,missing_after_pct
+Product Name,Tên SKU,0,0.0,0,0.0
+Manufacturer,Hãng,0,0.0,0,0.0
+CPU manufacturer,Hãng CPU,63,15.1,63,15.1
+CPU brand modifier,Dòng CPU,7,1.7,7,1.7
+CPU generation,Thế hệ CPU,226,54.2,226,54.2
+CPU Speed (GHz),Xung CPU,417,100.0,417,100.0
+RAM (GB),RAM,0,0.0,0,0.0
+RAM Type,Loại RAM,417,100.0,417,100.0
+Bus (MHz),Bus RAM,417,100.0,417,100.0
+Storage (GB),Ổ cứng,1,0.2,1,0.2
+Screen Size (inch),Kích thước màn hình,0,0.0,0,0.0
+Screen Resolution,Độ phân giải,417,100.0,417,100.0
+Refresh Rate (Hz),Tần số quét,417,100.0,417,100.0
+GPU manufacturer,Hãng GPU,4,1.0,4,1.0
+GPU model,Model GPU,4,1.0,4,1.0
+GPU type,Loại GPU,4,1.0,4,1.0
+Weight (kg),Cân nặng,411,98.6,411,98.6
+Battery,Thông tin pin,350,83.9,350,83.9
+Battery (Wh),Pin Wh,413,99.0,413,99.0
+Battery life (hours),Thời lượng pin,354,84.9,354,84.9
+Price (VND),Giá bán,0,0.0,0,0.0
+Original Price (VND),Giá gốc,417,100.0,417,100.0
+Is Installment 0%,Trả góp 0%,417,100.0,0,0.0
+Student Discount (VND),Ưu đãi HSSV,417,100.0,0,0.0
+Gifts,Quà tặng,417,100.0,417,100.0
+Stock Status,Tồn kho,417,100.0,0,0.0
+url,URL,0,0.0,0,0.0
+image,Ảnh,0,0.0,0,0.0

@@ -1,0 +1,11 @@
+problem,count,method,decision
+Trùng URL SKU,0,Khử trùng lặp theo URL trước khi build CSV,Xóa bản ghi trùng URL
+Tên sản phẩm lặp,53,Kiểm tra theo URL/SKU thay vì xóa theo tên,Giữ lại vì có thể là màu/cấu hình SKU khác nhau
+Thiếu trường bắt buộc,0,"Loại dòng thiếu tên, URL hoặc giá",Không có dòng bị loại trong lần build hiện tại
+Thiếu hãng CPU,63,Suy luận từ CPU spec và tên SKU; giữ thiếu nếu không chắc chắn,Không điền giá trị đoán tùy tiện
+Thiếu Storage,1,"Suy luận từ tên SKU, chuẩn hóa GB/TB",Giữ thiếu nếu không tìm thấy tín hiệu
+Thiếu GPU,4,"Kết hợp Card đồ hoạ, tên SKU và CPU/SoC","Chuẩn hóa hãng, model và loại GPU"
+Thiếu cân nặng,411,Tìm trong spec và thông số nổi bật; fallback trung lập khi scoring,Không nội suy từ dòng máy khác
+Thiếu pin,350,Tách riêng Wh và thời lượng giờ từ thông số nổi bật,Không quy đổi giờ sang Wh
+Giá trị numeric ngoài miền,0,Ép kiểu numeric và kiểm tra miền hợp lý,Loại hoặc giữ thiếu nếu vi phạm
+Retail chưa có nguồn thật,417,Duy trì schema bằng fallback nhưng đánh dấu giới hạn,Không dùng mặc định để xác nhận ưu đãi/tồn kho

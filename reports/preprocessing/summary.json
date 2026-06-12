@@ -1,0 +1,19 @@
+{
+  "raw_rows": 417,
+  "feature_rows": 417,
+  "feature_columns": 53,
+  "unique_urls": 417,
+  "duplicate_url_rows": 0,
+  "unique_product_names": 364,
+  "repeated_name_rows": 53,
+  "exact_duplicate_rows": 0,
+  "missing_required_rows": 0,
+  "invalid_numeric": {
+    "Giá ngoài 3–300 triệu": 0,
+    "RAM ngoài 4–128GB": 0,
+    "Ổ cứng ngoài 128–8192GB": 0,
+    "Màn hình ngoài 10–20 inch": 0,
+    "Cân nặng ngoài 0.5–6kg": 0,
+    "Pin ngoài 20–150Wh": 0
+  }
+}

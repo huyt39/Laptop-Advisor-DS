@@ -1,0 +1,6 @@
+field,source_count,source_pct,stored_non_missing,note
+Original Price (VND),0,0.0,0,
+Is Installment 0%,0,0.0,417,Fallback/schema default
+Student Discount (VND),0,0.0,417,Fallback/schema default
+Gifts,0,0.0,0,
+Stock Status,0,0.0,417,Fallback/schema default
