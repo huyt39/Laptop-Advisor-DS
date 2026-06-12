@@ -3,6 +3,7 @@ import unittest
 import pandas as pd
 
 from src.advisor.features import _cpu_score, _gpu_score, prepare_laptop_dataframe
+from src.feature_extractor import extract_features
 
 
 class FeatureEngineeringTests(unittest.TestCase):
@@ -66,6 +67,17 @@ class FeatureEngineeringTests(unittest.TestCase):
 
         self.assertFalse(bool(prepared.loc[0, "is_ultrabook"]))
         self.assertFalse(bool(prepared.loc[0, "is_light"]))
+
+    def test_gpu_model_prefers_sku_and_highlight_over_conflicting_card_field(self):
+        title = "Laptop Gaming 16GB/512GB/NVIDIA GeForce RTX5050 8GB"
+        specs = {
+            "Thông số nổi bật 1": "NVIDIA GeForce RTX 5050",
+            "Card đồ hoạ": "NVIDIA GeForce RTX 5070 8GB GDDR7",
+        }
+
+        features = extract_features(title, specs, 30_000_000)
+
+        self.assertEqual(features["GPU model"], "RTX 5050")
 
 
 if __name__ == "__main__":

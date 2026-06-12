@@ -164,7 +164,7 @@ def extract_features(title: str, specs: Dict[str, str], price_value: Optional[in
         out["Refresh Rate (Hz)"] = refresh.group(1)
 
     gpu_text = _find_spec("card đồ họa", "card đồ hoạ", "gpu", "vga", "card màn hình", "đồ họa", "đồ hoạ", "graphics")
-    gpu_src = f"{gpu_text or ''} {title} {all_spec_text}".lower()
+    gpu_src = f"{title} {all_spec_text} {gpu_text or ''}".lower()
     if re.search(r"\bnvidia\b|geforce|rtx\s*\d|gtx\s*\d", gpu_src):
         out["GPU manufacturer"] = "NVIDIA"
     elif re.search(r"radeon\s*rx|rx\s*\d{4}", gpu_src):
@@ -191,15 +191,24 @@ def extract_features(title: str, specs: Dict[str, str], price_value: Optional[in
         (r"\b(?:amd\s+)?radeon\s+(rx\s*\d{3,4}[a-z]*)\b", "Radeon RX {number}"),
         (r"\b(?:amd\s+)?radeon\s+(\d{3,4}[a-z]*m?)\s*(?:graphics)?\b", "Radeon {number}"),
     ]
-    for pattern, template in gpu_model_patterns:
-        match = re.search(pattern, gpu_src, re.I)
-        if not match:
-            continue
-        token = match.group(1)
-        number = re.sub(r"(?i)^(?:rtx|gtx|mx|rx)\s*", "", token)
-        number = re.sub(r"(?i)\s*ti$", "", number).upper()
-        out["GPU model"] = template.format(number=number)
-        break
+    highlighted_gpu_text = " ".join(
+        str(value)
+        for key, value in specs.items()
+        if "thông số nổi bật" in key.lower() and value
+    )
+    gpu_model_sources = [title, highlighted_gpu_text, gpu_text or "", all_spec_text]
+    for source in gpu_model_sources:
+        for pattern, template in gpu_model_patterns:
+            match = re.search(pattern, source, re.I)
+            if not match:
+                continue
+            token = match.group(1)
+            number = re.sub(r"(?i)^(?:rtx|gtx|mx|rx)\s*", "", token)
+            number = re.sub(r"(?i)\s*ti$", "", number).upper()
+            out["GPU model"] = template.format(number=number)
+            break
+        if out["GPU model"]:
+            break
 
     if not out["GPU model"]:
         if re.search(r"\bintel\s+arc(?:\s+graphics)?\b", gpu_src):
