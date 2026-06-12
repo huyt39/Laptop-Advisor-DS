@@ -105,7 +105,7 @@ def _cpu_score(df: pd.DataFrame) -> pd.Series:
     family = family.mask(brand.str.contains("i5|ryzen\\s*5|core\\s*5|ultra\\s*5", regex=True), 0.62)
     family = family.mask(brand.str.contains("i7|ryzen\\s*7|core\\s*7|ultra\\s*7", regex=True), 0.78)
     family = family.mask(brand.str.contains("i9|ryzen\\s*9|core\\s*9|ultra\\s*9", regex=True), 0.90)
-    family = family.mask(brand.str.contains("m1|m2|m3|m4", regex=True), 0.76)
+    family = family.mask(brand.str.contains(r"\bm[1-5]\b", regex=True), 0.76)
 
     gen_score = (gen / 14).clip(0, 1)
     speed_score = (speed / 5).clip(0, 1)
@@ -113,19 +113,30 @@ def _cpu_score(df: pd.DataFrame) -> pd.Series:
 
 
 def _gpu_score(df: pd.DataFrame) -> pd.Series:
-    gpu = df.get("GPU manufacturer", pd.Series("", index=df.index)).fillna("").astype(str).str.lower()
+    manufacturer = df.get("GPU manufacturer", pd.Series("", index=df.index)).fillna("").astype(str).str.lower()
+    model = df.get("GPU model", pd.Series("", index=df.index)).fillna("").astype(str).str.lower()
+    gpu_type = df.get("GPU type", pd.Series("", index=df.index)).fillna("").astype(str).str.lower()
     title = df.get("Product Name", pd.Series("", index=df.index)).fillna("").astype(str).str.lower()
-    text = gpu + " " + title
+    text = manufacturer + " " + model + " " + gpu_type + " " + title
 
     score = pd.Series(0.45, index=df.index)
-    score = score.mask(text.str.contains("rtx\\s*50|rtx\\s*40", regex=True), 1.00)
-    score = score.mask(text.str.contains("rtx\\s*30", regex=True), 0.88)
-    score = score.mask(text.str.contains("rtx\\s*20|gtx", regex=True), 0.72)
-    score = score.mask(text.str.contains("nvidia|geforce", regex=True), 0.66)
-    score = score.mask(text.str.contains("tuf|rog|nitro|loq|legion|victus|katana|cyborg|predator|gaming", regex=True), 0.64)
-    score = score.mask(text.str.contains("radeon\\s*rx|rx\\s*\\d", regex=True), 0.70)
-    score = score.mask(text.str.contains("iris|arc", regex=True), 0.55)
-    score = score.mask(text.str.contains("uhd|integrated|intel|amd|apple", regex=True), 0.48)
+    rules = [
+        (r"\brtx\s*50\d{2}\b", 1.00),
+        (r"\brtx\s*40\d{2}\b", 0.95),
+        (r"\brtx\s*30\d{2}\b", 0.86),
+        (r"\brtx\s*20\d{2}\b", 0.74),
+        (r"\bgtx\s*\d{3,4}\b", 0.68),
+        (r"\bradeon\s*rx\b|\brx\s*\d{3,4}\b", 0.72),
+        (r"\bintel\s*arc\b|\barc\s+[a-z]?\d{3,4}\b", 0.60),
+        (r"\biris\s*xe?\b", 0.54),
+        (r"\bapple\s+m[1-5]\b", 0.58),
+        (r"\bdedicated\b|\bnvidia\b|\bgeforce\b", 0.62),
+        (r"\btuf\b|\brog\b|\bnitro\b|\bloq\b|\blegion\b|\bvictus\b|\bkatana\b|\bcyborg\b|\bpredator\b|\bgaming\b", 0.64),
+        (r"\buhd\b|\bintegrated\b|\bintel graphics\b|\bradeon graphics\b|\badreno\b", 0.48),
+    ]
+    for pattern, value in rules:
+        matched = text.str.contains(pattern, regex=True)
+        score = score.where(~matched, score.clip(lower=value))
     return score.clip(0, 1)
 
 
@@ -160,7 +171,8 @@ def prepare_laptop_dataframe(df: pd.DataFrame, *, fpt_only: bool = True) -> pd.D
         else:
             inferred = title.apply(infer_fn)
             missing = df[col].isna()
-            df.loc[missing, col] = inferred[missing]
+            if missing.any():
+                df.loc[missing, col] = inferred[missing]
 
     if "Battery (Wh)" not in df.columns and "Battery" in df.columns:
         df["Battery (Wh)"] = df["Battery"].apply(_parse_battery_wh)
@@ -189,10 +201,21 @@ def prepare_laptop_dataframe(df: pd.DataFrame, *, fpt_only: bool = True) -> pd.D
     df["norm_weight"] = _norm_series(df.get("Weight (kg)", pd.Series(index=df.index, dtype=float)), inverse=True)
     df["norm_screen"] = _norm_series(df.get("Screen Size (inch)", pd.Series(index=df.index, dtype=float)))
     df["norm_battery"] = _norm_series(df.get("Battery (Wh)", pd.Series(index=df.index, dtype=float)))
+    battery_hours_score = _norm_series(
+        df.get("Battery life (hours)", pd.Series(index=df.index, dtype=float))
+    )
+    battery_wh_values = pd.to_numeric(
+        df.get("Battery (Wh)", pd.Series(index=df.index, dtype=float)),
+        errors="coerce",
+    )
+    battery_hour_values = pd.to_numeric(
+        df.get("Battery life (hours)", pd.Series(index=df.index, dtype=float)),
+        errors="coerce",
+    )
 
     df["gpu_score"] = _gpu_score(df)
     df["norm_cpu"] = _cpu_score(df)
-    df["battery_score"] = df["norm_battery"]
+    df["battery_score"] = df["norm_battery"].where(battery_wh_values.notna(), battery_hours_score)
     df["base_performance_score"] = (
         df["norm_cpu"] * 0.45 + df["gpu_score"] * 0.30 + df["norm_ram"] * 0.15 + df["norm_storage"] * 0.10
     ).clip(0, 1)
@@ -215,9 +238,23 @@ def prepare_laptop_dataframe(df: pd.DataFrame, *, fpt_only: bool = True) -> pd.D
 
     df["is_gaming_ready"] = df["gaming_score"] >= 0.60
     df["is_ai_ready"] = df["ai_graphics_score"] >= 0.60
-    df["is_business_ready"] = df["office_score"] >= 0.60
-    df["is_ultrabook"] = (df["norm_weight"] >= 0.70) & (df["battery_score"].fillna(0.5) >= 0.55)
-    df["is_light"] = pd.to_numeric(df.get("Weight (kg)"), errors="coerce").le(1.7).fillna(False)
+    weight_values = pd.to_numeric(
+        df.get("Weight (kg)", pd.Series(index=df.index, dtype=float)),
+        errors="coerce",
+    )
+    weight_observed = weight_values.notna()
+    battery_wh_observed = battery_wh_values.notna()
+    battery_hours_observed = battery_hour_values.notna()
+    battery_observed = battery_wh_observed | battery_hours_observed
+
+    df["is_business_ready"] = df["office_score"] >= 0.55
+    df["is_ultrabook"] = (
+        weight_observed
+        & battery_observed
+        & (df["norm_weight"] >= 0.70)
+        & (df["battery_score"] >= 0.55)
+    )
+    df["is_light"] = weight_observed & weight_values.le(1.7)
     df["is_small_screen"] = pd.to_numeric(df.get("Screen Size (inch)"), errors="coerce").le(14.1).fillna(False)
     df["is_large_screen"] = pd.to_numeric(df.get("Screen Size (inch)"), errors="coerce").ge(15.6).fillna(False)
 
