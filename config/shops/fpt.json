@@ -3,6 +3,7 @@
   "product_link_selector": "a[href*='/may-tinh-xach-tay/']",
   "load_more_selectors": [
     ".st-pd-btnShowmore",
+    ".light-btn",
     ".btn-show-more",
     ".show-more",
     ".view-more"

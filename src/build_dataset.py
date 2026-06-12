@@ -6,11 +6,14 @@ import sys
 from pathlib import Path
 from typing import Dict, List
 
-from az_no_db import extract_features
+import pandas as pd
+
+from feature_extractor import extract_features
+from advisor.features import prepare_laptop_dataframe
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
-OUTPUT_CSV = DATA_DIR / "all_laptops.csv"
-PARSED_DIR = DATA_DIR / "parsed_specs"
+FPT_OUTPUT_CSV = DATA_DIR / "fpt_laptops_features.csv"
+FPT_RAW_JSON = DATA_DIR / "fpt_laptops.json"
 
 FEATURE_COLUMNS = [
     "Product Name",
@@ -27,10 +30,20 @@ FEATURE_COLUMNS = [
     "Screen Resolution",
     "Refresh Rate (Hz)",
     "GPU manufacturer",
+    "GPU model",
+    "GPU type",
     "Weight (kg)",
     "Battery",
+    "Battery (Wh)",
+    "Battery life (hours)",
     "Price (VND)",
+    "Original Price (VND)",
+    "Is Installment 0%",
+    "Student Discount (VND)",
+    "Gifts",
+    "Stock Status",
     "url",
+    "image",
     "source",
     "saved_path",
     "detail_specs_html_path",
@@ -70,71 +83,96 @@ def _is_valid(item: Dict) -> bool:
     return filled >= 2
 
 
+def _first_present(item: Dict, *keys: str):
+    feats = item.get("features") or {}
+    for key in keys:
+        if item.get(key) not in (None, ""):
+            return item.get(key)
+        if feats.get(key) not in (None, ""):
+            return feats.get(key)
+    return ""
+
+
+def _infer_installment_0(item: Dict) -> bool:
+    text = " ".join(
+        str(x or "")
+        for x in [
+            item.get("name"),
+            item.get("price_raw"),
+            item.get("promotion"),
+            item.get("installment"),
+            item.get("url"),
+        ]
+    ).lower()
+    return any(x in text for x in ["trả góp 0%", "tra gop 0%", "góp 0%", "gop 0%"])
+
+
+def _retail_fields(item: Dict) -> Dict:
+    stock = _first_present(item, "stock_status", "Stock Status")
+    if not stock:
+        stock = "In Stock"
+    return {
+        "Original Price (VND)": _first_present(item, "original_price", "Original Price (VND)"),
+        "Is Installment 0%": _first_present(item, "is_installment_0", "Is Installment 0%") or _infer_installment_0(item),
+        "Student Discount (VND)": _first_present(item, "student_discount", "Student Discount (VND)") or 0,
+        "Gifts": _first_present(item, "gifts", "Gifts"),
+        "Stock Status": stock,
+        "image": item.get("image", ""),
+        "source": "fpt",
+    }
+
+
 def build() -> None:
-    shop_files = sorted(DATA_DIR.glob("*_laptops.json"))
-    if not shop_files:
-        sys.exit("No *_laptops.json files found in data/.")
+    if not FPT_RAW_JSON.exists():
+        sys.exit(f"Missing {FPT_RAW_JSON}. Crawl FPT first or provide the raw FPT JSON.")
 
     all_items: List[Dict] = []
     seen_urls: set[str] = set()
-
-    for sf in shop_files:
-        shop = sf.stem.replace("_laptops", "")
-        raw = _load(sf)
-        valid = 0
-        for item in raw:
-            url = item.get("url", "")
-            if url in seen_urls:
-                continue
-            seen_urls.add(url)
-            _re_extract(item)
-            if not _is_valid(item):
-                continue
-            item["_source"] = shop
-            all_items.append(item)
-            valid += 1
-        print(f"  {shop:>12s}: {len(raw):>4d} raw -> {valid:>4d} valid")
+    raw = _load(FPT_RAW_JSON)
+    valid = 0
+    for item in raw:
+        url = item.get("url", "")
+        if url in seen_urls:
+            continue
+        seen_urls.add(url)
+        _re_extract(item)
+        if not _is_valid(item):
+            continue
+        all_items.append(item)
+        valid += 1
+    print(f"  {'fpt':>12s}: {len(raw):>4d} raw -> {valid:>4d} valid")
 
     if not all_items:
         sys.exit("No valid products found.")
 
-    # ---- Per-product JSON ----
-    for idx, item in enumerate(all_items):
-        shop = item["_source"]
-        shop_dir = PARSED_DIR / shop
-        shop_dir.mkdir(parents=True, exist_ok=True)
-        out_data = {
+    # ---- FPT CSV ----
+    rows: List[Dict] = []
+    for item in all_items:
+        feats = item.get("features") or {}
+        row = {
             "Product Name": item.get("name", ""),
-            **(item.get("features") or {}),
             "url": item.get("url", ""),
             "saved_path": item.get("saved_path", ""),
             "detail_specs_html_path": item.get("detail_specs_html_path", ""),
+            **_retail_fields(item),
         }
-        fp = shop_dir / f"{idx:04d}.json"
-        fp.write_text(json.dumps(out_data, ensure_ascii=False, indent=2), encoding="utf-8")
+        for col in FEATURE_COLUMNS:
+            if col not in row:
+                row[col] = feats.get(col, "")
+        rows.append(row)
 
-    # ---- Consolidated CSV ----
-    OUTPUT_CSV.parent.mkdir(parents=True, exist_ok=True)
-    with open(OUTPUT_CSV, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=FEATURE_COLUMNS, extrasaction="ignore")
+    feature_df = prepare_laptop_dataframe(pd.DataFrame(rows), fpt_only=True)
+
+    FPT_OUTPUT_CSV.parent.mkdir(parents=True, exist_ok=True)
+    with open(FPT_OUTPUT_CSV, "w", newline="", encoding="utf-8") as f:
+        fieldnames = list(dict.fromkeys(FEATURE_COLUMNS + list(feature_df.columns)))
+        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
         writer.writeheader()
-        for item in all_items:
-            feats = item.get("features") or {}
-            row = {
-                "Product Name": item.get("name", ""),
-                "url": item.get("url", ""),
-                "source": item["_source"],
-                "saved_path": item.get("saved_path", ""),
-                "detail_specs_html_path": item.get("detail_specs_html_path", ""),
-            }
-            for col in FEATURE_COLUMNS:
-                if col not in row:
-                    row[col] = feats.get(col, "")
+        for row in feature_df.to_dict("records"):
             writer.writerow(row)
 
     print(f"\n  Total valid products: {len(all_items)}")
-    print(f"  CSV  -> {OUTPUT_CSV}")
-    print(f"  JSON -> {PARSED_DIR}/\n")
+    print(f"  FPT CSV -> {FPT_OUTPUT_CSV}\n")
 
     # ---- Quality stats ----
     print("  --- Column fill rates ---")

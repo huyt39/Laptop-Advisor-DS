@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import argparse
 import json
-import os
 import re
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -10,8 +8,8 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 from urllib.parse import urljoin, urlparse
 
-from bs4 import BeautifulSoup
 import requests
+from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.options import Options
@@ -21,37 +19,21 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
-from shop_configs import (
-    DEFAULT_LOAD_MORE_SELECTORS,
-    DEFAULT_PRODUCT_LINK_SELECTOR,
-    get_load_more_selectors,
-    get_product_link_selector,
-    get_brand_url,
-    list_shops,
-)
-from az_no_db import extract_features
+from feature_extractor import extract_features
+from shop_configs import get_load_more_selectors, get_product_link_selector
 
 
-def _collect_links_from_html(html: str, category_url: str, product_link_selector: str, shop: Optional[str]) -> List[str]:
-    soup = BeautifulSoup(html, "html.parser")
-    out: Dict[str, bool] = {}
-    for a in soup.select(product_link_selector):
-        href = a.get("href")
-        normalized = _normalize_url(href, category_url) if href else None
-        if not normalized:
-            continue
-        if urlparse(normalized).netloc != urlparse(category_url).netloc:
-            continue
-        if not _is_likely_product_url(normalized, shop):
-            continue
-        out[normalized] = True
-    return list(out.keys())
+FPT_CATEGORY_URL = "https://fptshop.com.vn/may-tinh-xach-tay"
+FPT_OUTPUT_JSON = Path("data/fpt_laptops.json")
+FPT_CATEGORY_API = "https://papi.fptshop.com.vn/gw/v1/public/fulltext-search-service/category"
+FPT_CATEGORY_SLUG = "may-tinh-xach-tay"
+FPT_API_BATCH_SIZE = 24
+FPT_API_PRODUCT_METADATA: Dict[str, Dict] = {}
 
 
 def create_driver(headless: bool = True) -> webdriver.Chrome:
     options = Options()
     if headless:
-        # Headless mode for automation environments.
         options.add_argument("--headless=new")
     options.add_argument("--window-size=1920,1080")
     options.add_argument("--disable-gpu")
@@ -72,71 +54,209 @@ def _normalize_url(href: str, base_url: str) -> Optional[str]:
     if href.startswith("#") or href.lower().startswith("javascript:"):
         return None
     full = urljoin(base_url, href)
-    p = urlparse(full)
-    if not p.scheme.startswith("http"):
+    parsed = urlparse(full)
+    if not parsed.scheme.startswith("http"):
         return None
     return full
 
 
-def _is_likely_product_url(url: str, shop: Optional[str]) -> bool:
-    p = urlparse(url)
-    path = p.path.lower()
+def _is_fpt_product_url(url: str) -> bool:
+    path = urlparse(url).path.lower()
+    if not path.startswith("/may-tinh-xach-tay/"):
+        return False
+    slug = path.rsplit("/", 1)[-1]
+    category_like = {
+        "gaming-do-hoa",
+        "asus",
+        "lenovo",
+        "hp",
+        "acer",
+        "msi",
+        "gigabyte",
+        "apple-macbook",
+        "lg",
+        "dell",
+        "samsung",
+        "colorful",
+        "masstel",
+        "sinh-vien-van-phong",
+        "mong-nhe",
+        "doanh-nhan",
+        "ai",
+    }
+    return slug not in category_like
 
-    if shop == "anphat":
-        if not path.endswith(".html"):
-            return False
-        if any(x in path for x in (
-            "/tim", "/collection/", "_id", "_dm",
-            "he-thong-showroom", "tin-khuyen-mai", "/trang-",
-        )):
-            return False
-        slug = path.rsplit("/", 1)[-1].replace(".html", "")
-        # Real product slugs contain model numbers (digits); pure category
-        # slugs like "laptop-gaming-do-hoa" do not.
-        if not re.search(r'\d', slug):
-            return False
-        return "/laptop-" in path or "/notebook-" in path or "/may-tinh" in path
 
-    if shop == "fpt":
-        if not path.startswith("/may-tinh-xach-tay/"):
-            return False
-        slug = path.rsplit("/", 1)[-1]
-        category_like = {
-            "gaming-do-hoa", "asus", "lenovo", "hp", "acer", "msi",
-            "gigabyte", "apple-macbook", "lg", "dell", "samsung",
-            "colorful", "masstel", "sinh-vien-van-phong", "mong-nhe",
-            "doanh-nhan", "ai",
+def _collect_fpt_links_from_html(html: str, category_url: str, product_link_selector: str) -> List[str]:
+    soup = BeautifulSoup(html, "html.parser")
+    out: Dict[str, bool] = {}
+    for a in soup.select(product_link_selector):
+        href = a.get("href")
+        normalized = _normalize_url(href, category_url) if href else None
+        if not normalized:
+            continue
+        if urlparse(normalized).netloc != urlparse(category_url).netloc:
+            continue
+        if not _is_fpt_product_url(normalized):
+            continue
+        out[normalized] = True
+
+    # FPT Shop is a Next.js app. Some product links are present only inside
+    # streamed script payloads, so a light regex pass recovers links that are
+    # not materialized as anchors in the current DOM snapshot.
+    for match in re.finditer(r'"slug"\s*:\s*"([^"]*may-tinh-xach-tay/[^"]+)"', html):
+        normalized = _normalize_url(match.group(1), category_url)
+        if normalized and _is_fpt_product_url(normalized):
+            out[normalized] = True
+    for match in re.finditer(r'(?<![\w/-])may-tinh-xach-tay/[a-zA-Z0-9?=&._%-]+', html):
+        normalized = _normalize_url(match.group(0), category_url)
+        if normalized and _is_fpt_product_url(normalized):
+            out[normalized] = True
+    return list(out.keys())
+
+
+def _api_product_to_urls(product: Dict) -> List[str]:
+    urls: List[str] = []
+    skus = product.get("skus")
+    if isinstance(skus, list):
+        for sku in skus:
+            if isinstance(sku, dict) and sku.get("slug"):
+                url = _normalize_url(str(sku["slug"]), FPT_CATEGORY_URL)
+                if url:
+                    urls.append(url)
+    if urls:
+        return list(dict.fromkeys(urls))
+
+    slug = product.get("slug")
+    if isinstance(slug, str) and slug:
+        url = _normalize_url(slug, FPT_CATEGORY_URL)
+        if url:
+            urls.append(url)
+    return list(dict.fromkeys(urls))
+
+
+def _extract_api_specs(product: Dict, sku: Optional[Dict] = None) -> Dict[str, str]:
+    specs: Dict[str, str] = {}
+    sku_name = ""
+    if isinstance(sku, dict):
+        sku_name = str(sku.get("displayName") or sku.get("name") or sku.get("shortDisplayName") or "").strip()
+    product_name = str(product.get("displayName") or product.get("name") or "").strip()
+    if sku_name:
+        specs["Tên SKU"] = sku_name
+    elif product_name:
+        specs["Tên sản phẩm API"] = product_name
+
+    for idx, point in enumerate(product.get("keySellingPoints") or [], start=1):
+        if not isinstance(point, dict):
+            continue
+        title = str(point.get("title") or "").strip()
+        description = str(point.get("description") or "").strip()
+        if title or description:
+            specs[f"Thông số nổi bật {idx}"] = " ".join(x for x in (title, description) if x)
+    return specs
+
+
+def _cache_api_metadata(product: Dict, url: str, sku: Optional[Dict] = None) -> None:
+    metadata = {
+        "name": (sku or {}).get("displayName") or (sku or {}).get("name") or product.get("displayName") or product.get("name"),
+        "price": (sku or {}).get("currentPrice") or product.get("currentPrice") or product.get("price"),
+        "original_price": (sku or {}).get("originalPrice") or product.get("originalPrice"),
+        "image": ((product.get("image") or {}).get("src") if isinstance(product.get("image"), dict) else product.get("image"))
+        or (sku or {}).get("image"),
+        "brand": ((product.get("brand") or {}).get("name") if isinstance(product.get("brand"), dict) else None),
+        "specs": _extract_api_specs(product, sku),
+    }
+    FPT_API_PRODUCT_METADATA[url] = metadata
+
+
+def crawl_fpt_links_via_api(max_batches: int = 50, batch_size: int = FPT_API_BATCH_SIZE) -> List[str]:
+    session = requests.Session()
+    session.headers.update(
+        {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Origin": "https://fptshop.com.vn",
+            "Referer": FPT_CATEGORY_URL,
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            ),
         }
-        return slug not in category_like
+    )
 
-    if shop == "cellphones":
-        # Drop duplicate hash-fragment URLs
-        if p.fragment:
-            return False
-        if "/laptop" not in path:
-            return False
-        # Exclude the bare category page itself
-        stripped = path.rstrip("/")
-        if stripped in ("/laptop.html", "/laptop"):
-            return False
+    collected: Dict[str, bool] = {}
+    total_count: Optional[int] = None
+    for batch_idx in range(max_batches):
+        skip_count = batch_idx * batch_size
+        payload = {
+            "slug": FPT_CATEGORY_SLUG,
+            "skipCount": skip_count,
+            "maxResultCount": batch_size,
+            "categoryType": "category",
+        }
+        try:
+            response = session.post(FPT_CATEGORY_API, json=payload, timeout=20)
+            response.raise_for_status()
+            data = response.json()
+        except Exception as exc:
+            print(f"  FPT category API failed at skip={skip_count}: {exc}")
+            break
+
+        items = data.get("items") if isinstance(data, dict) else None
+        if not isinstance(items, list) or not items:
+            break
+        if isinstance(data.get("totalCount"), int):
+            total_count = data["totalCount"]
+
+        before_count = len(collected)
+        for product in items:
+            if not isinstance(product, dict):
+                continue
+            skus = product.get("skus")
+            sku_by_url: Dict[str, Optional[Dict]] = {}
+            if isinstance(skus, list):
+                for sku in skus:
+                    if isinstance(sku, dict) and sku.get("slug"):
+                        sku_url = _normalize_url(str(sku["slug"]), FPT_CATEGORY_URL)
+                        if sku_url:
+                            sku_by_url[sku_url] = sku
+            for url in _api_product_to_urls(product):
+                if url and _is_fpt_product_url(url):
+                    collected[url] = True
+                    _cache_api_metadata(product, url, sku_by_url.get(url))
+
+        print(f"  API batch {batch_idx + 1}: collected {len(collected)} links")
+        if len(collected) == before_count:
+            break
+        if total_count is not None and len(collected) >= total_count:
+            break
+
+    return list(collected.keys())
+
+
+def _click_first_available_load_more(driver: webdriver.Chrome, selectors: List[str], timeout_sec: int) -> bool:
+    # Prefer the real category load-more button. Other "xem thêm" controls may
+    # appear in banners/articles and do not load product cards.
+    text_xpath = (
+        "//*[self::button or self::a or self::span or self::div]"
+        "[contains(translate(normalize-space(.), "
+        "'ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁẢÃẠĂẰẮẲẴẶÂẦẤẨẪẬĐÈÉẺẼẸÊỀẾỂỄỆÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ', "
+        "'abcdefghijklmnopqrstuvwxyzàáảãạăằắẳẵặâầấẩẫậđèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵ'), "
+        "'xem thêm') "
+        "and (contains(translate(normalize-space(.), "
+        "'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'sản phẩm') "
+        "or contains(translate(normalize-space(.), "
+        "'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'san pham'))]"
+    )
+    try:
+        button = WebDriverWait(driver, timeout_sec).until(EC.element_to_be_clickable((By.XPATH, text_xpath)))
+        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", button)
+        time.sleep(0.5)
+        driver.execute_script("arguments[0].click();", button)
         return True
+    except Exception:
+        pass
 
-    if shop == "phongvu":
-        # /c/ paths are category listing pages, not product pages
-        if "/c/" in path:
-            return False
-        if "/laptop-" not in path:
-            return False
-        return True
-
-    return True
-
-
-def _click_first_available_load_more(
-    driver: webdriver.Chrome,
-    selectors: List[str],
-    timeout_sec: int,
-) -> bool:
     for selector in selectors:
         try:
             button = WebDriverWait(driver, timeout_sec).until(
@@ -144,43 +264,49 @@ def _click_first_available_load_more(
             )
             driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", button)
             time.sleep(0.5)
-            button.click()
+            driver.execute_script("arguments[0].click();", button)
             return True
         except TimeoutException:
             continue
         except Exception:
             continue
-    # Fallback by visible text, useful when class names are dynamic.
+
     xpath_candidates = [
         "//button[contains(translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'xem thêm')]",
         "//a[contains(translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'xem thêm')]",
+        "//span[contains(translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'xem thêm')]",
         "//button[contains(translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'xem them')]",
         "//a[contains(translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'xem them')]",
+        "//span[contains(translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'xem them')]",
     ]
-    for xp in xpath_candidates:
+    for xpath in xpath_candidates:
         try:
-            btn = WebDriverWait(driver, timeout_sec).until(EC.element_to_be_clickable((By.XPATH, xp)))
-            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", btn)
+            button = WebDriverWait(driver, timeout_sec).until(EC.element_to_be_clickable((By.XPATH, xpath)))
+            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", button)
             time.sleep(0.5)
-            btn.click()
+            driver.execute_script("arguments[0].click();", button)
             return True
         except Exception:
             continue
     return False
 
 
-def crawl_dynamic_links(
-    category_url: str,
-    product_link_selector: str,
-    shop: Optional[str] = None,
-    load_more_selectors: Optional[List[str]] = None,
+def crawl_fpt_links(
+    category_url: str = FPT_CATEGORY_URL,
     max_clicks: int = 30,
     max_idle_rounds: int = 4,
     wait_after_scroll: float = 1.5,
     wait_after_click: float = 2.0,
     headless: bool = True,
 ) -> List[str]:
-    selectors = load_more_selectors or DEFAULT_LOAD_MORE_SELECTORS
+    api_links = crawl_fpt_links_via_api(max_batches=max_clicks)
+    if api_links:
+        print(f"  Collected {len(api_links)} FPT links via category API.")
+        return api_links
+
+    print("  Falling back to Selenium category crawl.")
+    product_link_selector = get_product_link_selector()
+    load_more_selectors = get_load_more_selectors()
 
     driver = create_driver(headless=headless)
     try:
@@ -189,84 +315,44 @@ def crawl_dynamic_links(
         collected: Dict[str, bool] = {}
         idle_rounds = 0
 
-        for _ in range(max_clicks):
+        for click_idx in range(max_clicks):
+            # Scroll in several steps so lazy product cards have time to render
+            # before we inspect the page or click the load-more button.
+            for ratio in (0.35, 0.7, 1.0):
+                driver.execute_script("window.scrollTo(0, document.body.scrollHeight * arguments[0]);", ratio)
+                time.sleep(wait_after_scroll / 3)
+
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             time.sleep(wait_after_scroll)
 
-            # Collect links progressively, not only from final DOM snapshot.
-            soup = BeautifulSoup(driver.page_source, "html.parser")
             before_count = len(collected)
-            for link in _collect_links_from_html(str(soup), category_url, product_link_selector, shop):
+            for link in _collect_fpt_links_from_html(driver.page_source, category_url, product_link_selector):
                 collected[link] = True
 
-            clicked = _click_first_available_load_more(driver, selectors, timeout_sec=4)
+            clicked = _click_first_available_load_more(driver, load_more_selectors, timeout_sec=4)
             if clicked:
                 time.sleep(wait_after_click)
-            after_count = len(collected)
-            if after_count == before_count and not clicked:
+                for link in _collect_fpt_links_from_html(driver.page_source, category_url, product_link_selector):
+                    collected[link] = True
+                print(f"  Load-more {click_idx + 1}: collected {len(collected)} links")
+
+            if len(collected) == before_count and not clicked:
                 idle_rounds += 1
             else:
                 idle_rounds = 0
             if idle_rounds >= max_idle_rounds:
                 break
+
         return list(collected.keys())
     finally:
         driver.quit()
-
-
-def crawl_anphat_paginated_links(
-    category_url: str,
-    product_link_selector: str,
-    max_pages: int = 50,
-    delay_sec: float = 0.2,
-) -> List[str]:
-    session = requests.Session()
-    session.headers.update(
-        {
-            "User-Agent": (
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-            )
-        }
-    )
-    collected: Dict[str, bool] = {}
-    idle_pages = 0
-    for page in range(1, max_pages + 1):
-        urls = [f"{category_url}?page={page}"]
-        if page > 1:
-            # Some category pages use /trang-{n}.html format.
-            base_no_html = category_url[:-5] if category_url.endswith(".html") else category_url
-            urls.append(f"{base_no_html}/trang-{page}.html")
-        page_links_before = len(collected)
-        got_page = False
-        for u in urls:
-            try:
-                r = session.get(u, timeout=20)
-                if r.status_code != 200:
-                    continue
-                got_page = True
-                for link in _collect_links_from_html(r.text, category_url, product_link_selector, "anphat"):
-                    collected[link] = True
-                break
-            except Exception:
-                continue
-        page_links_after = len(collected)
-        if (not got_page) or (page_links_after == page_links_before):
-            idle_pages += 1
-        else:
-            idle_pages = 0
-        if idle_pages >= 3:
-            break
-        time.sleep(delay_sec)
-    return list(collected.keys())
 
 
 def _to_int_price(text: Optional[str]) -> Optional[int]:
     if not text:
         return None
     for token in re.finditer(r"\d[\d\.,]{2,}", text):
-        raw = token.group(0)
-        digits = re.sub(r"[^0-9]", "", raw)
+        digits = re.sub(r"[^0-9]", "", token.group(0))
         if not digits:
             continue
         try:
@@ -278,14 +364,13 @@ def _to_int_price(text: Optional[str]) -> Optional[int]:
     return None
 
 
-def _extract_price_generic(soup: BeautifulSoup, selectors: List[str]) -> Tuple[Optional[str], Optional[int]]:
-    # 0) JSON-LD / embedded structured data (most stable for FPT + An Phat)
+def _extract_price(soup: BeautifulSoup) -> Tuple[Optional[str], Optional[int]]:
     html = str(soup)
-    m = re.search(r'"priceCurrency"\s*:\s*"VND"[^{}]{0,200}"price"\s*:\s*"?(\d[\d\.]*)"?', html, re.I)
-    if not m:
-        m = re.search(r'"price"\s*:\s*"?(\d[\d\.]*)"?', html, re.I)
-    if m:
-        raw = m.group(1)
+    match = re.search(r'"priceCurrency"\s*:\s*"VND"[^{}]{0,200}"price"\s*:\s*"?(\d[\d\.]*)"?', html, re.I)
+    if not match:
+        match = re.search(r'"price"\s*:\s*"?(\d[\d\.]*)"?', html, re.I)
+    if match:
+        raw = match.group(1)
         value = _to_int_price(raw)
         if value is not None:
             return raw, value
@@ -297,139 +382,156 @@ def _extract_price_generic(soup: BeautifulSoup, selectors: List[str]) -> Tuple[O
         if value is not None:
             return raw, value
 
+    selectors = [
+        "[itemprop='price']",
+        ".st-price-main",
+        ".price-current",
+        ".product__price",
+        ".price",
+        "[class*='price']",
+        "[class*='gia']",
+    ]
     candidates: List[tuple[str, int]] = []
-    for sel in selectors:
-        for el in soup.select(sel):
-            txt = el.get_text(" ", strip=True)
-            if not txt:
+    for selector in selectors:
+        for el in soup.select(selector):
+            text = el.get_text(" ", strip=True)
+            if not text:
                 continue
-            lowered = txt.lower()
+            lowered = text.lower()
             if any(x in lowered for x in ("trả góp", "voucher", "khuyến mãi", "ưu đãi", "tiết kiệm")):
                 continue
-            value = _to_int_price(txt)
+            value = _to_int_price(text)
             if value is not None:
-                candidates.append((txt, value))
+                candidates.append((text, value))
         if candidates:
             break
+
     if not candidates:
         return None, None
-    # Prefer lower candidate in selector block (often promo/sale price).
     best = min(candidates, key=lambda x: x[1])
     return best[0], best[1]
 
 
 _CONTACT_KEYWORDS = frozenset({
-    "email", "điện thoại", "phone", "fax", "cửa hàng", "trung tâm bảo hành",
-    "liên hệ", "chịu trách nhiệm", "chuỗi nhà thuốc", "hotline",
+    "email",
+    "điện thoại",
+    "phone",
+    "fax",
+    "cửa hàng",
+    "trung tâm bảo hành",
+    "liên hệ",
+    "chịu trách nhiệm",
+    "hotline",
 })
 
 
 def _table_to_dict(table) -> Dict[str, str]:
-    d: Dict[str, str] = {}
+    data: Dict[str, str] = {}
     for row in table.find_all("tr"):
         cols = row.find_all(["td", "th"])
         if len(cols) >= 2:
-            k = cols[0].get_text(" ", strip=True)
-            v = cols[1].get_text(" ", strip=True)
-            if k:
-                d[k] = v
-    return d
-
-
-def _dl_to_dict(dl) -> Dict[str, str]:
-    d: Dict[str, str] = {}
-    for dt, dd in zip(dl.find_all("dt"), dl.find_all("dd")):
-        k = dt.get_text(strip=True)
-        v = dd.get_text(strip=True)
-        if k:
-            d[k] = v
-    return d
+            key = cols[0].get_text(" ", strip=True)
+            value = cols[1].get_text(" ", strip=True)
+            if key:
+                data[key] = value
+    return data
 
 
 def _is_contact_table(kv: Dict[str, str]) -> bool:
     if not kv:
         return True
-    hits = sum(1 for k in kv if any(c in k.lower() for c in _CONTACT_KEYWORDS))
+    hits = sum(1 for key in kv if any(c in key.lower() for c in _CONTACT_KEYWORDS))
     return hits > len(kv) * 0.3
 
 
-def _extract_specs_common(soup: BeautifulSoup) -> Dict[str, str]:
-    specs: Dict[str, str] = {}
+def _is_specs_like(kv: Dict[str, str]) -> bool:
+    if not kv:
+        return False
+    joined = " ".join(kv.keys()).lower()
+    spec_keywords = (
+        "cpu",
+        "chip",
+        "ram",
+        "ssd",
+        "ổ cứng",
+        "màn hình",
+        "độ phân giải",
+        "gpu",
+        "card",
+        "pin",
+        "trọng lượng",
+        "kích thước",
+        "hệ điều hành",
+    )
+    return any(keyword in joined for keyword in spec_keywords)
 
-    # 1) Try well-known spec containers first (class / id containing spec keywords)
+
+def _extract_json_ld_specs(soup: BeautifulSoup) -> Dict[str, str]:
+    specs: Dict[str, str] = {}
+    for script in soup.select("script[type='application/ld+json']"):
+        raw = script.string or script.get_text("", strip=True)
+        if not raw:
+            continue
+        try:
+            payload = json.loads(raw)
+        except json.JSONDecodeError:
+            continue
+        nodes = payload if isinstance(payload, list) else [payload]
+        for node in nodes:
+            if not isinstance(node, dict):
+                continue
+            props = node.get("additionalProperty")
+            if not isinstance(props, list):
+                continue
+            for prop in props:
+                if not isinstance(prop, dict):
+                    continue
+                key = str(prop.get("name") or "").strip()
+                value = str(prop.get("value") or "").strip()
+                if key and value:
+                    specs[key] = value
+    return specs
+
+
+def _extract_specs(soup: BeautifulSoup) -> Dict[str, str]:
+    json_ld_specs = _extract_json_ld_specs(soup)
+    if _is_specs_like(json_ld_specs):
+        return json_ld_specs
+
+    specs: Dict[str, str] = {}
     for container in soup.select(
         "[class*='spec'], [class*='thong-so'], [class*='parameter'], "
         "[class*='config'], [id*='spec'], [id*='thong-so'], "
         ".product-info-table, .product-specs, .box-specifi"
     ):
-        for tbl in container.find_all("table"):
-            ts = _table_to_dict(tbl)
-            if ts and not _is_contact_table(ts):
-                specs.update(ts)
-        if not specs:
-            for dl in container.find_all("dl"):
-                ds = _dl_to_dict(dl)
-                if ds:
-                    specs.update(ds)
-    if specs:
-        return specs
+        for table in container.find_all("table"):
+            parsed = _table_to_dict(table)
+            if parsed and _is_specs_like(parsed) and not _is_contact_table(parsed):
+                specs.update(parsed)
+        if specs:
+            return specs
 
-    # 2) Scan ALL tables, pick the largest non-contact one
     best: Dict[str, str] = {}
-    for tbl in soup.find_all("table"):
-        ts = _table_to_dict(tbl)
-        if ts and not _is_contact_table(ts) and len(ts) > len(best):
-            best = ts
+    for table in soup.find_all("table"):
+        parsed = _table_to_dict(table)
+        if parsed and _is_specs_like(parsed) and not _is_contact_table(parsed) and len(parsed) > len(best):
+            best = parsed
     if best:
         return best
 
-    # 3) dl elements
-    for dl in soup.find_all("dl"):
-        ds = _dl_to_dict(dl)
-        if ds and not _is_contact_table(ds):
-            specs.update(ds)
-    if specs:
-        return specs
-
-    # 4) li with ":" pattern
     for li in soup.find_all("li"):
         text = li.get_text(" ", strip=True)
         if ":" in text and len(text) < 300:
-            k, v = [p.strip() for p in text.split(":", 1)]
-            if k and len(k) < 80 and not any(c in k.lower() for c in _CONTACT_KEYWORDS):
-                specs[k] = v
-    return specs
+            key, value = [p.strip() for p in text.split(":", 1)]
+            if key and len(key) < 80 and not any(c in key.lower() for c in _CONTACT_KEYWORDS):
+                specs[key] = value
+    return specs if _is_specs_like(specs) else json_ld_specs
 
 
-_PRICE_SELECTORS: Dict[str, List[str]] = {
-    "fpt": [
-        "[itemprop='price']", ".st-price-main", ".price",
-        ".price-current", ".product__price", "[class*='price']", "[class*='gia']",
-    ],
-    "anphat": [
-        "[itemprop='price']", ".price-main", ".product-price",
-        ".p-price", ".price", "[class*='price']", "[class*='gia']",
-    ],
-    "cellphones": [
-        "[itemprop='price']", ".product__price--show",
-        ".product__price", ".price", "[class*='price']",
-    ],
-    "phongvu": [
-        "[itemprop='price']", ".product-price__current",
-        ".product-price", ".price", "[class*='price']",
-    ],
-}
-
-_DEFAULT_PRICE_SELECTORS = [
-    "[itemprop='price']", ".price", "[class*='price']", "[class*='gia']",
-]
-
-
-def _parse_product_page_generic(html: str, url: str, shop: Optional[str]) -> Dict:
-    """Unified product-page parser used by all shops."""
+def parse_fpt_product_page(html: str, url: str) -> Dict:
     soup = BeautifulSoup(html, "html.parser")
+    api_metadata = FPT_API_PRODUCT_METADATA.get(url, {})
 
-    # ---- name ----
     name = ""
     og = soup.select_one("meta[property='og:title'], meta[name='title']")
     if og and og.get("content"):
@@ -439,188 +541,96 @@ def _parse_product_page_generic(html: str, url: str, shop: Optional[str]) -> Dic
         if h1:
             name = h1.get_text(strip=True)
 
-    # ---- price ----
-    selectors = _PRICE_SELECTORS.get(shop or "", _DEFAULT_PRICE_SELECTORS)
-    price_raw, price = _extract_price_generic(soup, selectors)
+    price_raw, price = _extract_price(soup)
 
-    # ---- image ----
     image = None
-    ogi = soup.select_one("meta[property='og:image']")
-    if ogi and ogi.get("content"):
-        image = ogi["content"]
+    og_image = soup.select_one("meta[property='og:image']")
+    if og_image and og_image.get("content"):
+        image = og_image["content"]
 
-    # ---- specs ----
-    specs = _extract_specs_common(soup)
+    specs = _extract_specs(soup)
+    api_specs = api_metadata.get("specs")
+    if isinstance(api_specs, dict):
+        specs = {**api_specs, **specs}
 
-    # ---- features ----
-    features = extract_features(name, specs, price)
+    final_name = str(api_metadata.get("name") or name or "").strip()
+    final_price = api_metadata.get("price") or price
+    final_image = api_metadata.get("image") or image
+    feature_context = f"{final_name} {name} {url} {' '.join(str(v) for v in specs.values())}"
+    features = extract_features(feature_context, specs, final_price)
+    if api_metadata.get("brand") and not features.get("Manufacturer"):
+        features["Manufacturer"] = str(api_metadata["brand"]).lower()
 
     return {
         "url": url,
-        "name": name,
-        "price": price,
-        "price_raw": price_raw,
-        "image": image,
+        "name": final_name,
+        "price": final_price,
+        "price_raw": str(final_price) if final_price is not None else price_raw,
+        "image": final_image,
         "specs": specs,
         "features": features,
     }
 
 
 def _is_valid_product(item: Dict) -> bool:
-    """Heuristic check: does this look like a real product page?"""
     if not item.get("name"):
         return False
-
-    specs = item.get("specs") or {}
-    # Count non-contact spec keys
-    real_specs = sum(
-        1 for k in specs
-        if not any(c in k.lower() for c in _CONTACT_KEYWORDS)
-    )
-
     features = item.get("features") or {}
     filled = sum(1 for v in features.values() if v)
-
-    price = item.get("price")
-
-    # Must have price OR enough real information
-    if price is None and real_specs < 3 and filled < 4:
-        return False
-    return True
+    return item.get("price") is not None and filled >= 3
 
 
 def _fetch_url(url: str) -> Tuple[str, Optional[str]]:
-    """Fetch a single URL, returning (url, html_or_None)."""
     try:
-        s = requests.Session()
-        s.headers.update({
-            "User-Agent": (
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-            )
-        })
-        r = s.get(url, timeout=20)
-        if r.status_code == 200:
-            return url, r.text
+        session = requests.Session()
+        session.headers.update(
+            {
+                "User-Agent": (
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                )
+            }
+        )
+        response = session.get(url, timeout=20)
+        if response.status_code == 200:
+            return url, response.text
     except Exception:
         pass
     return url, None
 
 
-def crawl_and_parse_products(
-    urls: List[str],
-    shop: Optional[str],
-    max_workers: int = 5,
-    save_html: bool = True,
-) -> List[Dict]:
-    # ---- Phase 1: Parallel fetch ----
+def crawl_and_parse_fpt_products(urls: List[str], max_workers: int = 5, save_html: bool = False) -> List[Dict]:
     html_dir: Optional[Path] = None
     if save_html:
-        html_dir = Path("data") / (shop or "unknown") / "raw_htmls"
+        html_dir = Path("data/fpt/raw_htmls")
         html_dir.mkdir(parents=True, exist_ok=True)
 
     html_map: Dict[str, str] = {}
-    print(f"  Fetching {len(urls)} product pages ({max_workers} workers)...")
-    with ThreadPoolExecutor(max_workers=max_workers) as ex:
-        futures = {ex.submit(_fetch_url, u): u for u in urls}
-        for fut in as_completed(futures):
-            url, html = fut.result()
+    print(f"  Fetching {len(urls)} FPT product pages ({max_workers} workers)...")
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = {executor.submit(_fetch_url, url): url for url in urls}
+        for future in as_completed(futures):
+            url, html = future.result()
             if html:
                 html_map[url] = html
 
-    print(f"  Fetched {len(html_map)}/{len(urls)} pages successfully.")
-
-    # ---- Phase 2: Parse + validate + save HTML ----
     items: List[Dict] = []
     for idx, (url, html) in enumerate(html_map.items()):
         if save_html and html_dir:
             html_path = html_dir / f"{idx:04d}.html"
             html_path.write_text(html, encoding="utf-8")
 
-        item = _parse_product_page_generic(html, url, shop)
-
+        item = parse_fpt_product_page(html, url)
         if not _is_valid_product(item):
             continue
-
         if save_html and html_dir:
             item["saved_path"] = str(html_dir / f"{idx:04d}.html")
-
         items.append(item)
 
-    print(f"  Validated {len(items)} products.")
+    print(f"  Validated {len(items)} FPT products.")
     return items
 
 
-def main() -> None:
-    shop_choices = list_shops()
-    parser = argparse.ArgumentParser(description="Crawl dynamic product links via Selenium.")
-    parser.add_argument("--url", help="Category/listing URL")
-    parser.add_argument("--shop", choices=shop_choices, help="Shop preset name")
-    parser.add_argument("--brand", help="Brand name in shop preset (asus/hp/...)")
-    parser.add_argument(
-        "--product-selector",
-        help="CSS selector for product links",
-    )
-    parser.add_argument(
-        "--fallback-product-selector",
-        default=DEFAULT_PRODUCT_LINK_SELECTOR,
-        help="CSS selector for product links",
-    )
-    parser.add_argument(
-        "--load-more-selector",
-        action="append",
-        dest="load_more_selectors",
-        help="CSS selector for load-more button (can repeat multiple times)",
-    )
-    parser.add_argument("--max-clicks", type=int, default=30, help="Max load-more clicks")
-    parser.add_argument("--show-browser", action="store_true", help="Show browser window")
-    parser.add_argument("--full-parse", action="store_true", help="Fetch product pages and parse details")
-    parser.add_argument("--out", help="Output JSON path")
-    args = parser.parse_args()
-
-    category_url = args.url
-    if not category_url and args.shop and args.brand:
-        category_url = get_brand_url(args.shop, args.brand)
-    if not category_url:
-        raise SystemExit("Please provide --url or use --shop with --brand.")
-
-    product_selector = args.product_selector
-    if not product_selector and args.shop:
-        product_selector = get_product_link_selector(args.shop)
-    if not product_selector:
-        product_selector = args.fallback_product_selector
-
-    load_more_selectors = args.load_more_selectors
-    if not load_more_selectors and args.shop:
-        load_more_selectors = get_load_more_selectors(args.shop)
-
-    urls = crawl_dynamic_links(
-        category_url=category_url,
-        product_link_selector=product_selector,
-        shop=args.shop,
-        load_more_selectors=load_more_selectors,
-        max_clicks=args.max_clicks,
-        headless=not args.show_browser,
-    )
-
-    if args.full_parse:
-        items = crawl_and_parse_products(urls, shop=args.shop)
-        out = args.out or "data/dynamic_products.json"
-        with open(out, "w", encoding="utf-8") as f:
-            json.dump(items, f, ensure_ascii=False, indent=2)
-        print(f"Parsed {len(items)} products and saved to {out}")
-        return
-
-    if args.out:
-        with open(args.out, "w", encoding="utf-8") as f:
-            json.dump(urls, f, ensure_ascii=False, indent=2)
-        print(f"Collected {len(urls)} product URLs and saved to {args.out}")
-        return
-
-    print(f"Collected {len(urls)} product URLs")
-    for u in urls[:10]:
-        print(u)
-
-
-if __name__ == "__main__":
-    main()
+def save_fpt_products(items: List[Dict], output_path: Path = FPT_OUTPUT_JSON) -> None:
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(json.dumps(items, ensure_ascii=False, indent=2), encoding="utf-8")

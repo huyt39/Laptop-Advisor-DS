@@ -27,36 +27,25 @@ def _load_shop_file(shop: str) -> Dict[str, Any]:
         return {}
 
 
-def list_shops() -> List[str]:
-    if not CONFIG_DIR.exists():
-        return []
-    return sorted(p.stem for p in CONFIG_DIR.glob("*.json"))
-
-
-def get_brand_url(shop: str, brand: str) -> Optional[str]:
-    cfg = _load_shop_file(shop)
+def get_brand_url(brand: str = "all") -> Optional[str]:
+    cfg = _load_shop_file("fpt")
     brands = cfg.get("brands", {})
     if not isinstance(brands, dict):
         return None
     return brands.get(brand.lower())
 
 
-def get_product_link_selector(shop: Optional[str]) -> str:
-    if not shop:
-        return DEFAULT_PRODUCT_LINK_SELECTOR
-    cfg = _load_shop_file(shop)
+def get_product_link_selector() -> str:
+    cfg = _load_shop_file("fpt")
     selector = cfg.get("product_link_selector")
     if isinstance(selector, str) and selector.strip():
         return selector
     return DEFAULT_PRODUCT_LINK_SELECTOR
 
 
-def get_load_more_selectors(shop: Optional[str]) -> List[str]:
-    if not shop:
-        return DEFAULT_LOAD_MORE_SELECTORS
-    cfg = _load_shop_file(shop)
+def get_load_more_selectors() -> List[str]:
+    cfg = _load_shop_file("fpt")
     selectors = cfg.get("load_more_selectors")
     if isinstance(selectors, list) and selectors:
         return [x for x in selectors if isinstance(x, str) and x.strip()]
     return DEFAULT_LOAD_MORE_SELECTORS
-
