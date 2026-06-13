@@ -12,7 +12,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
-from src.llm.schemas_v2 import BrandPreferences, IntentV2
+from src.llm.schemas_v2 import BatteryRequirements, BrandPreferences, DisplayRequirements, IntentV2
 from src.llm.gemini_client import GeminiClient
 from src.llm.prompts import fallback_advice_no_llm
 from src.advisor.features import prepare_laptop_dataframe
@@ -107,7 +107,7 @@ _GAMING_KW = [
     "lol", "liên minh", "dota", "gta", "elden ring", "aaa", "game"
 ]
 
-_CHEAP_KW = ["rẻ", "tiết kiệm", "giá tốt", "giá mềm", "ngon bổ rẻ"]
+_CHEAP_KW = ["rẻ", "tiết kiệm", "giá tốt", "giá mềm", "giá hợp lý", "ngon bổ rẻ"]
 _LIGHT_KW = ["nhẹ", "mỏng nhẹ", "dễ mang", "di chuyển", "portable"]
 _BATTERY_KW = ["pin", "pin trâu", "pin lâu", "dung lượng pin", "battery"]
 _BRANDS = ["asus", "acer", "dell", "hp", "lenovo", "msi", "apple", "macbook", "lg", "samsung", "gigabyte"]
@@ -162,6 +162,39 @@ def _extract_storage_gb(text: str) -> Optional[int]:
     return None
 
 
+def _extract_screen_size_inch(text: str) -> Optional[float]:
+    t = text.lower()
+    m = re.search(r"(\d{2}(?:[.,]\d)?)\s*(?:inch|inches|\")", t)
+    if not m:
+        return None
+    value = float(m.group(1).replace(",", "."))
+    if 10 <= value <= 18:
+        return value
+    return None
+
+
+def _extract_max_weight_kg(text: str) -> Optional[float]:
+    t = text.lower()
+    m = re.search(r"(?:dưới|không quá|tối đa|<=|<)\s*(\d(?:[.,]\d{1,2})?)\s*kg", t)
+    if not m:
+        return None
+    value = float(m.group(1).replace(",", "."))
+    if 0.5 <= value <= 5:
+        return value
+    return None
+
+
+def _extract_min_battery_wh(text: str) -> Optional[float]:
+    t = text.lower()
+    m = re.search(r"(?:pin|battery)?\s*(?:tối thiểu|ít nhất|>=|từ)?\s*(\d{2,3})\s*wh", t)
+    if not m:
+        return None
+    value = float(m.group(1))
+    if 20 <= value <= 120:
+        return value
+    return None
+
+
 def _extract_brand_preferences(text: str) -> tuple[list[str], list[str]]:
     t = text.lower()
     preferred = []
@@ -172,7 +205,7 @@ def _extract_brand_preferences(text: str) -> tuple[list[str], list[str]]:
         if not re.search(brand_pattern, t):
             continue
         exclusion_pattern = (
-            rf"(?:không\s+(?:thích|muốn|chọn)|tránh|loại|trừ)"
+            rf"(?:không\s+(?:thích|muốn|chọn|lấy)|tránh|loại|trừ)"
             rf"(?:\s+\w+){{0,3}}\s+{brand_pattern}"
         )
         if re.search(exclusion_pattern, t):
@@ -290,6 +323,23 @@ def patch_intent_from_text(user_text: str, intent: IntentV2) -> IntentV2:
     storage = _extract_storage_gb(user_text)
     if storage is not None:
         intent.min_storage_gb = storage
+
+    screen_size = _extract_screen_size_inch(user_text)
+    if screen_size is not None:
+        intent.display_requirements = DisplayRequirements(
+            screen_size_inch=screen_size,
+            screen_size_tolerance=0.25,
+        )
+
+    max_weight = _extract_max_weight_kg(user_text)
+    if max_weight is not None:
+        intent.max_weight_kg = max_weight
+        intent.pref_light = True
+
+    min_battery_wh = _extract_min_battery_wh(user_text)
+    if min_battery_wh is not None:
+        intent.battery_requirements = BatteryRequirements(min_wh=min_battery_wh)
+        intent.pref_battery = True
 
     preferred_brands, excluded_brands = _extract_brand_preferences(user_text)
     current_brand_pref = intent.brand_preferences

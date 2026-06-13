@@ -1,0 +1,15 @@
+{
+  "timestamp": "2026-06-12T22:21:32.598267",
+  "num_queries": 16,
+  "top_k": 3,
+  "metrics": {
+    "precision_at_k": 1.0,
+    "strict_precision_at_k": 0.9375,
+    "normalized_relevance_at_k": 0.96875,
+    "full_match_query_rate": 0.9375,
+    "ndcg_at_k": 1.0,
+    "mrr": 1.0,
+    "csr": 0.9375,
+    "unique_name_rate": 1.0
+  }
+}

@@ -1,0 +1,1554 @@
+{
+  "num_queries": 16,
+  "top_k": 3,
+  "aggregate": {
+    "avg_precision_at_k": 1.0,
+    "avg_strict_precision_at_k": 0.9375,
+    "avg_normalized_relevance_at_k": 0.96875,
+    "full_match_query_rate": 0.9375,
+    "avg_ndcg_at_k": 1.0,
+    "avg_csr": 0.9375,
+    "avg_unique_name_rate": 1.0,
+    "mrr": 1.0
+  },
+  "per_query_results": [
+    {
+      "query": "Tôi cần laptop văn phòng cho sinh viên dưới 20 triệu, ưu tiên nhẹ và trả góp 0%",
+      "num_recommendations": 3,
+      "top_k": 3,
+      "precision_at_k": 1.0,
+      "strict_precision_at_k": 1.0,
+      "normalized_relevance_at_k": 1.0,
+      "ndcg_at_k": 1.0,
+      "unique_name_rate": 1.0,
+      "relevances": [
+        2,
+        2,
+        2
+      ],
+      "judgments": [
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp văn phòng/học tập",
+          "laptop_name": "Laptop HP 240R G9 i3-1315U/8GB/512GB/14\"FHD/Win11 (AX3C6AT)",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp văn phòng/học tập",
+          "laptop_name": "Laptop Acer Aspire Lite 14 AL14-52P-309T i3-1305U/8GB/512GB/14\" FHD/Win11",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp văn phòng/học tập",
+          "laptop_name": "Laptop Asus Vivobook E1504FA-BQ1150W R5-7520U/16GB/512GB/15.6\" FHD/Win11",
+          "judge": "rule"
+        }
+      ],
+      "csr": 1.0,
+      "constraint_details": [
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 20000000,
+              "actual": 15490000.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 20000000,
+              "actual": 14490000.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 20000000,
+              "actual": 15390000.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query": "Top 3 laptop gaming FPT dưới 25 triệu",
+      "num_recommendations": 3,
+      "top_k": 3,
+      "precision_at_k": 1.0,
+      "strict_precision_at_k": 1.0,
+      "normalized_relevance_at_k": 1.0,
+      "ndcg_at_k": 1.0,
+      "unique_name_rate": 1.0,
+      "relevances": [
+        2,
+        2,
+        2
+      ],
+      "judgments": [
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; có tín hiệu phù hợp gaming; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop MSI Gaming Thin 15 B13UC-1411VN i7 13620H/24GB/512GB/15.6\" FHD/RTX 3050 4GB/Win11_Balo",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; có tín hiệu phù hợp gaming; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop Lenovo Gaming LOQ 15ARP10E R7 7735HS/16GB/1TB/15.6\"FHD/RTX 3050 6GB/W11 (83S0006RVN)",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; có tín hiệu phù hợp gaming; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop Asus Vivobook Gaming K3605VC-RP431W i5-13420H/16GB/512GB/16\" WUXGA/RTX 3050 4GB/W11",
+          "judge": "rule"
+        }
+      ],
+      "csr": 1.0,
+      "constraint_details": [
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 25000000,
+              "actual": 21790000.0,
+              "ok": true
+            },
+            "min_ram_gb": {
+              "required": 8,
+              "actual": 24.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 25000000,
+              "actual": 24590000.0,
+              "ok": true
+            },
+            "min_ram_gb": {
+              "required": 8,
+              "actual": 16.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 25000000,
+              "actual": 20990000.0,
+              "ok": true
+            },
+            "min_ram_gb": {
+              "required": 8,
+              "actual": 16.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query": "Mình muốn laptop Asus hoặc Dell học tập tầm 15 đến 20 triệu",
+      "num_recommendations": 3,
+      "top_k": 3,
+      "precision_at_k": 1.0,
+      "strict_precision_at_k": 1.0,
+      "normalized_relevance_at_k": 1.0,
+      "ndcg_at_k": 1.0,
+      "unique_name_rate": 1.0,
+      "relevances": [
+        2,
+        2,
+        2
+      ],
+      "judgments": [
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp văn phòng/học tập; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop Asus Vivobook M1405NAQ-LY010W R5 150/16GB/512GB/14\" WUXGA/Win11",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp văn phòng/học tập; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop Asus Vivobook Go 14 E1404FA-EB935W R5-40/16GB/ 512GB/14\" FHD/Win11",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp văn phòng/học tập; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop Asus Vivobook Go E1404FA-EB012W R5-40/8GB/512GB/14\" FHD/Win11",
+          "judge": "rule"
+        }
+      ],
+      "csr": 1.0,
+      "constraint_details": [
+        {
+          "satisfied": true,
+          "details": {
+            "price_min": {
+              "required": 15000000,
+              "actual": 17990000.0,
+              "ok": true
+            },
+            "price_max": {
+              "required": 20000000,
+              "actual": 17990000.0,
+              "ok": true
+            },
+            "brand_in": {
+              "required": [
+                "asus",
+                "dell"
+              ],
+              "actual": "asus",
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_min": {
+              "required": 15000000,
+              "actual": 18490000.0,
+              "ok": true
+            },
+            "price_max": {
+              "required": 20000000,
+              "actual": 18490000.0,
+              "ok": true
+            },
+            "brand_in": {
+              "required": [
+                "asus",
+                "dell"
+              ],
+              "actual": "asus",
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_min": {
+              "required": 15000000,
+              "actual": 16990000.0,
+              "ok": true
+            },
+            "price_max": {
+              "required": 20000000,
+              "actual": 16990000.0,
+              "ok": true
+            },
+            "brand_in": {
+              "required": [
+                "asus",
+                "dell"
+              ],
+              "actual": "asus",
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query": "Có laptop nào nhẹ để đi làm văn phòng dưới 18 triệu không?",
+      "num_recommendations": 3,
+      "top_k": 3,
+      "precision_at_k": 1.0,
+      "strict_precision_at_k": 1.0,
+      "normalized_relevance_at_k": 1.0,
+      "ndcg_at_k": 1.0,
+      "unique_name_rate": 1.0,
+      "relevances": [
+        2,
+        2,
+        2
+      ],
+      "judgments": [
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp văn phòng/học tập",
+          "laptop_name": "Laptop Colorful Rimbook L1 i3-1220P/16GB/512GB/15.6\" FHD/Win11_CA30016512C-G-E1AD",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp văn phòng/học tập",
+          "laptop_name": "Laptop Acer Aspire Lite AL15-41P-R3QL R7-5700U/8GB/512GB/15.6\"FHD/Win11",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp văn phòng/học tập",
+          "laptop_name": "Laptop Acer Aspire Go 15 AG15-72P-35X9 i3-1305U/8GB/256GB/15.6\" FHD/Win11",
+          "judge": "rule"
+        }
+      ],
+      "csr": 1.0,
+      "constraint_details": [
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 18000000,
+              "actual": 12990000.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 18000000,
+              "actual": 14490000.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 18000000,
+              "actual": 13190000.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query": "Tư vấn MacBook hoặc laptop pin tốt cho doanh nhân, giá không quá 35 triệu",
+      "num_recommendations": 3,
+      "top_k": 3,
+      "precision_at_k": 1.0,
+      "strict_precision_at_k": 1.0,
+      "normalized_relevance_at_k": 1.0,
+      "ndcg_at_k": 1.0,
+      "unique_name_rate": 1.0,
+      "relevances": [
+        2,
+        2,
+        2
+      ],
+      "judgments": [
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp nhu cầu doanh nhân; đúng nhóm MacBook/Apple",
+          "laptop_name": "MacBook Air 13 M5 2026 10CPU/10GPU/24GB/512GB/70W",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp nhu cầu doanh nhân; có tín hiệu pin tốt; đúng nhóm MacBook/Apple",
+          "laptop_name": "MacBook Air 13 M4 2025 10CPU/10GPU/24GB/256GB",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp nhu cầu doanh nhân; có tín hiệu pin tốt; đúng nhóm MacBook/Apple",
+          "laptop_name": "MacBook Air 13 M4 2025 10CPU/10GPU/24GB/512GB",
+          "judge": "rule"
+        }
+      ],
+      "csr": 1.0,
+      "constraint_details": [
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 35000000,
+              "actual": 33990000.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 35000000,
+              "actual": 27990000.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 35000000,
+              "actual": 29990000.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query": "Laptop học online giá rẻ dưới 15 triệu",
+      "num_recommendations": 3,
+      "top_k": 3,
+      "precision_at_k": 1.0,
+      "strict_precision_at_k": 1.0,
+      "normalized_relevance_at_k": 1.0,
+      "ndcg_at_k": 1.0,
+      "unique_name_rate": 1.0,
+      "relevances": [
+        2,
+        2,
+        2
+      ],
+      "judgments": [
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp văn phòng/học tập; mức giá hợp lý",
+          "laptop_name": "Laptop Colorful Rimbook L1 i3-1220P/16GB/512GB/15.6\" FHD/Win11_CA30016512C-G-E1AD",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp văn phòng/học tập; mức giá hợp lý",
+          "laptop_name": "Laptop Acer Aspire Go 15 AG15-72P-35X9 i3-1305U/8GB/256GB/15.6\" FHD/Win11",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp văn phòng/học tập; mức giá hợp lý",
+          "laptop_name": "Laptop Acer Aspire Lite 14 AL14-52P-309T i3-1305U/8GB/512GB/14\" FHD/Win11",
+          "judge": "rule"
+        }
+      ],
+      "csr": 1.0,
+      "constraint_details": [
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 15000000,
+              "actual": 12990000.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 15000000,
+              "actual": 13190000.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 15000000,
+              "actual": 14490000.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query": "Mình cần laptop có RAM 16GB, SSD tối thiểu 512GB, dưới 22 triệu",
+      "num_recommendations": 3,
+      "top_k": 3,
+      "precision_at_k": 1.0,
+      "strict_precision_at_k": 1.0,
+      "normalized_relevance_at_k": 1.0,
+      "ndcg_at_k": 1.0,
+      "unique_name_rate": 1.0,
+      "relevances": [
+        2,
+        2,
+        2
+      ],
+      "judgments": [
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop Asus Vivobook Gaming K3605VC-RP431W i5-13420H/16GB/512GB/16\" WUXGA/RTX 3050 4GB/W11",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop Acer Aspire Go 14 AI AG14-71M-57WR Ultra 5 125H/16GB/512GB/14 inch FHD+/Win11",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop Acer Aspire Go 14 AI AG14-71M-7681 Ultra 7 155H/16GB/512GB/14\" FHD+/Win11",
+          "judge": "rule"
+        }
+      ],
+      "csr": 1.0,
+      "constraint_details": [
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 22000000,
+              "actual": 20990000.0,
+              "ok": true
+            },
+            "min_ram_gb": {
+              "required": 16,
+              "actual": 16.0,
+              "ok": true
+            },
+            "min_storage_gb": {
+              "required": 512,
+              "actual": 512.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 22000000,
+              "actual": 16990000.0,
+              "ok": true
+            },
+            "min_ram_gb": {
+              "required": 16,
+              "actual": 16.0,
+              "ok": true
+            },
+            "min_storage_gb": {
+              "required": 512,
+              "actual": 512.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 22000000,
+              "actual": 19990000.0,
+              "ok": true
+            },
+            "min_ram_gb": {
+              "required": 16,
+              "actual": 16.0,
+              "ok": true
+            },
+            "min_storage_gb": {
+              "required": 512,
+              "actual": 512.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query": "Sinh viên cần máy có khuyến mãi hoặc quà tặng, khoảng 20 triệu quay đầu",
+      "num_recommendations": 3,
+      "top_k": 3,
+      "precision_at_k": 1.0,
+      "strict_precision_at_k": 1.0,
+      "normalized_relevance_at_k": 1.0,
+      "ndcg_at_k": 1.0,
+      "unique_name_rate": 1.0,
+      "relevances": [
+        2,
+        2,
+        2
+      ],
+      "judgments": [
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp văn phòng/học tập",
+          "laptop_name": "Laptop HP 240R G9 i3-1315U/8GB/512GB/14\"FHD/Win11 (AX3C6AT)",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp văn phòng/học tập",
+          "laptop_name": "Laptop Acer Aspire Lite 14 AL14-52P-309T i3-1305U/8GB/512GB/14\" FHD/Win11",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp văn phòng/học tập",
+          "laptop_name": "Laptop Colorful Rimbook S1 i5 12450H/16GB/512GB/14\"WUXGA/Win11 (A10208000034)",
+          "judge": "rule"
+        }
+      ],
+      "csr": 1.0,
+      "constraint_details": [
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 20000000,
+              "actual": 15490000.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 20000000,
+              "actual": 14490000.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 20000000,
+              "actual": 15990000.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query": "Laptop AI hoặc lập trình, RAM 16GB, giá dưới 30 triệu",
+      "num_recommendations": 3,
+      "top_k": 3,
+      "precision_at_k": 1.0,
+      "strict_precision_at_k": 1.0,
+      "normalized_relevance_at_k": 1.0,
+      "ndcg_at_k": 1.0,
+      "unique_name_rate": 1.0,
+      "relevances": [
+        2,
+        2,
+        2
+      ],
+      "judgments": [
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; có tín hiệu phù hợp AI/lập trình; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop Gigabyte Gaming A16 CMHI2VN894SH i7 13620H/16GB/1TB/16\"FHD/RTX 4050 6GB/Win11",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; có tín hiệu phù hợp AI/lập trình; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop Acer Nitro V 15 Gaming ANV15-41-R1JY R5 6600H/16GB/512GB/15.6\"FHD/Nvidia GeForce RTX3050 6GB/Win11",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; có tín hiệu phù hợp AI/lập trình; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop MSI Gaming Thin 15 B13UC-1411VN i7 13620H/24GB/512GB/15.6\" FHD/RTX 3050 4GB/Win11_Balo",
+          "judge": "rule"
+        }
+      ],
+      "csr": 1.0,
+      "constraint_details": [
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 30000000,
+              "actual": 29990000.0,
+              "ok": true
+            },
+            "min_ram_gb": {
+              "required": 16,
+              "actual": 16.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 30000000,
+              "actual": 21790000.0,
+              "ok": true
+            },
+            "min_ram_gb": {
+              "required": 16,
+              "actual": 16.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 30000000,
+              "actual": 21790000.0,
+              "ok": true
+            },
+            "min_ram_gb": {
+              "required": 16,
+              "actual": 24.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query": "Gợi ý 5 laptop FPT tốt nhất cho nhu cầu phổ thông, giá hợp lý",
+      "num_recommendations": 3,
+      "top_k": 3,
+      "precision_at_k": 1.0,
+      "strict_precision_at_k": 1.0,
+      "normalized_relevance_at_k": 1.0,
+      "ndcg_at_k": 1.0,
+      "unique_name_rate": 1.0,
+      "relevances": [
+        2,
+        2,
+        2
+      ],
+      "judgments": [
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; mức giá hợp lý",
+          "laptop_name": "Laptop Asus Vivobook Gaming K3605VC-RP431W i5-13420H/16GB/512GB/16\" WUXGA/RTX 3050 4GB/W11",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; mức giá hợp lý",
+          "laptop_name": "Laptop Acer Aspire Go 14 AI AG14-71M-7681 Ultra 7 155H/16GB/512GB/14\" FHD+/Win11",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; mức giá hợp lý",
+          "laptop_name": "Laptop MSI Gaming Thin 15 B13UC-1411VN i7 13620H/24GB/512GB/15.6\" FHD/RTX 3050 4GB/Win11_Balo",
+          "judge": "rule"
+        }
+      ],
+      "csr": 1.0,
+      "constraint_details": [
+        {
+          "satisfied": true,
+          "details": {
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query": "Laptop văn phòng 14 inch, RAM 16GB, dưới 20 triệu",
+      "num_recommendations": 3,
+      "top_k": 3,
+      "precision_at_k": 1.0,
+      "strict_precision_at_k": 1.0,
+      "normalized_relevance_at_k": 1.0,
+      "ndcg_at_k": 1.0,
+      "unique_name_rate": 1.0,
+      "relevances": [
+        2,
+        2,
+        2
+      ],
+      "judgments": [
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp văn phòng/học tập; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop Acer Aspire Go 14 AI AG14-71M-57WR Ultra 5 125H/16GB/512GB/14 inch FHD+/Win11",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp văn phòng/học tập; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop Acer Aspire Go 14 AI AG14-71M-7681 Ultra 7 155H/16GB/512GB/14\" FHD+/Win11",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp văn phòng/học tập; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop HP 245 G10 R7-7730U/16GB/512GB/14\"FHD/Win11 (BG5U8PT)",
+          "judge": "rule"
+        }
+      ],
+      "csr": 1.0,
+      "constraint_details": [
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 20000000,
+              "actual": 16990000.0,
+              "ok": true
+            },
+            "min_ram_gb": {
+              "required": 16,
+              "actual": 16.0,
+              "ok": true
+            },
+            "screen_size_inch": {
+              "required": 14.0,
+              "actual": 14.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 20000000,
+              "actual": 19990000.0,
+              "ok": true
+            },
+            "min_ram_gb": {
+              "required": 16,
+              "actual": 16.0,
+              "ok": true
+            },
+            "screen_size_inch": {
+              "required": 14.0,
+              "actual": 14.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 20000000,
+              "actual": 18990000.0,
+              "ok": true
+            },
+            "min_ram_gb": {
+              "required": 16,
+              "actual": 16.0,
+              "ok": true
+            },
+            "screen_size_inch": {
+              "required": 14.0,
+              "actual": 14.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query": "Không lấy Asus, gợi ý laptop học tập dưới 20 triệu RAM 16GB",
+      "num_recommendations": 3,
+      "top_k": 3,
+      "precision_at_k": 1.0,
+      "strict_precision_at_k": 1.0,
+      "normalized_relevance_at_k": 1.0,
+      "ndcg_at_k": 1.0,
+      "unique_name_rate": 1.0,
+      "relevances": [
+        2,
+        2,
+        2
+      ],
+      "judgments": [
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp văn phòng/học tập; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop Colorful Rimbook S1 i5- 12450H/16GB/512GB/14\"WUXGA/Win11 (A10205500034)",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp văn phòng/học tập; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop Colorful Rimbook S1 i5 12450H/16GB/512GB/14\"WUXGA/Win11 (A10208000034)",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp văn phòng/học tập; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop Acer Aspire Go 14 AI AG14-71M-57WR Ultra 5 125H/16GB/512GB/14 inch FHD+/Win11",
+          "judge": "rule"
+        }
+      ],
+      "csr": 1.0,
+      "constraint_details": [
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 20000000,
+              "actual": 15990000.0,
+              "ok": true
+            },
+            "min_ram_gb": {
+              "required": 16,
+              "actual": 16.0,
+              "ok": true
+            },
+            "brand_not_in": {
+              "required": [
+                "asus"
+              ],
+              "actual": "colorful",
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 20000000,
+              "actual": 15990000.0,
+              "ok": true
+            },
+            "min_ram_gb": {
+              "required": 16,
+              "actual": 16.0,
+              "ok": true
+            },
+            "brand_not_in": {
+              "required": [
+                "asus"
+              ],
+              "actual": "colorful",
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 20000000,
+              "actual": 16990000.0,
+              "ok": true
+            },
+            "min_ram_gb": {
+              "required": 16,
+              "actual": 16.0,
+              "ok": true
+            },
+            "brand_not_in": {
+              "required": [
+                "asus"
+              ],
+              "actual": "acer",
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query": "Laptop Intel i5 đời 13 trở lên dưới 23 triệu cho văn phòng",
+      "num_recommendations": 3,
+      "top_k": 3,
+      "precision_at_k": 1.0,
+      "strict_precision_at_k": 1.0,
+      "normalized_relevance_at_k": 1.0,
+      "ndcg_at_k": 1.0,
+      "unique_name_rate": 1.0,
+      "relevances": [
+        2,
+        2,
+        2
+      ],
+      "judgments": [
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp văn phòng/học tập; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop Asus Vivobook Gaming K3605VC-RP431W i5-13420H/16GB/512GB/16\" WUXGA/RTX 3050 4GB/W11",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp văn phòng/học tập; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop Dell 15 DC15250 i5-1334U/8GB/512GB/15.6\" FHD Touch/Win 11_NK (884116430315)",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; phù hợp văn phòng/học tập; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop Dell 15 DC15250 i5-1334U/16GB/512GB/15.6\" FHD/Win 11/Office Home 2024/Microsoft 365 (71092479)",
+          "judge": "rule"
+        }
+      ],
+      "csr": 1.0,
+      "constraint_details": [
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 23000000,
+              "actual": 20990000.0,
+              "ok": true
+            },
+            "min_cpu_gen": {
+              "required": 13,
+              "actual": 13,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 23000000,
+              "actual": 16490000.0,
+              "ok": true
+            },
+            "min_cpu_gen": {
+              "required": 13,
+              "actual": 13,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 23000000,
+              "actual": 22990000.0,
+              "ok": true
+            },
+            "min_cpu_gen": {
+              "required": 13,
+              "actual": 13,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query": "Laptop thật nhẹ dưới 1.5kg, giá dưới 35 triệu để đi công tác",
+      "num_recommendations": 3,
+      "top_k": 3,
+      "precision_at_k": 1.0,
+      "strict_precision_at_k": 1.0,
+      "normalized_relevance_at_k": 1.0,
+      "ndcg_at_k": 1.0,
+      "unique_name_rate": 1.0,
+      "relevances": [
+        2,
+        2,
+        2
+      ],
+      "judgments": [
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; đáp ứng nhu cầu mỏng nhẹ; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop Asus Vivobook S14 S3407CA-LY095WS Ultra 5 225H/AI/16GB/512GB/14\" WUXGA/Win11/Office HS24/OS365",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; đáp ứng nhu cầu mỏng nhẹ; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop Asus Vivobook M1407GA-LY270W Ryzen AI 7 445/16GB/512GB/14\"WUXGA/Win11",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; đáp ứng nhu cầu mỏng nhẹ; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop Asus Vivobook M3407KA-SF034WS AMD Ryzen AI 5 330/16GB/512GB/14\" OLED/Win11/Office HS24/OS365",
+          "judge": "rule"
+        }
+      ],
+      "csr": 1.0,
+      "constraint_details": [
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 35000000,
+              "actual": 23690000.0,
+              "ok": true
+            },
+            "max_weight_kg": {
+              "required": 1.5,
+              "actual": 1.4,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 35000000,
+              "actual": 23490000.0,
+              "ok": true
+            },
+            "max_weight_kg": {
+              "required": 1.5,
+              "actual": 1.4,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 35000000,
+              "actual": 23790000.0,
+              "ok": true
+            },
+            "max_weight_kg": {
+              "required": 1.5,
+              "actual": 1.4,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query": "Laptop pin tối thiểu 70Wh cho lập trình dưới 35 triệu",
+      "num_recommendations": 3,
+      "top_k": 3,
+      "precision_at_k": 1.0,
+      "strict_precision_at_k": 1.0,
+      "normalized_relevance_at_k": 1.0,
+      "ndcg_at_k": 1.0,
+      "unique_name_rate": 1.0,
+      "relevances": [
+        2,
+        2,
+        2
+      ],
+      "judgments": [
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; có tín hiệu phù hợp AI/lập trình; có tín hiệu pin tốt; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop Gigabyte Gaming A16 CMHI2VN894SH i7 13620H/16GB/1TB/16\"FHD/RTX 4050 6GB/Win11",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; có tín hiệu phù hợp AI/lập trình; có tín hiệu pin tốt; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop Gigabyte Gaming A16 CVHI3VNC93SH i7 13620H/16GB/512GB/16\"QHD/RTX 5060 8GB/Win11",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 2,
+          "short_reason": "đạt các ràng buộc chính; có tín hiệu phù hợp AI/lập trình; có tín hiệu pin tốt; thỏa nhiều ràng buộc cứng",
+          "laptop_name": "Laptop MSI Prestige 13 AI Evo A1MG-062VN Ultra 7 155H /32GB/1TB/13.3\"2.8K OLED/Win11_Túi_Chuột",
+          "judge": "rule"
+        }
+      ],
+      "csr": 1.0,
+      "constraint_details": [
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 35000000,
+              "actual": 29990000.0,
+              "ok": true
+            },
+            "min_battery_wh": {
+              "required": 70.0,
+              "actual": 76.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 35000000,
+              "actual": 34990000.0,
+              "ok": true
+            },
+            "min_battery_wh": {
+              "required": 70.0,
+              "actual": 76.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": true,
+          "details": {
+            "price_max": {
+              "required": 35000000,
+              "actual": 32990000.0,
+              "ok": true
+            },
+            "min_battery_wh": {
+              "required": 70.0,
+              "actual": 75.0,
+              "ok": true
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query": "Sinh viên muốn laptop dưới 20 triệu có quà tặng kèm",
+      "num_recommendations": 3,
+      "top_k": 3,
+      "precision_at_k": 1.0,
+      "strict_precision_at_k": 0.0,
+      "normalized_relevance_at_k": 0.5,
+      "ndcg_at_k": 1.0,
+      "unique_name_rate": 1.0,
+      "relevances": [
+        1,
+        1,
+        1
+      ],
+      "judgments": [
+        {
+          "relevance_score": 1,
+          "short_reason": "đạt 2/3 ràng buộc; phù hợp văn phòng/học tập",
+          "laptop_name": "Laptop HP 240R G9 i3-1315U/8GB/512GB/14\"FHD/Win11 (AX3C6AT)",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 1,
+          "short_reason": "đạt 2/3 ràng buộc; phù hợp văn phòng/học tập",
+          "laptop_name": "Laptop Acer Aspire Lite 14 AL14-52P-309T i3-1305U/8GB/512GB/14\" FHD/Win11",
+          "judge": "rule"
+        },
+        {
+          "relevance_score": 1,
+          "short_reason": "đạt 2/3 ràng buộc; phù hợp văn phòng/học tập",
+          "laptop_name": "Laptop Colorful Rimbook S1 i5 12450H/16GB/512GB/14\"WUXGA/Win11 (A10208000034)",
+          "judge": "rule"
+        }
+      ],
+      "csr": 0.0,
+      "constraint_details": [
+        {
+          "satisfied": false,
+          "details": {
+            "price_max": {
+              "required": 20000000,
+              "actual": 15490000.0,
+              "ok": true
+            },
+            "has_gifts": {
+              "required": true,
+              "actual": false,
+              "ok": false
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": false,
+          "details": {
+            "price_max": {
+              "required": 20000000,
+              "actual": 14490000.0,
+              "ok": true
+            },
+            "has_gifts": {
+              "required": true,
+              "actual": false,
+              "ok": false
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        },
+        {
+          "satisfied": false,
+          "details": {
+            "price_max": {
+              "required": 20000000,
+              "actual": 15990000.0,
+              "ok": true
+            },
+            "has_gifts": {
+              "required": true,
+              "actual": false,
+              "ok": false
+            },
+            "stock_status": {
+              "required": "in stock",
+              "actual": "in stock",
+              "ok": true
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,176 @@
+[
+  {
+    "id": 1,
+    "query": "Tôi cần laptop văn phòng cho sinh viên dưới 20 triệu, ưu tiên nhẹ và trả góp 0%",
+    "expected_constraints": {
+      "price_max": 20000000,
+      "stock_status": "In Stock"
+    },
+    "complexity": "medium",
+    "note": "FPT retail persona: sinh viên, văn phòng, ngân sách và trả góp"
+  },
+  {
+    "id": 2,
+    "query": "Top 3 laptop gaming FPT dưới 25 triệu",
+    "expected_constraints": {
+      "price_max": 25000000,
+      "min_ram_gb": 8,
+      "stock_status": "In Stock"
+    },
+    "complexity": "medium",
+    "note": "Gaming không hard-filter tuyệt đối vì dữ liệu GPU FPT có thể thiếu"
+  },
+  {
+    "id": 3,
+    "query": "Mình muốn laptop Asus hoặc Dell học tập tầm 15 đến 20 triệu",
+    "expected_constraints": {
+      "price_min": 15000000,
+      "price_max": 20000000,
+      "brand_in": ["asus", "dell"],
+      "stock_status": "In Stock"
+    },
+    "complexity": "medium",
+    "note": "Kiểm tra brand preference và khoảng giá"
+  },
+  {
+    "id": 4,
+    "query": "Có laptop nào nhẹ để đi làm văn phòng dưới 18 triệu không?",
+    "expected_constraints": {
+      "price_max": 18000000,
+      "stock_status": "In Stock"
+    },
+    "complexity": "medium",
+    "note": "Kiểm tra nhu cầu mỏng nhẹ"
+  },
+  {
+    "id": 5,
+    "query": "Tư vấn MacBook hoặc laptop pin tốt cho doanh nhân, giá không quá 35 triệu",
+    "expected_constraints": {
+      "price_max": 35000000,
+      "stock_status": "In Stock"
+    },
+    "complexity": "medium",
+    "note": "Business/pin tốt, có thể không bắt buộc brand vì query cho phép laptop thay thế"
+  },
+  {
+    "id": 6,
+    "query": "Laptop học online giá rẻ dưới 15 triệu",
+    "expected_constraints": {
+      "price_max": 15000000,
+      "stock_status": "In Stock"
+    },
+    "complexity": "simple",
+    "note": "Ca ngân sách thấp"
+  },
+  {
+    "id": 7,
+    "query": "Mình cần laptop có RAM 16GB, SSD tối thiểu 512GB, dưới 22 triệu",
+    "expected_constraints": {
+      "price_max": 22000000,
+      "min_ram_gb": 16,
+      "min_storage_gb": 512,
+      "stock_status": "In Stock"
+    },
+    "complexity": "hard",
+    "note": "Ràng buộc cấu hình cứng"
+  },
+  {
+    "id": 8,
+    "query": "Sinh viên cần máy có khuyến mãi hoặc quà tặng, khoảng 20 triệu quay đầu",
+    "expected_constraints": {
+      "price_max": 20000000,
+      "stock_status": "In Stock"
+    },
+    "complexity": "medium",
+    "note": "Quà tặng hiện phụ thuộc dữ liệu crawl, không bắt buộc CSR"
+  },
+  {
+    "id": 9,
+    "query": "Laptop AI hoặc lập trình, RAM 16GB, giá dưới 30 triệu",
+    "expected_constraints": {
+      "price_max": 30000000,
+      "min_ram_gb": 16,
+      "stock_status": "In Stock"
+    },
+    "complexity": "hard",
+    "note": "AI/programming với RAM tối thiểu"
+  },
+  {
+    "id": 10,
+    "query": "Gợi ý 5 laptop FPT tốt nhất cho nhu cầu phổ thông, giá hợp lý",
+    "expected_constraints": {
+      "stock_status": "In Stock"
+    },
+    "complexity": "simple",
+    "note": "Query tổng quát để đo tính ổn định Top-K"
+  },
+  {
+    "id": 11,
+    "query": "Laptop văn phòng 14 inch, RAM 16GB, dưới 20 triệu",
+    "expected_constraints": {
+      "price_max": 20000000,
+      "min_ram_gb": 16,
+      "screen_size_inch": 14,
+      "screen_size_tolerance": 0.25,
+      "stock_status": "In Stock"
+    },
+    "complexity": "hard",
+    "note": "Kiểm tra parser màn hình inch kết hợp RAM và ngân sách"
+  },
+  {
+    "id": 12,
+    "query": "Không lấy Asus, gợi ý laptop học tập dưới 20 triệu RAM 16GB",
+    "expected_constraints": {
+      "price_max": 20000000,
+      "min_ram_gb": 16,
+      "brand_not_in": ["asus"],
+      "stock_status": "In Stock"
+    },
+    "complexity": "hard",
+    "note": "Kiểm tra phủ định hãng và cấu hình tối thiểu"
+  },
+  {
+    "id": 13,
+    "query": "Laptop Intel i5 đời 13 trở lên dưới 23 triệu cho văn phòng",
+    "expected_constraints": {
+      "price_max": 23000000,
+      "min_cpu_gen": 13,
+      "stock_status": "In Stock"
+    },
+    "complexity": "hard",
+    "note": "Kiểm tra CPU generation và CPU family"
+  },
+  {
+    "id": 14,
+    "query": "Laptop thật nhẹ dưới 1.5kg, giá dưới 35 triệu để đi công tác",
+    "expected_constraints": {
+      "price_max": 35000000,
+      "max_weight_kg": 1.5,
+      "stock_status": "In Stock"
+    },
+    "complexity": "hard",
+    "note": "Kiểm tra yêu cầu cân nặng trong bối cảnh coverage Weight còn thấp"
+  },
+  {
+    "id": 15,
+    "query": "Laptop pin tối thiểu 70Wh cho lập trình dưới 35 triệu",
+    "expected_constraints": {
+      "price_max": 35000000,
+      "min_battery_wh": 70,
+      "stock_status": "In Stock"
+    },
+    "complexity": "hard",
+    "note": "Kiểm tra parser pin Wh và filter pin với dữ liệu pin còn hạn chế"
+  },
+  {
+    "id": 16,
+    "query": "Sinh viên muốn laptop dưới 20 triệu có quà tặng kèm",
+    "expected_constraints": {
+      "price_max": 20000000,
+      "has_gifts": true,
+      "stock_status": "In Stock"
+    },
+    "complexity": "stress",
+    "note": "Stress test cho dữ liệu retail; trường quà tặng hiện chưa được populate đầy đủ từ FPT"
+  }
+]

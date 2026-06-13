@@ -5,6 +5,7 @@ import pandas as pd
 from fastapi.testclient import TestClient
 
 from src.advisor.filters import apply_filters
+from src.advisor.advisor import recommend_laptops
 from src.advisor.scorer import apply_scoring
 from src.api import main as api_main
 from src.llm.schemas_v2 import IntentV2
@@ -75,6 +76,66 @@ class RecommendationLogicTests(unittest.TestCase):
 
         self.assertEqual(intent.brand_preferences.exclude, ["asus"])
         self.assertEqual(intent.brand_preferences.prefer, ["dell"])
+
+        intent = api_main.patch_intent_from_text(
+            "Không lấy Asus, gợi ý laptop học tập dưới 20 triệu",
+            IntentV2(user_type="general"),
+        )
+
+        self.assertEqual(intent.brand_preferences.exclude, ["asus"])
+
+    def test_rule_patch_extracts_display_weight_battery_and_value_price(self):
+        intent = api_main.patch_intent_from_text(
+            "Laptop 14 inch nhẹ dưới 1.5kg pin tối thiểu 70Wh, giá hợp lý",
+            IntentV2(user_type="general"),
+        )
+
+        self.assertEqual(intent.display_requirements.screen_size_inch, 14)
+        self.assertEqual(intent.max_weight_kg, 1.5)
+        self.assertEqual(intent.battery_requirements.min_wh, 70)
+        self.assertTrue(intent.pref_light)
+        self.assertTrue(intent.pref_battery)
+        self.assertTrue(intent.pref_cheap)
+
+    def test_top_k_deduplicates_repeated_product_names(self):
+        frame = pd.DataFrame(
+            [
+                {
+                    "Product Name": "MacBook Air 13 M5",
+                    "Price (VND)": 31_000_000,
+                    "norm_price": 0.7,
+                    "norm_weight": 1.0,
+                    "office_score": 0.85,
+                    "general_score": 0.8,
+                    "battery_score": 0.9,
+                    "is_ultrabook": False,
+                },
+                {
+                    "Product Name": "MacBook Air 13 M5",
+                    "Price (VND)": 32_000_000,
+                    "norm_price": 0.75,
+                    "norm_weight": 1.0,
+                    "office_score": 0.84,
+                    "general_score": 0.8,
+                    "battery_score": 0.9,
+                    "is_ultrabook": False,
+                },
+                {
+                    "Product Name": "Laptop Dell XPS",
+                    "Price (VND)": 33_000_000,
+                    "norm_price": 0.8,
+                    "norm_weight": 0.8,
+                    "office_score": 0.82,
+                    "general_score": 0.78,
+                    "battery_score": 0.8,
+                    "is_ultrabook": False,
+                },
+            ]
+        )
+
+        ranked = recommend_laptops(frame, {"user_type": "business", "price_max": 35_000_000}, top_n=3)
+
+        self.assertEqual(ranked["Product Name"].tolist(), ["MacBook Air 13 M5", "Laptop Dell XPS"])
 
 
 class ChatApiTests(unittest.TestCase):
