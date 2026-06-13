@@ -72,8 +72,7 @@ def recommend_laptops(df, query, top_n=5):
         axis=1,
     )
 
-    return (
-        df_s
-        .sort_values("final_score", ascending=False)
-        .head(top_n)
-    )
+    ranked = df_s.sort_values("final_score", ascending=False)
+    if "Product Name" in ranked.columns:
+        ranked = ranked.drop_duplicates(subset=["Product Name"], keep="first")
+    return ranked.head(top_n)
