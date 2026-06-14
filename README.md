@@ -81,6 +81,35 @@ Mở trình duyệt tại:
 http://127.0.0.1:8080
 ```
 
+## Chạy bằng Docker
+
+Yêu cầu Docker + Docker Compose. Build và chạy cả API lẫn frontend:
+
+```bash
+docker compose up -d --build
+```
+
+Sau khi chạy:
+
+- API: `http://127.0.0.1:8000` (health: `http://127.0.0.1:8000/health`)
+- Frontend: `http://127.0.0.1:8080`
+
+Bật Gemini bằng cách tạo file `.env` ở thư mục gốc (Compose tự nạp):
+
+```text
+GEMINI_API_KEY=your_api_key_here
+```
+
+Không có key thì API vẫn chạy bằng rule-based fallback (`use_llm=false`).
+
+Dừng:
+
+```bash
+docker compose down
+```
+
+Lưu ý: nếu cổng 8000 hoặc 8080 đang bị tiến trình khác chiếm trên máy, hãy tắt tiến trình đó trước (vd. một uvicorn đang chạy thủ công), nếu không trình duyệt có thể gọi nhầm server cũ.
+
 ## Chạy pipeline từ đầu
 
 ### 1. Crawl dữ liệu FPT

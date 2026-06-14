@@ -1,0 +1,33 @@
+services:
+  api:
+    build: .
+    image: fpt-laptop-advisor-api
+    container_name: laptop-advisor-api
+    ports:
+      - "8000:8000"
+    environment:
+      # Set GEMINI_API_KEY in a .env file to enable LLM intent/advice.
+      # Without it, the API runs with the rule-based fallback.
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - GEMINI_MODEL_INTENT=${GEMINI_MODEL_INTENT:-gemini-2.0-flash}
+      - GEMINI_MODEL_ADVICE=${GEMINI_MODEL_ADVICE:-gemini-2.0-flash}
+      - LAPTOPS_CSV=data/fpt_laptops_features.csv
+      - FPT_ONLY=${FPT_ONLY:-true}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+  web:
+    image: nginx:alpine
+    container_name: laptop-advisor-web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    depends_on:
+      - api
+    restart: unless-stopped

@@ -1,0 +1,15 @@
+.venv/
+venv/
+.git/
+.gitignore
+.pytest_cache/
+__pycache__/
+**/__pycache__/
+*.pyc
+.env
+*.pdf
+docs/
+reports/figures/
+.codex-pets/
+DS_AI-Laptop-Advisor-System/
+data/*/raw_htmls/
