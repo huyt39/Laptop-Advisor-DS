@@ -21,9 +21,8 @@ from src.advisor.advisor import recommend_laptops
 from fastapi.middleware.cors import CORSMiddleware
 
 
-# ============================================================
+
 # Bootstrap
-# ============================================================
 
 load_dotenv()
 
@@ -46,9 +45,8 @@ app.add_middleware(
 )
 
 
-# ============================================================
+
 # Load dataset once
-# ============================================================
 
 try:
     df = pd.read_csv(DATA_PATH)
@@ -67,9 +65,7 @@ if "Price (VND)" in df.columns and not df.empty:
     df = df[df["Price (VND)"].isna() | df["Price (VND)"].between(3_000_000, 300_000_000)]
 
 
-# ============================================================
 # Gemini client (allow running without GEMINI_API_KEY)
-# ============================================================
 
 try:
     gemini = GeminiClient(
@@ -83,9 +79,7 @@ except Exception:
     USE_LLM = False
 
 
-# ============================================================
 # API models
-# ============================================================
 
 class ChatRequest(BaseModel):
     text: str = Field(..., min_length=1)
@@ -98,9 +92,7 @@ class ChatResponse(BaseModel):
     answer: str
 
 
-# ============================================================
 # Rule-based patches (robustness)
-# ============================================================
 
 _GAMING_KW = [
     "chơi game", "gaming", "fps", "valorant", "cs2", "counter strike", "pubg",
@@ -425,9 +417,7 @@ def sort_recommendations_for_intent(intent: Dict[str, Any], recs: List[Dict[str,
     return sorted(recs, key=lambda x: float(x.get("scores", {}).get("final_score") or 0), reverse=True)
 
 
-# ============================================================
 # Endpoints
-# ============================================================
 
 @app.get("/health")
 def health():

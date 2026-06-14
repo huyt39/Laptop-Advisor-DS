@@ -76,14 +76,16 @@ Bạn là một chuyên viên tư vấn bán hàng laptop tại FPT Shop. Nhiệ
 Quy tắc ứng xử và phong cách:
 - Mở đầu thân thiện: Luôn chào hỏi lịch sự, bắt đầu câu trả lời bằng: "Dạ, FPT Shop xin chào anh/chị..."
 - Phong cách tư vấn: Thân thiện, chu đáo, tự nhiên, giống một nhân viên bán hàng thật sự. Tránh chia đề mục quá cứng nhắc hoặc lặp lại các tên trường JSON.
-- Đề xuất chính xác: Giới thiệu chính xác N máy tính xách tay trong danh sách recommendations (N = chiều dài danh sách).
-- Điểm mạnh sản phẩm: Nêu rõ tên sản phẩm, giá bán hiện tại và 2-3 điểm mạnh cụ thể dựa trên thông số (RAM, CPU, cân nặng, card màn hình).
+- Không liệt kê lại từng laptop trong phần văn bản trả lời. Frontend sẽ hiển thị danh sách laptop từ recommendations bằng product cards riêng bên dưới.
+- Phần văn bản trả lời chỉ gồm 2 câu:
+  1. "Dạ, FPT Shop xin chào anh/chị. Dựa trên nhu cầu của anh/chị, em xin phép gợi ý danh sách sản phẩm tốt nhất:"
+  2. "Không biết anh/chị có muốn em tư vấn chi tiết hơn về cấu hình hay hình thức trả góp của mẫu máy nào trên đây không ạ?"
 - Đề cập ưu đãi FPT Shop:
-  - Nếu máy hỗ trợ trả góp hoặc có quà tặng (gifts), hoặc có chương trình ưu đãi học sinh/sinh viên (student discount), hãy khéo léo lồng ghép vào phần giới thiệu.
+  - Không nhắc chi tiết ưu đãi trong phần văn bản trả lời nếu thông tin đó đã nằm trong recommendations.
   - Chỉ đề cập ưu đãi, tồn kho, bảo hành hoặc giao hàng khi trường dữ liệu tương ứng trong recommendations có bằng chứng rõ ràng. Không suy đoán chính sách bán hàng.
-- Kêu gọi hành động (CTA): Luôn gợi ý khách hàng click vào đường link sản phẩm (trường `url` trong recommendations) để đặt mua trực tiếp hoặc xem chi tiết chương trình khuyến mại tại website FPT Shop.
-- Cuối câu trả lời: Kết thúc bằng một câu hỏi gợi mở ngắn gọn để tiếp tục tư vấn, ví dụ: "Dạ không biết anh/chị có muốn tham khảo thêm về chương trình trả góp cụ thể của mẫu nào trên đây không ạ?"
+- Kêu gọi hành động (CTA): Dùng câu hỏi kết thúc đúng mẫu ở trên để tiếp tục tư vấn.
 - Không sử dụng biểu tượng cảm xúc (emojis) trong câu trả lời để giữ phong cách bán hàng lịch sự của FPT Shop.
+- Không dùng các ký tự gạch ngang dài; nếu cần ngăn ý, chỉ dùng gạch ngắn "-".
 """.strip()
 
 
@@ -121,32 +123,7 @@ def fallback_advice_no_llm(
             "Anh/chị có thể cung cấp thêm thông tin về ngân sách tối đa và nhu cầu sử dụng chính (như làm văn phòng, chơi game, học tập...) để em tìm các dòng máy thay thế phù hợp hơn nhé."
         )
 
-    lines: List[str] = []
-    lines.append("Dạ, FPT Shop xin chào anh/chị. Dựa trên nhu cầu của anh/chị, em xin phép gợi ý danh sách sản phẩm tốt nhất:")
-
-    lines.append("")
-    for i, item in enumerate(recommendations, start=1):
-        name = item.get("name", "N/A")
-        price = item.get("price_vnd")
-        price_str = f"{int(price):,} VND".replace(",", ".") if isinstance(price, (int, float)) else "chưa niêm yết/giá liên hệ"
-        url = item.get("url")
-        lines.append(f"{i}. {name} — Giá bán ưu đãi: {price_str}")
-        specs = []
-        if item.get("cpu_brand"):
-            specs.append(str(item["cpu_brand"]))
-        if item.get("ram_gb"):
-            specs.append(f"RAM {int(item['ram_gb'])}GB")
-        if item.get("storage_gb"):
-            specs.append(f"SSD {int(item['storage_gb'])}GB")
-        if item.get("gpu_model"):
-            specs.append(str(item["gpu_model"]))
-        if specs:
-            lines.append(f"   Cấu hình nổi bật: {', '.join(specs)}")
-        if item.get("reason"):
-            lines.append(f"   Lý do phù hợp: {item['reason']}")
-        if url:
-            lines.append(f"   Link mua hàng tại FPT Shop: {url}")
-
-    lines.append("")
-    lines.append("Không biết anh/chị có muốn em tư vấn chi tiết hơn về cấu hình hay hình thức trả góp của mẫu máy nào trên đây không ạ?")
-    return "\n".join(lines)
+    return (
+        "Dạ, FPT Shop xin chào anh/chị. Dựa trên nhu cầu của anh/chị, em xin phép gợi ý danh sách sản phẩm tốt nhất:\n\n"
+        "Không biết anh/chị có muốn em tư vấn chi tiết hơn về cấu hình hay hình thức trả góp của mẫu máy nào trên đây không ạ?"
+    )

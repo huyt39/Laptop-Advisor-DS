@@ -6,8 +6,7 @@ services:
     ports:
       - "${API_PORT:-8000}:8000"
     environment:
-      # Set GEMINI_API_KEY in a .env file to enable LLM intent/advice.
-      # Without it, the API runs with the rule-based fallback.
+
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}
       - GEMINI_MODEL_INTENT=${GEMINI_MODEL_INTENT:-gemini-2.0-flash}
       - GEMINI_MODEL_ADVICE=${GEMINI_MODEL_ADVICE:-gemini-2.0-flash}

@@ -147,10 +147,7 @@ def apply_filters(df, query):
             df = df[stock.isin(["in stock", "còn hàng", "con hang", "1", "true", "yes", "available"])]
             break
 
-    # =========================
-    # HARD CONSTRAINTS
-    # =========================
-    # PRICE
+ 
     if "price_min" in query and "Price (VND)" in df.columns:
         df = df[df["Price (VND)"].notna() & (df["Price (VND)"] >= query["price_min"])]
 
@@ -173,11 +170,7 @@ def apply_filters(df, query):
     if "max_weight_kg" in query and "Weight (kg)" in df.columns:
         df = df[df["Weight (kg)"] <= query["max_weight_kg"]]
 
-    # =========================
-    # ADVANCED HARD CONSTRAINTS
-    # =========================
 
-    # --- Brand exclude / prefer ---
     brand_pref = query.get("brand_preferences") or {}
     exclude = set(_norm_brand(x) for x in (brand_pref.get("exclude") or []) if x)
 
@@ -195,7 +188,6 @@ def apply_filters(df, query):
         mask = df.apply(lambda r: _cpu_gen_passes(r.to_dict(), int(min_cpu_gen)), axis=1)
         df = df[mask]
 
-    # --- Display requirements ---
     disp = query.get("display_requirements")
     if isinstance(disp, dict):
         size = disp.get("screen_size_inch")
@@ -236,9 +228,6 @@ def apply_filters(df, query):
                 df["_battery_wh"] = df["Battery"].apply(_parse_battery_wh)
                 df = df[df["_battery_wh"].notna() & (df["_battery_wh"] >= float(min_wh))]
 
-    # =========================
-    # INTENT-AWARE FILTER
-    # =========================
     user_types = normalize_user_types(query)
 
     return df

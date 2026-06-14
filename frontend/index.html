@@ -76,20 +76,19 @@
       background:rgba(255,255,255,.14);
     }
     .logo{
-      display:inline-flex; align-items:baseline; gap:8px;
+      display:inline-flex; align-items:center;
       background:#fff;
-      padding:7px 12px;
+      padding:8px 12px;
       border-radius:12px;
       box-shadow:0 6px 16px rgba(0,0,0,.15);
-      font-weight:900; font-size:22px; letter-spacing:-.5px;
       line-height:1;
+      position:relative;
+      z-index:1;
     }
-    .logo .f{color:var(--fpt-orange)}
-    .logo .p{color:var(--fpt-green)}
-    .logo .t{color:var(--fpt-blue)}
-    .logo .shop{
-      color:var(--fpt-red); font-size:14px; font-weight:800;
-      letter-spacing:0;
+    .logo img{
+      display:block;
+      width:138px;
+      height:auto;
     }
     .title{
       font-weight:800; font-size:17px; margin:16px 0 4px;
@@ -142,15 +141,6 @@
     }
     .btn.secondary:hover{background:#eef1f7}
     .divider{height:1px; background:var(--border); margin:6px 0;}
-    .hint{
-      margin-top:auto;
-      padding:16px 18px;
-      color:var(--muted); font-size:12px; line-height:1.5;
-      border-top:1px solid var(--border);
-      background:var(--surface-2);
-    }
-    .hint b{color:var(--fpt-red)}
-
     /* ============ Main ============ */
     .main{
       flex:1;
@@ -222,6 +212,77 @@
       border-bottom-left-radius:5px;
     }
     .bubble strong{font-weight:800}
+    .answer-text{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .answer-paragraph{
+      margin:0;
+      line-height:1.55;
+    }
+    .answer-products{
+      display:grid;
+      gap:10px;
+    }
+    .answer-product{
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:var(--surface-2);
+      padding:12px;
+      display:grid;
+      gap:9px;
+    }
+    .answer-product-head{
+      display:grid;
+      grid-template-columns:minmax(0, 1fr) auto;
+      gap:10px;
+      align-items:start;
+    }
+    .answer-product-title{
+      margin:0;
+      font-size:14px;
+      line-height:1.35;
+      font-weight:850;
+      overflow-wrap:anywhere;
+    }
+    .answer-product-title span{
+      color:var(--fpt-red);
+      margin-right:5px;
+    }
+    .answer-price{
+      color:var(--fpt-red);
+      font-size:13px;
+      font-weight:900;
+      white-space:nowrap;
+    }
+    .answer-field{
+      display:grid;
+      grid-template-columns:116px minmax(0, 1fr);
+      gap:8px;
+      font-size:13px;
+      line-height:1.45;
+    }
+    .answer-label{
+      color:var(--muted);
+      font-weight:750;
+    }
+    .answer-value{
+      color:var(--text);
+      overflow-wrap:anywhere;
+    }
+    .answer-link{
+      color:var(--fpt-red);
+      font-weight:800;
+      text-decoration:none;
+      overflow-wrap:anywhere;
+    }
+    .answer-link:hover{text-decoration:underline}
+    @media (max-width: 640px){
+      .answer-product-head{grid-template-columns:1fr}
+      .answer-price{white-space:normal}
+      .answer-field{grid-template-columns:1fr; gap:2px}
+    }
 
     /* ============ Recommendations cards ============ */
     .rec-wrap{
@@ -455,11 +516,10 @@
     <aside class="sidebar">
       <div class="side-header">
         <span class="logo">
-          <span class="f">F</span><span class="p">P</span><span class="t">T</span>
-          <span class="shop">Shop</span>
+          <img src="./Logo-FPT-Shop-Black.png" alt="FPT Shop" />
         </span>
         <p class="title">Trợ lý tư vấn Laptop</p>
-        <p class="subtitle">Chọn đúng máy, đúng nhu cầu — nhanh & chuẩn gu FPT.</p>
+        <p class="subtitle">Chọn đúng máy, đúng nhu cầu - nhanh & chuẩn gu FPT.</p>
       </div>
 
       <div class="settings">
@@ -479,10 +539,6 @@
         </div>
       </div>
 
-      <div class="hint">
-        <div><b>Mẹo:</b> Cứ mô tả nhu cầu tự nhiên — ngân sách, hãng, mục đích dùng, cân nặng… trợ lý sẽ lọc giúp.</div>
-        <div style="margin-top:8px;">Trả lời được stream theo thời gian thực qua <code>/chat/stream</code>.</div>
-      </div>
     </aside>
 
     <main class="main">
@@ -639,7 +695,7 @@
 
         const brand = document.createElement('div');
         brand.className = 'brand';
-        brand.textContent = `Hãng: ${(r.brand ?? r.manufacturer ?? '—')}`;
+        brand.textContent = `Hãng: ${(r.brand ?? r.manufacturer ?? '-')}`;
 
         left.appendChild(name);
         left.appendChild(brand);
@@ -800,7 +856,7 @@
         <div class="row">
         <div class="k">FPT Shop link</div>
         <div class="v">
-          ${rec.url ? `<a href="${escapeHTML(rec.url)}" target="_blank" style="color: #ef4444; text-decoration: underline; font-weight: bold;">Mua tại FPT Shop ↗</a>` : '—'}
+          ${rec.url ? `<a href="${escapeHTML(rec.url)}" target="_blank" style="color: #ef4444; text-decoration: underline; font-weight: bold;">Mua tại FPT Shop ↗</a>` : '-'}
         </div>
         </div>
         `;
@@ -872,6 +928,7 @@
           const reader = res.body.getReader();
           const decoder = new TextDecoder("utf-8");
           let buffer = "";
+          let streamedAnswer = "";
           let finalRespData = { intent: null, query: null, recommendations: null };
 
           while (true) {
@@ -892,7 +949,8 @@
                   finalRespData.recommendations = data.recommendations;
                   renderRecommendationsGrid(data.recommendations, 'Danh sách gợi ý FPT Shop');
                 } else if (data.type === "text") {
-                  bubble.innerHTML += formatText(data.content);
+                  streamedAnswer += data.content || "";
+                  bubble.innerHTML = formatText(streamedAnswer);
                   scrollToBottom();
                 }
               } catch (e) {
@@ -950,17 +1008,161 @@
     function formatText(text){
       if(!text) return '';
 
-      let html = text;
+      const normalized = normalizeAnswerText(text);
+      const parsed = parseAdvisorAnswer(normalized);
+      if(parsed.products.length){
+        return renderAdvisorAnswerSummary(parsed);
+      }
 
-      html = html
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
+      let html = escapeHTML(normalized);
 
       html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
       html = html.replace(/\n/g, '<br>');
 
       return html;
+    }
+
+    function normalizeAnswerText(text){
+      return String(text ?? '')
+        .replace(/[—–]/g, '-')
+        .replace(/[ \t]+\n/g, '\n')
+        .trim();
+    }
+
+    function stripMarkdown(value){
+      return String(value ?? '').replace(/\*\*(.*?)\*\*/g, '$1').trim();
+    }
+
+    function splitLabelValue(line){
+      const cleaned = stripMarkdown(line).trim();
+      const match = cleaned.match(/^([^:：]{2,40})[:：]\s*(.*)$/);
+      if(!match) return null;
+      return {
+        label: match[1].trim(),
+        value: match[2].trim(),
+      };
+    }
+
+    function labelKey(label){
+      const normalized = label.toLowerCase();
+      if(normalized.includes('cấu hình')) return 'specs';
+      if(normalized.includes('lý do')) return 'reason';
+      if(normalized.includes('link')) return 'link';
+      if(normalized.includes('giá')) return 'price';
+      return 'extra';
+    }
+
+    function displayLabel(label, key){
+      if(key === 'specs') return 'Cấu hình';
+      if(key === 'reason') return 'Lý do';
+      if(key === 'link') return 'Link mua';
+      if(key === 'price') return 'Giá bán';
+      return label;
+    }
+
+    function parseProductHeading(line){
+      const heading = stripMarkdown(line).replace(/^\s*[-*]\s+/, '').trim();
+      const match = heading.match(/^(\d+)[.)]\s+(.+)$/);
+      if(!match) return null;
+
+      const index = match[1];
+      let rest = match[2].trim();
+      let price = '';
+      let name = rest;
+
+      const priceMatch = rest.match(/\s+-\s*(?:Giá bán ưu đãi|Giá bán|Giá|Price)\s*:\s*(.+)$/i);
+      if(priceMatch){
+        price = priceMatch[1].trim();
+        name = rest.slice(0, priceMatch.index).trim();
+      }
+
+      return { index, name, price, fields: [] };
+    }
+
+    function parseAdvisorAnswer(text){
+      const lines = text.split('\n').map(line => line.trim()).filter(Boolean);
+      const intro = [];
+      const outro = [];
+      const products = [];
+      let current = null;
+      let afterProducts = false;
+
+      lines.forEach((line) => {
+        const product = parseProductHeading(line);
+        if(product){
+          products.push(product);
+          current = product;
+          afterProducts = true;
+          return;
+        }
+
+        if(current){
+          const pair = splitLabelValue(line);
+          if(pair){
+            const key = labelKey(pair.label);
+            if(key === 'price' && !current.price){
+              current.price = pair.value;
+            }else{
+              current.fields.push({
+                key,
+                label: displayLabel(pair.label, key),
+                value: pair.value,
+              });
+            }
+            return;
+          }
+
+          if(/^(dạ\s+)?(không biết|anh\/chị|anh chị|mình có|em có thể)/i.test(line)){
+            current = null;
+            outro.push(line);
+            return;
+          }
+
+          current.fields.push({
+            key: 'extra',
+            label: 'Ghi chú',
+            value: stripMarkdown(line),
+          });
+          return;
+        }
+
+        if(afterProducts){
+          outro.push(line);
+        }else{
+          intro.push(line);
+        }
+      });
+
+      return { intro, products, outro };
+    }
+
+    function linkifyValue(value, key){
+      const safe = escapeHTML(value);
+      const urlMatch = String(value ?? '').match(/https?:\/\/\S+/);
+      if(key !== 'link' || !urlMatch) return safe;
+
+      const url = urlMatch[0].replace(/[),.]+$/, '');
+      return safe.replace(
+        escapeHTML(url),
+        `<a class="answer-link" href="${escapeHTML(url)}" target="_blank" rel="noopener">Mua tại FPT Shop</a>`
+      );
+    }
+
+    function renderAdvisorAnswerSummary(parsed){
+      const intro = parsed.intro
+        .map(line => `<p class="answer-paragraph">${escapeHTML(stripMarkdown(line))}</p>`)
+        .join('');
+
+      const outro = parsed.outro
+        .map(line => `<p class="answer-paragraph">${escapeHTML(stripMarkdown(line))}</p>`)
+        .join('');
+
+      return `
+        <div class="answer-text">
+          ${intro}
+          ${outro}
+        </div>
+      `;
     }
 
     // initial greet

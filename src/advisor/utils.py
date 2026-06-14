@@ -1,9 +1,5 @@
 def normalize_user_types(query):
-    """
-    STRICT intent semantics:
-    - user_type: single intent (string)
-    - user_types: multi intent (list, length >=2)
-    """
+
     if "user_types" in query:
         uts = query["user_types"]
         if isinstance(uts, list):

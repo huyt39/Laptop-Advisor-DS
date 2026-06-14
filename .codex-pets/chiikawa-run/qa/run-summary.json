@@ -1,0 +1,9 @@
+{
+  "ok": true,
+  "run_dir": "/Users/macbook/Documents/Laptop-Advisor/.codex-pets/chiikawa-run",
+  "spritesheet": "/Users/macbook/Documents/Laptop-Advisor/.codex-pets/chiikawa-run/final/spritesheet.webp",
+  "validation": "/Users/macbook/Documents/Laptop-Advisor/.codex-pets/chiikawa-run/final/validation.json",
+  "contact_sheet": "/Users/macbook/Documents/Laptop-Advisor/.codex-pets/chiikawa-run/qa/contact-sheet.png",
+  "review": "/Users/macbook/Documents/Laptop-Advisor/.codex-pets/chiikawa-run/qa/review.json",
+  "package": "/Users/macbook/.codex/pets/chiikawa"
+}
