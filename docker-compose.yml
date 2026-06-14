@@ -4,7 +4,7 @@ services:
     image: fpt-laptop-advisor-api
     container_name: laptop-advisor-api
     ports:
-      - "8000:8000"
+      - "${API_PORT:-8000}:8000"
     environment:
       # Set GEMINI_API_KEY in a .env file to enable LLM intent/advice.
       # Without it, the API runs with the rule-based fallback.
@@ -25,7 +25,7 @@ services:
     image: nginx:alpine
     container_name: laptop-advisor-web
     ports:
-      - "8080:80"
+      - "${WEB_PORT:-8080}:80"
     volumes:
       - ./frontend:/usr/share/nginx/html:ro
     depends_on:
