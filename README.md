@@ -31,8 +31,6 @@ src/evaluation/                    Benchmark/evaluator
 tests/                             Unit tests
 ```
 
-Thư mục `DS_AI-Laptop-Advisor-System/` và file `Data_Science (2).pdf` là tài liệu/dự án tham khảo, không phải phần cần chạy cho project hiện tại.
-
 ## Cài đặt
 
 Yêu cầu Python 3.10+.
@@ -219,12 +217,4 @@ Các metric đạt 1.0000 như Precision@K, NDCG@K, MRR và Unique Name Rate đ�
 - `Weight` và `Battery` vẫn có coverage thấp, nên các yêu cầu về tính di động/pin còn phụ thuộc nhiều vào dữ liệu hiện có.
 - Benchmark chính đang dùng rule-based judge; có thể chạy thêm Gemini judge khi có API key.
 
-## Báo cáo
 
-Báo cáo chính nằm tại:
-
-```text
-reports/fpt_laptop_advisor_report.md
-```
-
-Báo cáo mô tả pipeline, EDA, preprocessing, feature engineering, chatbot và benchmark cho project hiện tại.
